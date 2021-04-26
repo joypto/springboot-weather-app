@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util;
+package com.weather.weatherdataapi.util.openapi.LivingWthIdx;
 
 import com.weather.weatherdataapi.model.entity.UVIdx;
 import com.weather.weatherdataapi.repository.UVIdxRepository;
@@ -19,7 +19,7 @@ import java.io.BufferedReader;
 
 @Component
 @RequiredArgsConstructor
-public class LivingWthrIdx {
+public class UVIdxApiCall {
 
     private final String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private final UVIdxRepository uvIdxRepository;
