@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi;
 
-import com.weather.weatherdataapi.corona.GovCoronaOpenApi;
+import com.weather.weatherdataapi.corona.gov.GovCoronaOpenApi;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
