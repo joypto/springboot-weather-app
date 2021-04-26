@@ -1,5 +1,8 @@
 package com.weather.weatherdataapi.util;
 
+import com.weather.weatherdataapi.model.entity.UVIdx;
+import com.weather.weatherdataapi.repository.UVIdxRepository;
+import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -13,14 +16,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.io.BufferedReader;
-import java.sql.SQLOutput;
 
 @Component
+@RequiredArgsConstructor
 public class LivingWthrIdx {
 
     private final String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
+    private final UVIdxRepository uvIdxRepository;
 
-    @PostConstruct
     public void LivingWthrIdxService() throws IOException, ParseException {
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/LivingWthrIdxService01/getUVIdx"); /*URL*/
@@ -56,8 +59,27 @@ public class LivingWthrIdx {
         JSONObject response = (JSONObject) jsonObject.get("response");
         JSONObject body = (JSONObject) response.get("body");
         JSONObject items = (JSONObject) body.get("items");
-        JSONObject item = (JSONObject) items.get("item");
-        System.out.println(item);
+        JSONArray item = (JSONArray) items.get("item");
+        JSONObject itemObject = (JSONObject) item.get(0);
+
+        // 여기서부터가 사용하는 값!
+        String date = (String) itemObject.get("date");
+        String code = (String) itemObject.get("code");
+        String areaNo = (String) itemObject.get("areaNo");
+        String today = (String) itemObject.get("today");
+        String tomorrow = (String) itemObject.get("tomorrow");
+        String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
+
+        UVIdx uvIdx = new UVIdx();
+        uvIdx.setDate(date);
+        uvIdx.setAreaNo(areaNo);
+        uvIdx.setToday(today);
+        uvIdx.setTomorrow(tomorrow);
+        uvIdx.setTheDayAfterTomorrow(theDayAfterTomorrow);
+
+        // DB에 저장
+        uvIdxRepository.save(uvIdx);
+
     }
 
 }
