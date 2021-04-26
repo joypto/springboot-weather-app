@@ -9,7 +9,7 @@ import javax.annotation.PostConstruct;
 @Component
 public class ReverseGeoCoding {
 
-    @PostConstruct
+//    @PostConstruct
     public void reverseGeocoding() {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
@@ -20,7 +20,6 @@ public class ReverseGeoCoding {
         String url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?sourcecrs=epsg:4326&orders=legalcode,admcode&output=json&coords=" + locate;
         ResponseEntity<String> responseEntity = rest.exchange(url, HttpMethod.GET, new HttpEntity<>(headers), String.class);
         System.out.println(responseEntity);
-
     }
 
 }

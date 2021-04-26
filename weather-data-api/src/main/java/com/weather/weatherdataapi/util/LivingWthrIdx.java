@@ -24,6 +24,7 @@ public class LivingWthrIdx {
     private final String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private final UVIdxRepository uvIdxRepository;
 
+    @PostConstruct
     public void LivingWthrIdxService() throws IOException, ParseException {
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/LivingWthrIdxService01/getUVIdx"); /*URL*/
