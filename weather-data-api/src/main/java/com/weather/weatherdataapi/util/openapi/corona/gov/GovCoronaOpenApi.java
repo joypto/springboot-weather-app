@@ -1,7 +1,7 @@
-package com.weather.weatherdataapi.corona.gov;
+package com.weather.weatherdataapi.util.openapi.corona.gov;
 
-import com.weather.weatherdataapi.corona.ICoronaInfo;
-import com.weather.weatherdataapi.corona.ICoronaOpenApi;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaOpenApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;

@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.corona.gov;
+package com.weather.weatherdataapi.util.openapi.corona.gov;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

@@ -1,7 +1,7 @@
-package com.weather.weatherdataapi.corona.gov;
+package com.weather.weatherdataapi.util.openapi.corona.gov;
 
-import com.weather.weatherdataapi.corona.ICoronaInfo;
-import com.weather.weatherdataapi.corona.ICoronaItem;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
 

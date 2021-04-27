@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.corona.gov;
+package com.weather.weatherdataapi.util.openapi.corona.gov;
 
 import lombok.Getter;
 import org.simpleframework.xml.Element;

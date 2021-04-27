@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.corona;
+package com.weather.weatherdataapi.util.openapi.corona;
 
 public interface ICoronaItem {
     String getRegionName();
