@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.corona;
 
-public interface ICoronaRegion {
-    String getName();
+public interface ICoronaItem {
+    String getRegionName();
 
     Integer getNewLocalCaseCount();
 

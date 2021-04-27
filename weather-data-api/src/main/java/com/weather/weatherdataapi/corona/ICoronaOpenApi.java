@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.corona;
 
+import java.util.Optional;
+
 public interface ICoronaOpenApi {
-    ICoronaInfo getInfo();
+    Optional<ICoronaInfo> getInfo() throws Exception;
 }

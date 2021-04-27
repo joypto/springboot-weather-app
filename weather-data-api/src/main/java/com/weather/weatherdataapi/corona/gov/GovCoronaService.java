@@ -1,0 +1,10 @@
+package com.weather.weatherdataapi.corona.gov;
+
+import retrofit2.Call;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
+
+public interface GovCoronaService {
+    @GET("getCovid19SidoInfStateJson")
+    Call<GovCoronaResponse> getResponseCall(@Query("serviceKey") String serviceKey);
+}
