@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.air_pollution.airkorea;
+package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea;
 
 import org.simpleframework.xml.ElementList;
 import org.simpleframework.xml.Root;
