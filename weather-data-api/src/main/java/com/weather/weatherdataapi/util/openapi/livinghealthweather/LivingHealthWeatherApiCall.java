@@ -33,6 +33,7 @@ public class LivingHealthWeatherApiCall {
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
 
         for(int i=0; i<methods.length; i++) {
+
             String method = methods[i];
 
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/HealthWthrIdxService/" + method); /*URL*/
