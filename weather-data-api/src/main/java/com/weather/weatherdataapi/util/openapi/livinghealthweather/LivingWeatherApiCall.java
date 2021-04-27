@@ -1,7 +1,7 @@
-package com.weather.weatherdataapi.util.openapi.LivingWthIdx;
+package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
-import com.weather.weatherdataapi.model.entity.UVIdx;
-import com.weather.weatherdataapi.repository.UVIdxRepository;
+import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
+import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -9,7 +9,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -19,18 +18,18 @@ import java.io.BufferedReader;
 
 @Component
 @RequiredArgsConstructor
-public class UVIdxApiCall {
+public class LivingWeatherApiCall {
 
-    private final String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
-    private final UVIdxRepository uvIdxRepository;
+    private String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
+    private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-    @PostConstruct
-    public void LivingWthrIdxService() throws IOException, ParseException {
+//    @PostConstruct
+    public void uvIdxApiCall() throws IOException, ParseException {
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/LivingWthrIdxService01/getUVIdx"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
         urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode("1100000000", "UTF-8")); /*서울지점*/
-        urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode("2021042606", "UTF-8")); /*2017년6월8일6시*/
+        urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode("2021042706", "UTF-8")); /*2017년6월8일6시*/
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml, json 선택(미입력시 xml)*/
 
         URL url = new URL(urlBuilder.toString());
@@ -71,15 +70,15 @@ public class UVIdxApiCall {
         String tomorrow = (String) itemObject.get("tomorrow");
         String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-        UVIdx uvIdx = new UVIdx();
+        LivingHealthWeather uvIdx = new LivingHealthWeather();
         uvIdx.setDate(date);
         uvIdx.setAreaNo(areaNo);
-        uvIdx.setToday(today);
-        uvIdx.setTomorrow(tomorrow);
-        uvIdx.setTheDayAfterTomorrow(theDayAfterTomorrow);
+        uvIdx.setUvToday(today);
+        uvIdx.setUvTomorrow(tomorrow);
+        uvIdx.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
 
         // DB에 저장
-        uvIdxRepository.save(uvIdx);
+        livingHealthWeatherRepository.save(uvIdx);
 
     }
 

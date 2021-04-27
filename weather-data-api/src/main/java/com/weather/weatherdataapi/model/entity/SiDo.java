@@ -2,34 +2,23 @@ package com.weather.weatherdataapi.model.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
-public class UVIdx {
+public class SiDo {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column
-    Long id;
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "gu_id")
+    private Gu gu;
 
     @Column
-    private String date;
-
-    @Column
-    private String areaNo;
-
-    @Column
-    private String today;
-
-    @Column
-    private String tomorrow;
-
-    @Column
-    private String theDayAfterTomorrow;
-
+    private String siDoName;
 }
