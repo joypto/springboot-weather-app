@@ -29,13 +29,14 @@ public class GovCoronaItem implements ICoronaItem {
     @Element(name = "overFlowCnt")
     private Integer newForeignCaseCount;
 
-    public LocalDate getDate() {
-        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시", Locale.KOREA));
-    }
-
     @Override
     public String getRegionName() {
         return this.regionName;
+    }
+
+    @Override
+    public LocalDate getDate() {
+        return LocalDate.parse(dateString, DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 HH시", Locale.KOREA));
     }
 
     @Override
