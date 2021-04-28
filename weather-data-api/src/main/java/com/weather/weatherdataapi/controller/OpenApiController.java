@@ -29,10 +29,6 @@ public class OpenApiController {
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
 
-    @GetMapping("/api/test")
-    public void show() throws IOException, ParseException {
-    }
-
     @GetMapping("/api/weather/data")
     public ReverseGeocodingResponseDto getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());

@@ -28,7 +28,6 @@ public class LivingHealthWeatherApiCall {
 
     private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
-    private final RegionRepository regionRepository;
 
     public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address, Region region) throws IOException, ParseException {
 
