@@ -30,7 +30,7 @@ public class OpenApiController {
     private final CoronaService coronaService;
 
     @GetMapping("/api/weather/data")
-    public ReverseGeocodingResponseDto getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
+    public Region getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
@@ -41,8 +41,7 @@ public class OpenApiController {
         openApiService.callApi(weatherDataRequestDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
-
-        return address;
+        return region;
     }
 
     @GetMapping("/api/corona/data")
