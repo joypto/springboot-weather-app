@@ -5,7 +5,6 @@ import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
-import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -25,11 +24,12 @@ public class OpenApiService {
 
     public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {
+            System.out.println(wantRegion.getBigRegion());
             int currentDate = LocalDate.now().getDayOfMonth();
-            if (currentDate == wantRegion.getWeekInfo().getModifiedAt().getDayOfMonth()) {
-                System.out.println("같아요");
-                return;
-            } else {
+//            if (currentDate == wantRegion.getWeekInfo().getModifiedAt().getDayOfMonth()) {
+//                System.out.println("같아요");
+//                return;
+//            } else {
                 JSONObject jObj;
                 JSONObject jObj1;
                 JSONArray jObj2;
@@ -87,7 +87,7 @@ public class OpenApiService {
                 wantRegion.updateWeekInfo(weekInfo);
                 weekInfo.setRegion(wantRegion);
                 weekInfoRepository.save(weekInfo);
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
