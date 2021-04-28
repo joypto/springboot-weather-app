@@ -34,6 +34,8 @@ public class OpenApiController {
 
     @GetMapping("/api/weather/data")
     public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException {
+        String latitude = weatherDataRequestDto.getLatitude();
+        String longtitude = weatherDataRequestDto.getLongitude();
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
 

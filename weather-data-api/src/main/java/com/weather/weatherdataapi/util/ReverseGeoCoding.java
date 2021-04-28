@@ -38,7 +38,7 @@ public class ReverseGeoCoding {
         String area3_name = (String) area3.get("name");
 
         System.out.println(area1_name + " " + area2_name + " " + area3_name);
-        return area1_name + " " + area2_name + " " + area3_name;
+        return area1_name + " " + area2_name + " ";
     }
 
 }
