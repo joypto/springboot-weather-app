@@ -19,14 +19,13 @@ import java.net.URLEncoder;
 
 @Component
 @RequiredArgsConstructor
-public class LivingHealthWeatherApiCall {
+public class HealthWeatherApiCall {
 
     private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private String AREA_NO = "1100000000";
     private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-    @PostConstruct
     public void healthWeatherApiCall() throws IOException, ParseException {
 
         String [] methods = {"getAsthmaIdx", "getFoodPoisoningIdx", "getColdIdx", "getOakPollenRiskIdx", "getPinePollenRiskIdx"};
