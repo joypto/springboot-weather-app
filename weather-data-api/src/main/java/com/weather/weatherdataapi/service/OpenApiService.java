@@ -22,7 +22,7 @@ public class OpenApiService {
     private final WeekInfoRepository weekInfoRepository;
     private final ReverseGeoCoding reverseGeoCoding;
 
-    public void callApi(WeatherDataRequestDto requestDto) {
+    public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region) {
         try {
             System.out.println(requestDto.getLatitude());
             System.out.println(requestDto.getLongitude());
@@ -41,7 +41,6 @@ public class OpenApiService {
             List<String> weatherDes = new ArrayList<>();
             List<String> rainPer = new ArrayList<>();
             List<String> rain = new ArrayList<>();
-            ReverseGeocodingResponseDto region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
             String big_region = region.getBigRegion();
             String small_region = region.getSmallRegion();
             if (small_region.equals("")){

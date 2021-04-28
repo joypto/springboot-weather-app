@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,10 @@ public class WeekInfo {
     @Column(nullable = false)
     private Long id;
     // 최저 기온
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "region_id")
+    private Region region;
 
     @Column
     private String big_region;

@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.entity.region;
 
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,6 +29,10 @@ public class Region {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "living_health_wth_id")
     private LivingHealthWeather livingHealthWeather;
+
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "week_data_id")
+    private WeekInfo weekInfo;
 
     public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
