@@ -65,17 +65,21 @@ public class LivingWeatherApiCall {
         JSONObject itemObject = (JSONObject) item.get(0);
 
         // 여기서부터가 사용하는 값!
+        String date = (String) itemObject.get("date");
+        String code = (String) itemObject.get("code");
+        String areaNo = (String) itemObject.get("areaNo");
         String today = (String) itemObject.get("today");
         String tomorrow = (String) itemObject.get("tomorrow");
         String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-        LivingHealthWeather uvIdx = new LivingHealthWeather();
-        uvIdx.setUvToday(today);
-        uvIdx.setUvTomorrow(tomorrow);
-        uvIdx.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
+         LivingHealthWeather livingHealthWeather = livingHealthWeatherRepository.findByAreaNo(areaNo);
+
+        livingHealthWeather.setUvToday(today);
+        livingHealthWeather.setUvTomorrow(tomorrow);
+        livingHealthWeather.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
 
         // DB에 저장
-        livingHealthWeatherRepository.save(uvIdx);
+        livingHealthWeatherRepository.save(livingHealthWeather);
 
     }
 

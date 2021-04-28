@@ -3,22 +3,30 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
+import com.weather.weatherdataapi.util.openapi.livinghealthweather.HealthWeatherApiCall;
+import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingWeatherApiCall;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RequiredArgsConstructor
 @RestController
 public class OpenApiController {
 
     final private OpenApiService openApiService;
+    private final HealthWeatherApiCall healthWeatherApiCall;
+    private final LivingWeatherApiCall livingWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
 
     @GetMapping("api/test")
-    public void show(){
+    public void show() throws IOException, ParseException {
         openApiService.callApi();
+        healthWeatherApiCall.healthWeatherApiCall();
+        livingWeatherApiCall.livingWeatherApiCall();
     }
   
   @GetMapping("/api/weather/data")
