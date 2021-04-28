@@ -11,6 +11,34 @@ public class OpenApiController {
 
     final private OpenApiService openApiService;
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @GetMapping("api/test")
     public void show(){
         openApiService.callApi();
