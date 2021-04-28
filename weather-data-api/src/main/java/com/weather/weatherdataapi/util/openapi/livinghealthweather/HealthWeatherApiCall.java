@@ -26,7 +26,7 @@ public class HealthWeatherApiCall {
     private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-    public void healthWeatherApiCall() throws IOException, ParseException {
+    public void healthWeatherApiCall(String address) throws IOException, ParseException {
 
         String [] methods = {"getAsthmaIdx", "getFoodPoisoningIdx", "getColdIdx", "getOakPollenRiskIdx", "getPinePollenRiskIdx"};
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();

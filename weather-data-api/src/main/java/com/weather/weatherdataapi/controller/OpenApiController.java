@@ -26,17 +26,17 @@ public class OpenApiController {
 
     @GetMapping("/api/test")
     public void show() throws IOException, ParseException {
-
-        healthWeatherApiCall.healthWeatherApiCall();
-        livingWeatherApiCall.livingWeatherApiCall();
         coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
     }
 
     @GetMapping("/api/weather/data")
-    public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException {
+    public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
         String latitude = weatherDataRequestDto.getLatitude();
         String longitude = weatherDataRequestDto.getLongitude();
+        String address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
         openApiService.callApi(weatherDataRequestDto);
+        healthWeatherApiCall.healthWeatherApiCall(address);
+        livingWeatherApiCall.livingWeatherApiCall(address);
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
 
