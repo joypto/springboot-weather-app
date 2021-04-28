@@ -30,14 +30,7 @@ public class LivingHealthWeatherApiCall {
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
     private final RegionRepository regionRepository;
 
-    public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address) throws IOException, ParseException {
-
-        // 해당 시/구 주소를 가진 Region 객체 가져오기
-        List<Region> regions1 = regionRepository.findByBigRegion(address.getBigRegion());
-        List<Region> regions2 = regionRepository.findBySmallRegion(address.getSmallRegion());
-
-        regions1.retainAll(regions2);
-        Region region = regions1.get(0);
+    public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address, Region region) throws IOException, ParseException {
 
         // 예보 기준일 생성
         String dateResult = "2021042706";

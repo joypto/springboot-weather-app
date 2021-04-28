@@ -2,6 +2,8 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.repository.region.RegionRepository;
 import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
@@ -19,7 +21,8 @@ import java.util.List;
 @RestController
 public class OpenApiController {
 
-    final private OpenApiService openApiService;
+    private final OpenApiService openApiService;
+    private final RegionRepository regionRepository;
     private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
@@ -31,11 +34,20 @@ public class OpenApiController {
 
     @GetMapping("/api/weather/data")
     public ReverseGeocodingResponseDto getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
-        String latitude = weatherDataRequestDto.getLatitude();
-        String longitude = weatherDataRequestDto.getLongitude();
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
+
+        // 해당 시/구 주소를 가진 Region 객체 가져오기
+        List<Region> regions1 = regionRepository.findByBigRegion(address.getBigRegion());
+        List<Region> regions2 = regionRepository.findBySmallRegion(address.getSmallRegion());
+        regions1.retainAll(regions2);
+        Region region = regions1.get(0);
+
+        // OPEN API 호출
         openApiService.callApi(weatherDataRequestDto, address);
-        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address);
+        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
+
+
+
         return address;
     }
 
