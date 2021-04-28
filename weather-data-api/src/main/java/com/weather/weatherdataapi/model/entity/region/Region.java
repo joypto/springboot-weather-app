@@ -37,4 +37,8 @@ public class Region {
     public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
     }
+
+    public void updateWeekInfo(WeekInfo weekInfo){
+        this.weekInfo = weekInfo;
+    }
 }

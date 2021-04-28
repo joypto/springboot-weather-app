@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
+import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
@@ -22,7 +23,7 @@ public class OpenApiService {
     private final WeekInfoRepository weekInfoRepository;
     private final ReverseGeoCoding reverseGeoCoding;
 
-    public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region) {
+    public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {
             System.out.println(requestDto.getLatitude());
             System.out.println(requestDto.getLongitude());
@@ -79,8 +80,10 @@ public class OpenApiService {
                     .rain(rain)
                     .build();
 
-            weekInfoRepository.save(weekInfo);
 
+            wantRegion.updateWeekInfo(weekInfo);
+            weekInfo.setRegion(wantRegion);
+            weekInfoRepository.save(weekInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -43,7 +43,7 @@ public class OpenApiController {
         Region region = regions1.get(0);
 
         // OPEN API 호출
-        openApiService.callApi(weatherDataRequestDto, address);
+        openApiService.callApi(weatherDataRequestDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
 
