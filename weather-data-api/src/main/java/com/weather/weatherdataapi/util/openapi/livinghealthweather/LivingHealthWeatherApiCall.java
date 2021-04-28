@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
+import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
@@ -29,10 +30,14 @@ public class LivingHealthWeatherApiCall {
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
     private final RegionRepository regionRepository;
 
-    public void livingHealthWeatherApiCall(List<String> address) throws IOException, ParseException {
+    public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address) throws IOException, ParseException {
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
-        Region region = regionRepository.findBySmallRegion(address.get(1));
+        List<Region> regions1 = regionRepository.findByBigRegion(address.getBigRegion());
+        List<Region> regions2 = regionRepository.findBySmallRegion(address.getSmallRegion());
+
+        regions1.retainAll(regions2);
+        Region region = regions1.get(0);
 
         // 예보 기준일 생성
         String dateResult = "2021042706";

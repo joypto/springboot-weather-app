@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.util;
 
+import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,7 +16,7 @@ import java.util.List;
 @Component
 public class ReverseGeoCoding {
 
-    public List<String> reverseGeocoding(String longitude, String latitude) throws ParseException {
+    public ReverseGeocodingResponseDto reverseGeocoding(String longitude, String latitude) throws ParseException {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-NCP-APIGW-API-KEY-ID", "et23d38qwi");
@@ -39,11 +40,14 @@ public class ReverseGeoCoding {
         JSONObject area3 = (JSONObject) region2.get("area3");
         String area3_name = (String) area3.get("name");
 
-        List<String> areaList = new ArrayList<>();
-        areaList.add(area1_name);
-        areaList.add(area2_name);
+        System.out.println(results);
+        System.out.println(region);
 
-        return areaList;
+        ReverseGeocodingResponseDto reverseGeocodingResponseDto = new ReverseGeocodingResponseDto();
+        reverseGeocodingResponseDto.setBigRegion(area1_name);
+        reverseGeocodingResponseDto.setSmallRegion(area2_name);
+
+        return reverseGeocodingResponseDto;
     }
 
 }
