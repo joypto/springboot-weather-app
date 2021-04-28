@@ -24,7 +24,7 @@ public class OpenApiController {
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
 
-    @GetMapping("api/test")
+    @GetMapping("/api/test")
     public void show() throws IOException, ParseException {
         openApiService.callApi();
         healthWeatherApiCall.healthWeatherApiCall();
