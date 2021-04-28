@@ -10,37 +10,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class OpenApiController {
 
     final private OpenApiService openApiService;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    private final ReverseGeoCoding reverseGeoCoding;
 
     @GetMapping("api/test")
     public void show(){
         openApiService.callApi();
     }
+  
+  @GetMapping("/api/weather/data")
+    public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException {
+        return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
+    }
+
 }

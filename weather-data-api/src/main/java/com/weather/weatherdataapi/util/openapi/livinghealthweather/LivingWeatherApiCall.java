@@ -9,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -21,15 +22,16 @@ import java.io.BufferedReader;
 public class LivingWeatherApiCall {
 
     private String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
+    private String AREA_NO = "1100000000";
+    private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-//    @PostConstruct
-    public void uvIdxApiCall() throws IOException, ParseException {
+    public void livingWeatherApiCall() throws IOException, ParseException {
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/LivingWthrIdxService01/getUVIdx"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode("1100000000", "UTF-8")); /*서울지점*/
-        urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode("2021042706", "UTF-8")); /*2017년6월8일6시*/
+        urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode(AREA_NO, "UTF-8")); /*서울지점*/
+        urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(DATE, "UTF-8")); /*2017년6월8일6시*/
         urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml, json 선택(미입력시 xml)*/
 
         URL url = new URL(urlBuilder.toString());
@@ -63,16 +65,11 @@ public class LivingWeatherApiCall {
         JSONObject itemObject = (JSONObject) item.get(0);
 
         // 여기서부터가 사용하는 값!
-        String date = (String) itemObject.get("date");
-        String code = (String) itemObject.get("code");
-        String areaNo = (String) itemObject.get("areaNo");
         String today = (String) itemObject.get("today");
         String tomorrow = (String) itemObject.get("tomorrow");
         String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
         LivingHealthWeather uvIdx = new LivingHealthWeather();
-        uvIdx.setDate(date);
-        uvIdx.setAreaNo(areaNo);
         uvIdx.setUvToday(today);
         uvIdx.setUvTomorrow(tomorrow);
         uvIdx.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
