@@ -1,7 +1,9 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.model.dto.CoronaRequestDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.region.RegionRepository;
 import com.weather.weatherdataapi.service.CoronaService;
@@ -29,7 +31,6 @@ public class OpenApiController {
 
     @GetMapping("/api/test")
     public void show() throws IOException, ParseException {
-        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
     }
 
     @GetMapping("/api/weather/data")
@@ -47,8 +48,23 @@ public class OpenApiController {
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
 
-
         return address;
+    }
+
+    @GetMapping("/api/corona/data")
+    public Corona getCorona(@RequestBody CoronaRequestDto requestDto) throws ParseException {
+        List<Corona> coronaList = coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
+
+        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
+        String areaAlias = reverseGeocodingResponseDto.getAlias();
+
+        for (Corona corona : coronaList) {
+            if (corona.getSido_name().equals(areaAlias)) {
+                return corona;
+            }
+        }
+
+        return null;
     }
 
 }
