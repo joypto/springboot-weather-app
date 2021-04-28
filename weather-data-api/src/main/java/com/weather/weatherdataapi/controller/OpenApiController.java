@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.livinghealthweather.HealthWeatherApiCall;
@@ -21,15 +22,17 @@ public class OpenApiController {
     private final HealthWeatherApiCall healthWeatherApiCall;
     private final LivingWeatherApiCall livingWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
+    private final CoronaService coronaService;
 
     @GetMapping("api/test")
     public void show() throws IOException, ParseException {
         openApiService.callApi();
         healthWeatherApiCall.healthWeatherApiCall();
         livingWeatherApiCall.livingWeatherApiCall();
+        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
     }
-  
-  @GetMapping("/api/weather/data")
+
+    @GetMapping("/api/weather/data")
     public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException {
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
