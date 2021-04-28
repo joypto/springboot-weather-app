@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util.openapi;
+package com.weather.weatherdataapi.util;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
