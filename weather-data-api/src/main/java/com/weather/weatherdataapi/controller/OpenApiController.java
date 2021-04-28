@@ -26,7 +26,7 @@ public class OpenApiController {
 
     @GetMapping("/api/test")
     public void show() throws IOException, ParseException {
-        openApiService.callApi();
+
         healthWeatherApiCall.healthWeatherApiCall();
         livingWeatherApiCall.livingWeatherApiCall();
         coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
@@ -36,6 +36,7 @@ public class OpenApiController {
     public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException {
         String latitude = weatherDataRequestDto.getLatitude();
         String longitude = weatherDataRequestDto.getLongitude();
+        openApiService.callApi(weatherDataRequestDto);
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
 

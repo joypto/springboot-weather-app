@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
@@ -18,7 +19,7 @@ public class OpenApiService {
     private final WeatherGatherApi weatherGatherApi;
     private final WeekInfoRepository weekInfoRepository;
 
-    public void callApi() {
+    public void callApi(WeatherDataRequestDto requestDto) {
         try {
             JSONObject jObj;
             JSONObject jObj1;
