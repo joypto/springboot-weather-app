@@ -16,19 +16,24 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class WeekInfo extends Timestamped{
+
+    @JsonIgnore
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+
     // 최저 기온
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id")
     private Region region;
 
+    @JsonIgnore
     @Column
     private String big_region;
 
+    @JsonIgnore
     @Column
     private String small_region;
 

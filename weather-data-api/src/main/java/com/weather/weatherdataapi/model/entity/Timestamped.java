@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -15,9 +16,11 @@ import java.time.LocalDate;
 @EntityListeners(AuditingEntityListener.class) // 생성/변경 시간을 자동으로 업데이트합니다.
 public class Timestamped {
 
+    @JsonIgnore
     @CreatedDate
     private LocalDate createdAt;
 
+    @JsonIgnore
     @LastModifiedDate
     private LocalDate modifiedAt;
 }

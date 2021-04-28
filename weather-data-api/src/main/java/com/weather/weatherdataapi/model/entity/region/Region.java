@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity.region;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
@@ -15,9 +16,11 @@ public class Region {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "region_id")
+    @JsonIgnore
     private Long id;
 
     @Column(name = "admcode", nullable = false)
+    @JsonIgnore
     private Long admCode;
 
     @Column(name = "big_region", nullable = false)

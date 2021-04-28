@@ -14,6 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 public class LivingHealthWeather {
 
+    @JsonIgnore
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column
@@ -24,9 +25,11 @@ public class LivingHealthWeather {
     @JoinColumn(name = "region_id")
     private Region region;
 
+    @JsonIgnore
     @Column
     private String date;
 
+    @JsonIgnore
     @Column
     private String areaNo;
 
