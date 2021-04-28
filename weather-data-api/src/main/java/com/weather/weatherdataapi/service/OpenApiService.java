@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
@@ -40,11 +41,11 @@ public class OpenApiService {
             List<String> weatherDes = new ArrayList<>();
             List<String> rainPer = new ArrayList<>();
             List<String> rain = new ArrayList<>();
-            List<String> region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
-            String big_region = region.get(0);
-            String small_region = region.get(1);
+            ReverseGeocodingResponseDto region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
+            String big_region = region.getBigRegion();
+            String small_region = region.getSmallRegion();
             if (small_region.equals("")){
-                small_region=region.get(0);
+                small_region=region.getBigRegion();
             }
 
             for (int i = 0; i < array.size(); i++) {
