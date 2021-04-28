@@ -36,7 +36,7 @@ public class OpenApiController {
         String address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
         openApiService.callApi(weatherDataRequestDto);
         healthWeatherApiCall.healthWeatherApiCall(address);
-        livingWeatherApiCall.livingWeatherApiCall(address);
+//        livingWeatherApiCall.livingWeatherApiCall(address);
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
 
