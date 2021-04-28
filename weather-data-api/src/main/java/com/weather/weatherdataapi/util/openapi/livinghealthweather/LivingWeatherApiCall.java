@@ -26,7 +26,7 @@ public class LivingWeatherApiCall {
     private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-    public void livingWeatherApiCall() throws IOException, ParseException {
+    public void livingWeatherApiCall(String address) throws IOException, ParseException {
 
         StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/LivingWthrIdxService01/getUVIdx"); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
