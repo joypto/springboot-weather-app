@@ -9,11 +9,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ReverseGeoCoding {
 
-    public String reverseGeocoding(String longitude, String latitude) throws ParseException {
+    public List<String> reverseGeocoding(String longitude, String latitude) throws ParseException {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-NCP-APIGW-API-KEY-ID", "et23d38qwi");
@@ -37,8 +39,11 @@ public class ReverseGeoCoding {
         JSONObject area3 = (JSONObject) region2.get("area3");
         String area3_name = (String) area3.get("name");
 
-        System.out.println(area1_name + " " + area2_name + " " + area3_name);
-        return area1_name + " " + area2_name + " ";
+        List<String> areaList = new ArrayList<>();
+        areaList.add(area1_name);
+        areaList.add(area2_name);
+
+        return areaList;
     }
 
 }

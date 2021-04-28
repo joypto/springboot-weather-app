@@ -16,6 +16,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -26,16 +27,17 @@ public class HealthWeatherApiCall {
     private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
 
-    public void healthWeatherApiCall(String address) throws IOException, ParseException {
+    public void healthWeatherApiCall(List<String> address) throws IOException, ParseException {
+        System.out.println(address);
 
-        String [] methods = {"getAsthmaIdx", "getFoodPoisoningIdx", "getColdIdx", "getOakPollenRiskIdx", "getPinePollenRiskIdx"};
+        String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getColdIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "HealthWthrIdxService/getPinePollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
 
         for(int i=0; i<methods.length; i++) {
 
             String method = methods[i];
 
-            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/HealthWthrIdxService/" + method); /*URL*/
+            StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/" + method); /*URL*/
             urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
             urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode(AREA_NO, "UTF-8")); /*서울지점*/
             urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(DATE, "UTF-8")); /*2017년6월8일6시*/
@@ -92,25 +94,29 @@ public class HealthWeatherApiCall {
                 livingHealthWeather.setAreaNo(areaNo);
             }
 
-            if (method == "getAsthmaIdx") {
+            if (method == "HealthWthrIdxService/getAsthmaIdx") {
                 livingHealthWeather.setAsthmaToday(today);
                 livingHealthWeather.setAsthmaTomorrow(tomorrow);
                 livingHealthWeather.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "getOakPollenRiskIdx") {
+            } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
                 livingHealthWeather.setOakPollenRiskToday(today);
                 livingHealthWeather.setOakPollenRiskTomorrow(tomorrow);
                 livingHealthWeather.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "getPinePollenRiskIdx") {
+            } else if (method == "HealthWthrIdxService/getPinePollenRiskIdx") {
                 livingHealthWeather.setPinePollenRiskToday(today);
                 livingHealthWeather.setPinePollenRiskTomorrow(tomorrow);
                 livingHealthWeather.setPinePollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "getColdIdx") {
+            } else if (method == "HealthWthrIdxService/getColdIdx") {
                 livingHealthWeather.setColdToday(today);
                 livingHealthWeather.setColdTomorrow(tomorrow);
                 livingHealthWeather.setColdTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "getFoodPoisoningIdx") {
+            } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
                 livingHealthWeather.setFoodPoisonToday(today);
                 livingHealthWeather.setFoodPoisonTomorrow(tomorrow);
+                livingHealthWeather.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
+            } else if (method == "LivingWthrIdxService01/getUVIdx") {
+                livingHealthWeather.setUvToday(today);
+                livingHealthWeather.setUvTomorrow(tomorrow);
                 livingHealthWeather.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
             }
 

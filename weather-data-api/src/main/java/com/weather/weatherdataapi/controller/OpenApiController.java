@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -30,10 +31,10 @@ public class OpenApiController {
     }
 
     @GetMapping("/api/weather/data")
-    public String getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
+    public List<String> getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
         String latitude = weatherDataRequestDto.getLatitude();
         String longitude = weatherDataRequestDto.getLongitude();
-        String address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
+        List<String> address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
         openApiService.callApi(weatherDataRequestDto);
         healthWeatherApiCall.healthWeatherApiCall(address);
 //        livingWeatherApiCall.livingWeatherApiCall(address);
