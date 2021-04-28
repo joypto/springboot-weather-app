@@ -25,7 +25,7 @@ public class RegionSi {
     @OneToMany(mappedBy = "regionSi")
     private List<RegionGu> regionGuList;
 
-    @Column(name = "si_name")
+    @Column()
     private String name;
 
 }
