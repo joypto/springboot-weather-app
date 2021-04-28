@@ -58,6 +58,9 @@ public class LivingHealthWeatherApiCall {
 
         String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getColdIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "HealthWthrIdxService/getPinePollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
+        if (region.getLivingHealthWeather() != null) {
+            livingHealthWeather = region.getLivingHealthWeather();
+        }
 
         // Region Table 과 LivingWeatherTable @OneToOne Mapping 과정
         region.updateLivingHealthWeather(livingHealthWeather);
@@ -111,9 +114,7 @@ public class LivingHealthWeatherApiCall {
             String tomorrow = (String) itemObject.get("tomorrow");
             String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-            if (livingHealthWeather.getDate() == null) {
-                livingHealthWeather.setDate(date);
-            }
+            livingHealthWeather.setDate(date);
 
             if (livingHealthWeather.getAreaNo() == null) {
                 livingHealthWeather.setAreaNo(areaNo);
