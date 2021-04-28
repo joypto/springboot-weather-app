@@ -1,8 +1,12 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.service.OpenApiService;
+import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import lombok.RequiredArgsConstructor;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
