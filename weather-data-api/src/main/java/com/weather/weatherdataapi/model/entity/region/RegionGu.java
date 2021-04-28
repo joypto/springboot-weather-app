@@ -17,7 +17,7 @@ public class RegionGu {
     @JoinColumn(name = "region_si_id")
     private RegionSi regionSi;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
 }

@@ -19,7 +19,7 @@ public class RegionDo {
     @OneToMany(mappedBy = "regionDo", fetch = FetchType.LAZY)
     private List<RegionSi> regionSiList;
 
-    @Column()
+    @Column(nullable = false)
     private String name;
 
 }
