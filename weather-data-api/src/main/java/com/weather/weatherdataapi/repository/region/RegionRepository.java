@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface RegionRepository extends JpaRepository<Region, Long> {
-    List<Region> findBySmallRegion(String region);
-    List<Region> findByBigRegion(String region);
+    List<Region> findByBigRegionAndSmallRegion(String bigRegion, String smallRegion);
 }

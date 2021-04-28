@@ -34,10 +34,8 @@ public class OpenApiController {
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
-        List<Region> regions1 = regionRepository.findByBigRegion(address.getBigRegion());
-        List<Region> regions2 = regionRepository.findBySmallRegion(address.getSmallRegion());
-        regions1.retainAll(regions2);
-        Region region = regions1.get(0);
+        List<Region> regions = regionRepository.findByBigRegionAndSmallRegion(address.getBigRegion(), address.getSmallRegion());
+        Region region = regions.get(0);
 
         // OPEN API 호출
         openApiService.callApi(weatherDataRequestDto, address, region);
