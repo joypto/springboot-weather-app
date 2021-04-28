@@ -40,10 +40,10 @@ public class OpenApiService {
             List<String> weatherDes = new ArrayList<>();
             List<String> rainPer = new ArrayList<>();
             List<String> rain = new ArrayList<>();
-            String[] region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude()).split(" ",2);
-            String big_region = region[0];
-            String small_region = region[1];
-            
+            List<String> region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
+//            String big_region = region[0];
+//            String small_region = region[1];
+
             for (int i = 0; i < array.size(); i++) {
                 jObj = (JSONObject) array.get(i);
                 jObj1 = (JSONObject) jObj.get("temp");
@@ -66,8 +66,8 @@ public class OpenApiService {
                 weatherDes.add(jObj2b.get("description").toString());
             }
             WeekInfo weekInfo = WeekInfo.builder()
-                    .big_region(big_region)
-                    .small_region(small_region)
+//                    .big_region(big_region)
+//                    .small_region(small_region)
                     .maxTmp(maxTmp)
                     .minTmp(minTmp)
                     .tmp(tmp)
