@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Builder;
 import lombok.Getter;
