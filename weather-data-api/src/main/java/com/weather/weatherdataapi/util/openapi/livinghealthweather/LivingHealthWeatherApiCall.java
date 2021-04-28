@@ -1,7 +1,9 @@
 package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
+import com.weather.weatherdataapi.repository.region.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -16,38 +18,69 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class HealthWeatherApiCall {
+public class LivingHealthWeatherApiCall {
 
     private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
-    private String AREA_NO = "1100000000";
-    private String DATE = "2021042706";
     private final LivingHealthWeatherRepository livingHealthWeatherRepository;
+    private final RegionRepository regionRepository;
 
-    public void healthWeatherApiCall(List<String> address) throws IOException, ParseException {
-        System.out.println(address);
+    public void livingHealthWeatherApiCall(List<String> address) throws IOException, ParseException {
+
+        // 해당 시/구 주소를 가진 Region 객체 가져오기
+        Region region = regionRepository.findBySmallRegion(address.get(1));
+
+        // 예보 기준일 생성
+        String dateResult = "2021042706";
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        if (hour >= 6) {
+            SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd06");
+            Date dateSet = cal.getTime();
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            dateResult = sdf.format(dateSet);
+        } else if (hour < 6) {
+            Date dDate = new Date();
+            dDate = new Date(dDate.getTime()+(1000*60*60*24*-1));
+            SimpleDateFormat dSdf = new SimpleDateFormat("yyyyMMdd06", Locale.KOREA);
+            dateResult = dSdf.format(dDate);
+        }
+
+        // 24시간 이내에 요청이 된 시/구 주소인지 검사
+        if (region.getLivingHealthWeather() != null && dateResult.toString().equals(region.getLivingHealthWeather().getDate().toString())) {
+            return;
+        }
+
+        // 해당 시/구 주소를 가진 Region의 행정동 주소 불러오기
+        String admcode = region.getAdmCode().toString();
 
         String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getColdIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "HealthWthrIdxService/getPinePollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
 
+        // Region Table 과 LivingWeatherTable @OneToOne Mapping 과정
+        region.updateLivingHealthWeather(livingHealthWeather);
+        livingHealthWeather.setRegion(region);
+
+        // for 문으로 반복하며 OPEN API에 여러 요청들을 보내는 코드
         for(int i=0; i<methods.length; i++) {
 
             String method = methods[i];
-
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/" + method); /*URL*/
             urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
-            urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode(AREA_NO, "UTF-8")); /*서울지점*/
-            urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(DATE, "UTF-8")); /*2017년6월8일6시*/
+            urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode(admcode, "UTF-8")); /*서울지점*/
+            urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(dateResult, "UTF-8")); /*2017년6월8일6시*/
             urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml, json 선택(미입력시 xml)*/
 
             URL url = new URL(urlBuilder.toString());
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("GET");
             conn.setRequestProperty("Content-type", "application/json");
-            System.out.println("Response code: " + conn.getResponseCode());
+            // System.out.println("Response code: " + conn.getResponseCode());
             BufferedReader rd;
 
             if (conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
@@ -81,11 +114,6 @@ public class HealthWeatherApiCall {
             String tomorrow = (String) itemObject.get("tomorrow");
             String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-            System.out.println(method);
-            System.out.println(today);
-            System.out.println(tomorrow);
-            System.out.println(theDayAfterTomorrow);
-
             if (livingHealthWeather.getDate() == null) {
                 livingHealthWeather.setDate(date);
             }
@@ -117,13 +145,13 @@ public class HealthWeatherApiCall {
             } else if (method == "LivingWthrIdxService01/getUVIdx") {
                 livingHealthWeather.setUvToday(today);
                 livingHealthWeather.setUvTomorrow(tomorrow);
-                livingHealthWeather.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
+                livingHealthWeather.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
             }
-
         }
 
         // DB에 저장
         livingHealthWeatherRepository.save(livingHealthWeather);
+
     }
 
 }

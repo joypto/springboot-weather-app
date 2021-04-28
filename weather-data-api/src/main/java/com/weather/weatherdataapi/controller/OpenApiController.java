@@ -4,8 +4,7 @@ import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
-import com.weather.weatherdataapi.util.openapi.livinghealthweather.HealthWeatherApiCall;
-import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingWeatherApiCall;
+import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthWeatherApiCall;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,8 +19,7 @@ import java.util.List;
 public class OpenApiController {
 
     final private OpenApiService openApiService;
-    private final HealthWeatherApiCall healthWeatherApiCall;
-    private final LivingWeatherApiCall livingWeatherApiCall;
+    private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
 
@@ -36,8 +34,7 @@ public class OpenApiController {
         String longitude = weatherDataRequestDto.getLongitude();
         List<String> address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
         openApiService.callApi(weatherDataRequestDto);
-        healthWeatherApiCall.healthWeatherApiCall(address);
-//        livingWeatherApiCall.livingWeatherApiCall(address);
+        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address);
         return reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
     }
 

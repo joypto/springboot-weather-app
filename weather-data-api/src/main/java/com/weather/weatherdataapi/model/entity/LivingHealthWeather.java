@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,8 +18,9 @@ public class LivingHealthWeather {
     @Column
     Long id;
 
-    @Column(unique = true)
-    private String siDoName;
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "region_id")
+    private Region region;
 
     @Column
     private String date;
