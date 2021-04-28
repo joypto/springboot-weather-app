@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
+import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -18,17 +19,19 @@ import java.util.List;
 public class OpenApiService {
     private final WeatherGatherApi weatherGatherApi;
     private final WeekInfoRepository weekInfoRepository;
+    private final ReverseGeoCoding reverseGeoCoding;
 
     public void callApi(WeatherDataRequestDto requestDto) {
         try {
+            System.out.println(requestDto.getLatitude());
+            System.out.println(requestDto.getLongitude());
             JSONObject jObj;
             JSONObject jObj1;
             JSONArray jObj2;
             JSONObject jObj2b;
             JSONParser jsonParser = new JSONParser();
-            JSONObject jsonObj = (JSONObject) jsonParser.parse(weatherGatherApi.callWeather());
+            JSONObject jsonObj = (JSONObject) jsonParser.parse(weatherGatherApi.callWeather(requestDto));
             JSONArray array = (JSONArray) jsonObj.get("daily");
-            System.out.println(weatherGatherApi.callWeather());
             List<String> tmp = new ArrayList<>();
             List<String> maxTmp = new ArrayList<>();
             List<String> minTmp = new ArrayList<>();
@@ -37,7 +40,10 @@ public class OpenApiService {
             List<String> weatherDes = new ArrayList<>();
             List<String> rainPer = new ArrayList<>();
             List<String> rain = new ArrayList<>();
-
+            String[] region = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude()).split(" ",2);
+            String big_region = region[0];
+            String small_region = region[1];
+            
             for (int i = 0; i < array.size(); i++) {
                 jObj = (JSONObject) array.get(i);
                 jObj1 = (JSONObject) jObj.get("temp");
@@ -60,6 +66,8 @@ public class OpenApiService {
                 weatherDes.add(jObj2b.get("description").toString());
             }
             WeekInfo weekInfo = WeekInfo.builder()
+                    .big_region(big_region)
+                    .small_region(small_region)
                     .maxTmp(maxTmp)
                     .minTmp(minTmp)
                     .tmp(tmp)

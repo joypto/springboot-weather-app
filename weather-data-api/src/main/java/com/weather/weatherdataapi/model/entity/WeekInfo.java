@@ -19,6 +19,13 @@ public class WeekInfo {
     @Column(nullable = false)
     private Long id;
     // 최저 기온
+
+    @Column
+    private String big_region;
+
+    @Column
+    private String small_region;
+
     @ElementCollection
     private List<String> maxTmp;
     // 최고 기온
@@ -44,8 +51,10 @@ public class WeekInfo {
     private List<String> rain;
 
     @Builder
-    public WeekInfo(List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain){
-            this.maxTmp = maxTmp;
+    public WeekInfo(String big_region, String small_region,List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain){
+        this.big_region=big_region;
+        this.small_region=small_region;
+        this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;
         this.humidity = humidity;
