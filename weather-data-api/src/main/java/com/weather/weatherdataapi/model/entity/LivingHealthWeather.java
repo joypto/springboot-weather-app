@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class LivingHealthWeather {
     @Column
     Long id;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id")
     private Region region;
