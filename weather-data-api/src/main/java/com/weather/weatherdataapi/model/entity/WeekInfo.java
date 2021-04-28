@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,13 +15,13 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WeekInfo {
+public class WeekInfo extends Timestamped{
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
     // 최저 기온
-
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id")
     private Region region;
