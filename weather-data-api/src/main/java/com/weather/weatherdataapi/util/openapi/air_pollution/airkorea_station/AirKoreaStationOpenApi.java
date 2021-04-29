@@ -13,9 +13,8 @@ import java.util.Optional;
 @Component
 public class AirKoreaStationOpenApi {
 
-    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
-
     private final AirKoreaStationService service;
+    private final String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     public AirKoreaStationOpenApi() {
         Retrofit retrofit = new Retrofit.Builder()
