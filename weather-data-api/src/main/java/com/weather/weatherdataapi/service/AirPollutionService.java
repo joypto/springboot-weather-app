@@ -24,7 +24,7 @@ public class AirPollutionService {
 
     private final RegionRepository regionRepository;
 
-    public AirPollution fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, String bigRegion, String smallRegion) {
+    public AirPollution fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, Region region) {
         Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(stationName);
 
         if (fetchedResponse.isPresent() == false) {
@@ -32,8 +32,6 @@ public class AirPollutionService {
         }
 
         AirKoreaAirPollutionItem response = fetchedResponse.get();
-
-        Region region = regionRepository.findByBigRegionAndSmallRegion(bigRegion, smallRegion).get(0);
 
         AirPollution airPollution = new AirPollution(response, region);
         airPollutionRepository.save(airPollution);
