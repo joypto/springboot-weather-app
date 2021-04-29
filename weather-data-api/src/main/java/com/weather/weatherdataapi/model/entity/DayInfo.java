@@ -2,15 +2,18 @@ package com.weather.weatherdataapi.model.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.region.Region;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 public class DayInfo {
     @JsonIgnore
@@ -18,6 +21,12 @@ public class DayInfo {
     @GeneratedValue( strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
+
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "region_id")
+    private Region region;
+
 
     // 기온
     @ElementCollection

@@ -40,7 +40,7 @@ public class OpenApiService {
                 JSONObject jObj2b;
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObj = (JSONObject) jsonParser.parse(weatherGatherApi.callWeather(requestDto));
-                JSONArray array = (JSONArray) jsonObj.get("daily");
+
                 List<String> tmp = new ArrayList<>();
                 List<String> maxTmp = new ArrayList<>();
                 List<String> minTmp = new ArrayList<>();
@@ -49,12 +49,12 @@ public class OpenApiService {
                 List<String> weatherDes = new ArrayList<>();
                 List<String> rainPer = new ArrayList<>();
                 List<String> rain = new ArrayList<>();
-                String big_region = region.getBigRegion();
-                String small_region = region.getSmallRegion();
-                if (small_region.equals("")) {
-                    small_region = region.getBigRegion();
-                }
+                List<String> hour_tmp = new ArrayList<>();
+                List<String> hour_weather = new ArrayList<>();
+                List<String> hour_weatherDes = new ArrayList<>();
+                List<String> hour_rainPer = new ArrayList<>();
 
+                JSONArray array = (JSONArray) jsonObj.get("daily");
                 for (int i = 0; i < array.size(); i++) {
                     jObj = (JSONObject) array.get(i);
                     jObj1 = (JSONObject) jObj.get("temp");
@@ -69,8 +69,6 @@ public class OpenApiService {
                     weatherDes.add(jObj2b.get("description").toString());
                 }
                 WeekInfo weekInfo = WeekInfo.builder()
-                        .big_region(big_region)
-                        .small_region(small_region)
                         .maxTmp(maxTmp)
                         .minTmp(minTmp)
                         .tmp(tmp)
@@ -87,26 +85,24 @@ public class OpenApiService {
                 weekInfoRepository.save(weekInfo);
 
                 array = (JSONArray) jsonObj.get("hourly");
-                tmp.clear();
-                weather.clear();
-                weatherDes.clear();
-                rainPer.clear();
+
                 for (int i = 0; i < 24; i++) {
                     jObj = (JSONObject) array.get(i);
-                    tmp.add(jObj.get("temp").toString());
-                    rainPer.add(jObj.get("pop").toString());
+                    hour_tmp.add(jObj.get("temp").toString());
+                    hour_rainPer.add(jObj.get("pop").toString());
                     jObj2 = (JSONArray) jObj.get("weather");
                     jObj2b = (JSONObject) jObj2.get(0);
-                    weather.add(jObj2b.get("main").toString());
-                    weatherDes.add(jObj2b.get("description").toString());
+                    hour_weather.add(jObj2b.get("main").toString());
+                    hour_weatherDes.add(jObj2b.get("description").toString());
                 }
                 DayInfo dayInfo = DayInfo.builder()
-                        .rainPer(rainPer)
-                        .tmp(tmp)
-                        .weather(weather)
-                        .weatherDes(weatherDes)
+                        .rainPer(hour_rainPer)
+                        .tmp(hour_tmp)
+                        .weather(hour_weather)
+                        .weatherDes(hour_weatherDes)
                         .build();
                 wantRegion.updateDayInfo(dayInfo);
+                dayInfo.setRegion(wantRegion);
                 dayInfoRepository.save(dayInfo);
             }
         } catch (Exception e) {

@@ -57,7 +57,7 @@ public class WeekInfo extends Timestamped{
     private List<String> rain;
 
     @Builder
-    public WeekInfo(String big_region, String small_region,List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain){
+    public WeekInfo(List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain){
         this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;
