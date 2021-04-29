@@ -57,6 +57,13 @@ public class AirKoreaStationUtil {
             // 그렇지 않다면 OpenApi를 사용하여 측정소 정보를 매핑해야 합니다.
             // ** 주의: 아래 구문을 하루 내에 반복적으로 여러 차례 실행할 경우, 측정소 정보를 가져오는 OpenApi 호출 제한 횟수를 넘겨 더 이상 올바르게 작동하지 않을 수 있습니다.  **
             else {
+
+                // 일부분이 이미 저장되어 있던 상태라면, 테이블을 초기화한 뒤 매핑을 시작합니다.
+                if (allRegionList.size() != 0) {
+                    log.info("InitializeRegionStationNameDict::DB에 존재하는 매핑된 미세먼지 측정소 정보의 수가 모든 지역의 수와 다릅니다. 테이블을 초기화하고 다시 매핑합니다.");
+                    airPollutionStationRepository.deleteAll();
+                }
+
                 // 각 region에 가장 가까운 미세먼지 측정소의 이름을 저장합니다.
                 for (Region region : allRegionList) {
                     KakaoGeoTranscoordResponseDocument transcoord = kakaoGeoOpenApi.convertWGS84ToWTM(region.getLongitude(), region.getLatitude());
