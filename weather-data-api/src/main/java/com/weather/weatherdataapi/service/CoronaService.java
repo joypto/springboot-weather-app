@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -20,16 +19,12 @@ public class CoronaService {
 
     private final GovCoronaOpenApi govCoronaOpenApi;
 
-    public List<Corona> fetchAndStoreCoronaInfoUsingOpenApi() {
-        Optional<ICoronaInfo> fetchedInfo = govCoronaOpenApi.getInfo();
-
-        if (fetchedInfo.isPresent() == false) {
-            return null;
-        }
-
-        ICoronaInfo info = fetchedInfo.get();
+    public List<Corona> fetchAndStoreCoronaInfoUsingOpenApi() throws RuntimeException {
+        ICoronaInfo info = govCoronaOpenApi.getInfo().orElseThrow(() -> new RuntimeException("정보를 가져오지 못했습니다."));
 
         List<Corona> coronaList = new ArrayList<>(info.getItemList().size());
+
+        coronaRepository.deleteAll();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);

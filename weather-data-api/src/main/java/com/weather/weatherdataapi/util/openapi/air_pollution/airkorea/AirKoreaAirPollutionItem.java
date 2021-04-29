@@ -15,18 +15,6 @@ public class AirKoreaAirPollutionItem {
     private String dataTime;
 
     /**
-     * 시·도 이름
-     */
-    @Element
-    private String sidoName;
-
-    /**
-     * 측정소명
-     */
-    @Element
-    private String stationName;
-
-    /**
      * 미세먼지(PM10) 농도 (단위 : ㎍/㎥)
      */
     @Element
