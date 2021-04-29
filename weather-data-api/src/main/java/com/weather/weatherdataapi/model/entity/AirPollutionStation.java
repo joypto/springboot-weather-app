@@ -22,4 +22,9 @@ public class AirPollutionStation {
 
     @Column(name = "station_name")
     private String stationName;
+
+    public AirPollutionStation(Region region, String stationName) {
+        this.region = region;
+        this.stationName = stationName;
+    }
 }
