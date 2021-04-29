@@ -30,6 +30,12 @@ public class Region {
     @Column(name = "small_region", nullable = false)
     private String smallRegion;
 
+    @Column(name = "longitude", nullable = false)
+    private String longitude;
+
+    @Column(name = "latitude", nullable = false)
+    private String latitude;
+
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "living_health_wth_id")
     private LivingHealthWeather livingHealthWeather;
