@@ -18,7 +18,7 @@ public class AirPollution {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "corona_id")
+    @Column(name = "air_pollution_id")
     private Long id;
 
     @OneToOne(fetch = FetchType.EAGER)
