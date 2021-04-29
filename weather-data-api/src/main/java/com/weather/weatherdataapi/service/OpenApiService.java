@@ -2,8 +2,10 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.entity.DayInfo;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.repository.DayInfoRepository;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +23,17 @@ import java.util.List;
 public class OpenApiService {
     private final WeatherGatherApi weatherGatherApi;
     private final WeekInfoRepository weekInfoRepository;
+    private final DayInfoRepository dayInfoRepository;
 
     public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {
-            System.out.println(wantRegion.getBigRegion());
             int currentDate = LocalDate.now().getDayOfMonth();
-//            if (currentDate == wantRegion.getWeekInfo().getModifiedAt().getDayOfMonth()) {
-//                System.out.println("같아요");
-//                return;
-//            } else {
+
+            if (wantRegion.getWeekInfo() != null) {
+                System.out.println("값 존재 다시 불러올 필요 없음");
+                return;
+            } else {
+                System.out.println("값이 없어서 값을 불러오는 중");
                 JSONObject jObj;
                 JSONObject jObj1;
                 JSONArray jObj2;
@@ -59,12 +63,6 @@ public class OpenApiService {
                     minTmp.add(jObj1.get("min").toString());
                     humidity.add(jObj.get("humidity").toString());
                     rainPer.add(jObj.get("pop").toString());
-//                if (jObj.get("rain").toString() != null){
-//                    rain.add(jObj.get("rain").toString());
-//                }
-//                else{
-//                    rain.add("");
-//                }
                     jObj2 = (JSONArray) jObj.get("weather");
                     jObj2b = (JSONObject) jObj2.get(0);
                     weather.add(jObj2b.get("main").toString());
@@ -87,7 +85,29 @@ public class OpenApiService {
                 wantRegion.updateWeekInfo(weekInfo);
                 weekInfo.setRegion(wantRegion);
                 weekInfoRepository.save(weekInfo);
-
+                array = (JSONArray) jsonObj.get("hourly");
+                tmp.clear();
+                weather.clear();
+                weatherDes.clear();
+                rainPer.clear();
+                for (int i = 0; i < 24; i++) {
+                    jObj = (JSONObject) array.get(i);
+                    tmp.add(jObj.get("temp").toString());
+                    rainPer.add(jObj.get("pop").toString());
+                    jObj2 = (JSONArray) jObj.get("weather");
+                    jObj2b = (JSONObject) jObj2.get(0);
+                    weather.add(jObj2b.get("main").toString());
+                    weatherDes.add(jObj2b.get("description").toString());
+                }
+                DayInfo dayInfo = DayInfo.builder()
+                        .rainPer(rainPer)
+                        .tmp(tmp)
+                        .weather(weather)
+                        .weatherDes(weatherDes)
+                        .build();
+                wantRegion.updateDayInfo(dayInfo);
+                dayInfoRepository.save(dayInfo);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

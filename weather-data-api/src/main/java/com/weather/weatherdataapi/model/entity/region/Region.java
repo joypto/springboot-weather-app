@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.entity.region;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.DayInfo;
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
@@ -37,11 +38,20 @@ public class Region {
     @JoinColumn(name = "week_data_id")
     private WeekInfo weekInfo;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "day_data_id")
+    private DayInfo dayInfo;
+
     public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
     }
 
-    public void updateWeekInfo(WeekInfo weekInfo){
+    public void updateWeekInfo(WeekInfo weekInfo) {
         this.weekInfo = weekInfo;
+    }
+
+
+    public void updateDayInfo(DayInfo dayInfo){
+        this.dayInfo = dayInfo;
     }
 }

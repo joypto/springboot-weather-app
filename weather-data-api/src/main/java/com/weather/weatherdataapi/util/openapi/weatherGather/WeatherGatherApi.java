@@ -16,7 +16,7 @@ public class WeatherGatherApi {
         StringBuilder result = new StringBuilder();
         String lat= requestDto.getLatitude();
         String lon=requestDto.getLongitude();
-        String urlStr= "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&exclude=hourly,minutely,current&appid=0479c3d98eb03e0a92d9a69ce53b631f&units=metric";
+        String urlStr= "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&exclude=minutely,current&appid=0479c3d98eb03e0a92d9a69ce53b631f&units=metric";
         URL url = new URL(urlStr);
 
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
