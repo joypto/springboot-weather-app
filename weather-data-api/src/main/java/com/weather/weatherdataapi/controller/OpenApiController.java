@@ -78,7 +78,7 @@ public class OpenApiController {
     }
 
     @GetMapping("/api/transcoord")
-    public String getTranscoord(@RequestParam Double x, @RequestParam Double y) {
+    public String getTranscoord(@RequestParam String x, @RequestParam String y) {
         try {
             KakaoGeoTranscoordResponseDocument document = kakaoGeoOpenApi.convertWGS84ToWTM(x, y);
             return document.getX() + "," + document.getY();

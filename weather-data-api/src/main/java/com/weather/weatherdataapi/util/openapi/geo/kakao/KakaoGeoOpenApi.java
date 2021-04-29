@@ -26,8 +26,8 @@ public class KakaoGeoOpenApi {
         service = retrofit.create(KakaoGeoService.class);
     }
 
-    public KakaoGeoTranscoordResponseDocument convertWGS84ToWTM(Double x, Double y) throws IOException {
-        Call<KakaoGeoTranscoordResponse> kakaoGeoTranscoordResponseCall = service.generateTranscoordCall(REST_API_KEY, x.toString(), y.toString());
+    public KakaoGeoTranscoordResponseDocument convertWGS84ToWTM(String x, String y) throws IOException {
+        Call<KakaoGeoTranscoordResponse> kakaoGeoTranscoordResponseCall = service.generateTranscoordCall(REST_API_KEY, x, y);
         KakaoGeoTranscoordResponse response = kakaoGeoTranscoordResponseCall.execute().body();
 
         return response.getDocuments().get(0);

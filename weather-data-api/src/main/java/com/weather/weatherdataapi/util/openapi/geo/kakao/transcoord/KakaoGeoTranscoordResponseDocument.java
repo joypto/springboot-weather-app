@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 public class KakaoGeoTranscoordResponseDocument {
     @SerializedName("x")
-    private Double x;
+    private String x;
 
     @SerializedName("y")
-    private Double y;
+    private String y;
 }
