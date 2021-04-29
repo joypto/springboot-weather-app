@@ -1,19 +1,19 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.model.dto.AirPollutionRequestDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.region.RegionRepository;
+import com.weather.weatherdataapi.service.AirPollutionService;
 import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthWeatherApiCall;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +28,7 @@ public class OpenApiController {
     private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
+    private final AirPollutionService airPollutionService;
 
     @GetMapping("/api/weather/data")
     public Region getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
@@ -62,4 +63,14 @@ public class OpenApiController {
 //        return null;
 //    }
 
+    @GetMapping("/api/air_pollution/data")
+    public AirPollution getAirPollution(@RequestBody AirPollutionRequestDto requestDto) throws ParseException {
+        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
+
+        String stationName = airPollutionService.getStationNameUsingCoords(requestDto.getTmX(), requestDto.getTmY());
+
+        AirPollution airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(stationName, reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion());
+
+        return airPollution;
+    }
 }
