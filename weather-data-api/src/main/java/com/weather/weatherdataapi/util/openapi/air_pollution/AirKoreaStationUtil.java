@@ -68,6 +68,9 @@ public class AirKoreaStationUtil {
                         regionNameStationNameDict.put(region.getBigRegion(), new Hashtable<>());
 
                     regionNameStationNameDict.get(region.getBigRegion()).put(region.getSmallRegion(), nearestStationName);
+
+                    AirPollutionStation newStation = new AirPollutionStation(region, nearestStationName);
+                    airPollutionStationRepository.save(newStation);
                 }
             }
 
