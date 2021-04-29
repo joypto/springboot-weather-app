@@ -27,22 +27,23 @@ public class AirKoreaAirPollutionOpenApi {
         service = retrofit.create(AirKoreaAirPollutionService.class);
     }
 
-    public Optional<AirKoreaAirPollutionResponseBody> getResponse(String sidoName) {
+    public Optional<AirKoreaAirPollutionItem> getResponseByStationName(String stationName) {
         try {
-            Call<AirKoreaAirPollutionResponse> call = service.getResponseCall(SERVICE_KEY, sidoName);
+            Call<AirKoreaAirPollutionResponse> call = service.getResponseByStationName(SERVICE_KEY, stationName);
             AirKoreaAirPollutionResponse response = call.execute().body();
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new Exception("값을 정상적으로 조회하지 못했습니다.");
+            } else if (response.getBody().getItemList().size() == 0) {
+                throw new Exception("조회해온 값이 없습니다.");
             }
 
-            return Optional.of(response.getBody());
+            return Optional.of(response.getBody().getItemList().get(0));
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
 
             return Optional.empty();
         }
-
     }
 }
