@@ -108,7 +108,6 @@ public class LivingHealthWeatherApiCall {
 
             // 여기서부터가 사용하는 값!
             String date = (String) itemObject.get("date");
-            String code = (String) itemObject.get("code");
             String areaNo = (String) itemObject.get("areaNo");
             String today = (String) itemObject.get("today");
             String tomorrow = (String) itemObject.get("tomorrow");

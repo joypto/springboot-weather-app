@@ -29,23 +29,17 @@ public class WeekInfo extends Timestamped{
     @JoinColumn(name = "region_id")
     private Region region;
 
-    @JsonIgnore
-    @Column
-    private String big_region;
-
-    @JsonIgnore
-    @Column
-    private String small_region;
-
     @ElementCollection
     private List<String> maxTmp;
     // 최고 기온
+    @JsonIgnore
     @ElementCollection
     private List<String> minTmp;
     // 기온
     @ElementCollection
     private List<String> tmp;
     // 습도
+    @JsonIgnore
     @ElementCollection
     private List<String> humidity;
     // 날씨
@@ -58,13 +52,12 @@ public class WeekInfo extends Timestamped{
     @ElementCollection
     private List<String> rainPer;
     // 강수량
+    @JsonIgnore
     @ElementCollection
     private List<String> rain;
 
     @Builder
     public WeekInfo(String big_region, String small_region,List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain){
-        this.big_region=big_region;
-        this.small_region=small_region;
         this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;
