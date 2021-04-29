@@ -85,6 +85,7 @@ public class OpenApiService {
                 wantRegion.updateWeekInfo(weekInfo);
                 weekInfo.setRegion(wantRegion);
                 weekInfoRepository.save(weekInfo);
+
                 array = (JSONArray) jsonObj.get("hourly");
                 tmp.clear();
                 weather.clear();
