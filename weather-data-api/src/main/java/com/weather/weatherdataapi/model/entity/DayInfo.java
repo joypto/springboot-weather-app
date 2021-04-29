@@ -41,11 +41,16 @@ public class DayInfo {
     @ElementCollection
     private List<String> rainPer;
 
+    // 강수확률
+    @ElementCollection
+    private List<String> dailyTime;
+
     @Builder
-    public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer){
+    public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer, List<String> dailyTime){
         this.tmp=tmp;
         this.weather=weather;
         this.weatherDes=weatherDes;
         this.rainPer=rainPer;
+        this.dailyTime = dailyTime;
     }
 }
