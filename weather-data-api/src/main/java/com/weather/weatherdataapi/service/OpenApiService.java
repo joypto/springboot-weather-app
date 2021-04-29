@@ -30,15 +30,19 @@ public class OpenApiService {
 
     public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {
-            int currentDate = LocalDate.now().getDayOfMonth();
+            LocalDate currentDate = LocalDate.now();
+            System.out.println(currentDate.toString());
             // 해당지역이 이전에 검색이 된적이있으면 이전값 반환
             if (wantRegion.getWeekInfo() != null) {
-                System.out.println("값 존재 다시 불러올 필요 없음");
-                return;
+               if(wantRegion.getWeekInfo().getModifiedAt().toString().equals(currentDate.toString())){
+                   System.out.println("값이 존재하지만 아직 업데이트 시간은 아님");
+                   return;
+               }
+                System.out.println("값은 존재하지만 업데이트가 필요함");
             }
+
             // 검색이 처음된것이면 값 가져오기
-            else {
-                System.out.println("값이 없어서 값을 불러오는 중");
+                System.out.println("값을 불러오는 중");
                 JSONObject jObj;
                 JSONObject jObj1;
                 JSONArray jObj2;
@@ -124,7 +128,7 @@ public class OpenApiService {
                 wantRegion.updateDayInfo(dayInfo);
                 dayInfo.setRegion(wantRegion);
                 dayInfoRepository.save(dayInfo);
-            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
