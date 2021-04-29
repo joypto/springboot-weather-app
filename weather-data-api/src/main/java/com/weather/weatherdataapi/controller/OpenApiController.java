@@ -12,13 +12,13 @@ import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthWeatherApiCall;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Header;
 
 import java.io.IOException;
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
 public class OpenApiController {
@@ -30,7 +30,9 @@ public class OpenApiController {
     private final CoronaService coronaService;
 
     @GetMapping("/api/weather/data")
-    public Region getAllWeatherData(@RequestBody WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
+    public Region getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
+        weatherDataRequestDto.setLatitude(latitude);
+        weatherDataRequestDto.setLongitude(longitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
@@ -45,7 +47,7 @@ public class OpenApiController {
     }
 
     @GetMapping("/api/corona/data")
-    public Corona getCorona(@RequestBody CoronaRequestDto requestDto) throws ParseException {
+    public Corona getCorona(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, CoronaRequestDto requestDto) throws ParseException {
         List<Corona> coronaList = coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
 
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
