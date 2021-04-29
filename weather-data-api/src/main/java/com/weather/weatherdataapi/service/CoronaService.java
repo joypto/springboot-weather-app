@@ -28,8 +28,9 @@ public class CoronaService {
         }
 
         ICoronaInfo info = fetchedInfo.get();
-
         List<Corona> coronaList = new ArrayList<>(info.getItemList().size());
+
+        coronaRepository.deleteAll();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
