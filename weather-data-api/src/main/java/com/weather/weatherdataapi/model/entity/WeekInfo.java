@@ -32,14 +32,12 @@ public class WeekInfo extends Timestamped{
     @ElementCollection
     private List<String> maxTmp;
     // 최고 기온
-    @JsonIgnore
     @ElementCollection
     private List<String> minTmp;
     // 기온
     @ElementCollection
     private List<String> tmp;
     // 습도
-    @JsonIgnore
     @ElementCollection
     private List<String> humidity;
     // 날씨
