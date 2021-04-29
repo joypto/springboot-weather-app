@@ -5,6 +5,6 @@ import retrofit2.http.GET;
 import retrofit2.http.Query;
 
 public interface AirKoreaAirPollutionService {
-    @GET("getCtprvnRltmMesureDnsty?returnType=xml&ver=1.0")
-    Call<AirKoreaAirPollutionResponse> getResponseCall(@Query("serviceKey") String serviceKey, @Query("sidoName") String sidoName);
+    @GET("getMsrstnAcctoRltmMesureDnsty?returnType=xml&dataTerm=DAILY&pageNo=1&numOfRows=1")
+    Call<AirKoreaAirPollutionResponse> getResponseByStationName(@Query("serviceKey") String serviceKey, @Query("stationName") String stationName);
 }
