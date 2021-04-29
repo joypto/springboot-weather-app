@@ -8,5 +8,5 @@ import retrofit2.http.Query;
 
 public interface KakaoGeoService {
     @GET("transcoord.json?input_coord=WGS84&output_coord=WTM")
-    Call<KakaoGeoTranscoordResponse> generateTranscoordCall(@Header("AUTHENTICATION") String authentication, @Query("x") String x, @Query("y") String y);
+    Call<KakaoGeoTranscoordResponse> generateTranscoordCall(@Header("Authorization") String authentication, @Query("x") String x, @Query("y") String y);
 }
