@@ -15,7 +15,7 @@ public class AirKoreaStationOpenApi {
 
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
-    private AirKoreaStationService service;
+    private final AirKoreaStationService service;
 
     public AirKoreaStationOpenApi() {
         Retrofit retrofit = new Retrofit.Builder()

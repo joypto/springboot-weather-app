@@ -17,12 +17,12 @@ import java.util.Optional;
 @Service
 public class AirPollutionService {
 
-    private AirPollutionRepository airPollutionRepository;
+    private final AirPollutionRepository airPollutionRepository;
 
-    private AirKoreaAirPollutionOpenApi airKoreaAirPollutionOpenApi;
-    private AirKoreaStationOpenApi airKoreaStationOpenApi;
+    private final AirKoreaAirPollutionOpenApi airKoreaAirPollutionOpenApi;
+    private final AirKoreaStationOpenApi airKoreaStationOpenApi;
 
-    private RegionRepository regionRepository;
+    private final RegionRepository regionRepository;
 
     public AirPollution fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, String bigRegion, String smallRegion) {
         Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(stationName);
