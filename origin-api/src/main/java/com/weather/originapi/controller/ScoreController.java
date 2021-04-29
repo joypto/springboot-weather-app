@@ -17,6 +17,7 @@ public class ScoreController {
 
     @PostMapping("/api/weather/scores")
     public ScoreRangeResponseDto getWeatherScore(@RequestBody ScoreRequestDto scoreRequestDto) {
-        return scoreService.getWeatherScoreRange(scoreRequestDto);
+        ScoreRangeResponseDto scoreRangeResponseDto = scoreService.getWeatherScoreRange(scoreRequestDto);
+        return scoreRangeResponseDto;
     }
 }
