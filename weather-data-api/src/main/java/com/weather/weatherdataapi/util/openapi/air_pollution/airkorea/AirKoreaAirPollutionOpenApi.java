@@ -15,7 +15,7 @@ public class AirKoreaAirPollutionOpenApi {
 
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
-    private AirKoreaAirPollutionService service;
+    private final AirKoreaAirPollutionService service;
 
     public AirKoreaAirPollutionOpenApi() {
         Retrofit retrofit = new Retrofit.Builder()
