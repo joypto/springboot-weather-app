@@ -1,6 +1,5 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station;
 
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionResponse;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
