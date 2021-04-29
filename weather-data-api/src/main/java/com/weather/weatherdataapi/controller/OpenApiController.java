@@ -10,6 +10,8 @@ import com.weather.weatherdataapi.service.AirPollutionService;
 import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
+import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoOpenApi;
+import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthWeatherApiCall;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -29,6 +31,7 @@ public class OpenApiController {
     private final ReverseGeoCoding reverseGeoCoding;
     private final CoronaService coronaService;
     private final AirPollutionService airPollutionService;
+    private final KakaoGeoOpenApi kakaoGeoOpenApi;
 
     @GetMapping("/api/weather/data")
     public Region getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
@@ -72,5 +75,16 @@ public class OpenApiController {
         AirPollution airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(stationName, reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion());
 
         return airPollution;
+    }
+
+    @GetMapping("/api/transcoord")
+    public String getTranscoord(@RequestParam Double x, @RequestParam Double y) {
+        try {
+            KakaoGeoTranscoordResponseDocument document = kakaoGeoOpenApi.convertWGS84ToWTM(x, y);
+            return document.getX() + "," + document.getY();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "error";
+        }
     }
 }
