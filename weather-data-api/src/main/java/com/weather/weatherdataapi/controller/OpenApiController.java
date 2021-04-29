@@ -1,11 +1,9 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.AirPollutionRequestDto;
-import com.weather.weatherdataapi.model.dto.CoronaRequestDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
-import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.region.Region;
 import com.weather.weatherdataapi.repository.region.RegionRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
@@ -16,7 +14,6 @@ import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthW
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Header;
 
 import java.io.IOException;
 import java.util.List;
@@ -50,21 +47,21 @@ public class OpenApiController {
         return region;
     }
 
-    @GetMapping("/api/corona/data")
-    public Corona getCorona(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, CoronaRequestDto requestDto) throws ParseException {
-        List<Corona> coronaList = coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
-
-        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
-        String areaAlias = reverseGeocodingResponseDto.getAlias();
-
-        for (Corona corona : coronaList) {
-            if (corona.getSido_name().equals(areaAlias)) {
-                return corona;
-            }
-        }
-
-        return null;
-    }
+//    @GetMapping("/api/corona/data")
+//    public Corona getCorona(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, CoronaRequestDto requestDto) throws ParseException {
+//        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
+//
+//        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
+//        String areaAlias = reverseGeocodingResponseDto.getAlias();
+//
+//        for (Corona corona : coronaList) {
+//            if (corona.getSido_name().equals(areaAlias)) {
+//                return corona;
+//            }
+//        }
+//
+//        return null;
+//    }
 
     @GetMapping("/api/air_pollution/data")
     public AirPollution getAirPollution(@RequestBody AirPollutionRequestDto requestDto) throws ParseException {
