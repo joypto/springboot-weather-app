@@ -36,6 +36,8 @@ public class AirPollutionService {
         AirPollution airPollution = new AirPollution(response, region);
         airPollutionRepository.save(airPollution);
 
+        region.updateAirPollution(airPollution);
+
         return airPollution;
     }
 
