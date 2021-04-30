@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.weatherGather;
 
 
-import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -12,7 +12,7 @@ import java.net.URL;
 
 @Component
 public class WeatherGatherApi {
-    public String callWeather(WeatherDataRequestDto requestDto) throws IOException{
+    public String callWeather(CoordinateDto requestDto) throws IOException{
         StringBuilder result = new StringBuilder();
         String lat= requestDto.getLatitude();
         String lon=requestDto.getLongitude();

@@ -1,7 +1,8 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
@@ -39,20 +40,20 @@ public class OpenApiController {
     private final KakaoGeoOpenApi kakaoGeoOpenApi;
 
     @GetMapping("/api/weather/data")
-    public Region getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, WeatherDataRequestDto weatherDataRequestDto) throws ParseException, IOException {
-        weatherDataRequestDto.setLatitude(latitude);
-        weatherDataRequestDto.setLongitude(longitude);
-        ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(weatherDataRequestDto.getLongitude(), weatherDataRequestDto.getLatitude());
+    public WeatherDataResponseDto getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude) throws ParseException, IOException {
+        CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
+        ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
         List<Region> regions = regionRepository.findByBigRegionAndSmallRegion(address.getBigRegion(), address.getSmallRegion());
         Region region = regions.get(0);
 
         // OPEN API 호출
-        openApiService.callApi(weatherDataRequestDto, address, region);
+        openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
-        return region;
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region);
+        return responseDto;
     }
 
     @GetMapping("/api/corona/data")
