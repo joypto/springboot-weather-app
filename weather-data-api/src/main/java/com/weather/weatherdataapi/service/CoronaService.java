@@ -8,9 +8,6 @@ import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaOpenApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RequiredArgsConstructor
 @Service
 public class CoronaService {
@@ -19,10 +16,8 @@ public class CoronaService {
 
     private final GovCoronaOpenApi govCoronaOpenApi;
 
-    public List<Corona> fetchAndStoreCoronaInfoUsingOpenApi() throws RuntimeException {
-        ICoronaInfo info = govCoronaOpenApi.getInfo().orElseThrow(() -> new RuntimeException("정보를 가져오지 못했습니다."));
-
-        List<Corona> coronaList = new ArrayList<>(info.getItemList().size());
+    public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
+        ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         coronaRepository.deleteAll();
 
@@ -31,10 +26,6 @@ public class CoronaService {
 
             Corona corona = new Corona(item);
             coronaRepository.save(corona);
-
-            coronaList.add(corona);
         }
-
-        return coronaList;
     }
 }
