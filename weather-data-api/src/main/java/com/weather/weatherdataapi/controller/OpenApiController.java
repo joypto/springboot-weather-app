@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
+import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
@@ -54,21 +55,12 @@ public class OpenApiController {
         return region;
     }
 
-//    @GetMapping("/api/corona/data")
-//    public Corona getCorona(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, CoronaRequestDto requestDto) throws ParseException {
-//        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
-//
-//        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(requestDto.getLongitude(), requestDto.getLatitude());
-//        String areaAlias = reverseGeocodingResponseDto.getAlias();
-//
-//        for (Corona corona : coronaList) {
-//            if (corona.getSido_name().equals(areaAlias)) {
-//                return corona;
-//            }
-//        }
-//
-//        return null;
-//    }
+    @GetMapping("/api/corona/data")
+    public Corona getCorona(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
+        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(longitude, latitude);
+
+        return coronaService.getInfoByRegion(reverseGeocodingResponseDto.getBigRegion());
+    }
 
     @GetMapping("/api/air_pollution/data")
     public AirPollution getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
