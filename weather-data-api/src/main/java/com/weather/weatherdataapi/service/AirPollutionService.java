@@ -4,6 +4,7 @@ import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;
+import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionOpenApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
@@ -21,6 +22,7 @@ public class AirPollutionService {
 
     private final AirKoreaAirPollutionOpenApi airKoreaAirPollutionOpenApi;
     private final AirKoreaStationOpenApi airKoreaStationOpenApi;
+    private final AirKoreaStationUtil airKoreaStationUtil;
 
     private final RegionRepository regionRepository;
 
@@ -39,6 +41,12 @@ public class AirPollutionService {
         region.updateAirPollution(airPollution);
 
         return airPollution;
+    }
+
+    public AirPollution getInfoByRegion(Region region) {
+        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(region);
+
+        return fetchAndStoreAirPollutionInfoUsingOpenApi(stationName, region);
     }
 
     public String getStationNameUsingCoords(String tmX, String tmY) {
