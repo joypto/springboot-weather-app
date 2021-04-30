@@ -63,6 +63,7 @@ public class OpenApiService {
                 List<String> hour_weatherDes = new ArrayList<>();
                 List<String> hour_rainPer = new ArrayList<>();
                 List<String> hour_time = new ArrayList<>();
+                List<String> windSpeed = new ArrayList<>();
 
                 // 주간 날씨 파씽
                 JSONArray array = (JSONArray) jsonObj.get("daily");
@@ -74,6 +75,7 @@ public class OpenApiService {
                     minTmp.add(jObj1.get("min").toString());
                     humidity.add(jObj.get("humidity").toString());
                     rainPer.add(jObj.get("pop").toString());
+                    windSpeed.add(jObj.get("wind_speed").toString());
                     jObj2 = (JSONArray) jObj.get("weather");
                     jObj2b = (JSONObject) jObj2.get(0);
                     weather.add(jObj2b.get("main").toString());
@@ -88,6 +90,7 @@ public class OpenApiService {
                         .weatherDes(weatherDes)
                         .rainPer(rainPer)
                         .rain(rain)
+                        .windSpeed(windSpeed)
                         .build();
 
                 // 파싱한 값 저장하고 매핑하기
@@ -139,6 +142,8 @@ public class OpenApiService {
         // 날짜별 환산점수 변환 시작
         List<String> getRainPer = new ArrayList<>();
         List<String> getWeather = new ArrayList<>();
+        List<String> getWind = new ArrayList<>();
+        List<String> getHumidity = new ArrayList<>();
         for(int i=0; i<region.getWeekInfo().getWeather().size(); i++){
             // 날짜별 기온 변환점수
 
@@ -151,6 +156,28 @@ public class OpenApiService {
                 getRainPer.add("40");
             }else{
                 getRainPer.add("10");
+            }
+
+            // 날짜별 바람속도 변환점수
+            if (Double.parseDouble(region.getWeekInfo().getWindSpeed().get(i))<= 3.3d) {
+                getWind.add("100");
+            }else if(Double.parseDouble(region.getWeekInfo().getWindSpeed().get(i) )<=5.4d){
+                getWind.add("70");
+            }else if(Double.parseDouble(region.getWeekInfo().getWindSpeed().get(i) )<=10.7d){
+                getWind.add("40");
+            }else{
+                getWind.add("10");
+            }
+
+            // 날짜별 습도 변환점수
+            if (40d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 60d) {
+                getHumidity.add("100");
+            }else if(30d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 70d){
+                getHumidity.add("70");
+            }else if(20d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 80d){
+                getHumidity.add("40");
+            }else{
+                getHumidity.add("10");
             }
 
             switch (region.getWeekInfo().getWeatherDes().get(i)){
@@ -176,6 +203,8 @@ public class OpenApiService {
         }
         scoreResultResponseDto.setRainPerResult(getRainPer);
         scoreResultResponseDto.setWeatherResult(getWeather);
+        scoreResultResponseDto.setHumidityResult(getHumidity);
+        scoreResultResponseDto.setWindResult(getWind);
 
 
         return scoreResultResponseDto;

@@ -44,6 +44,9 @@ public class DayInfo {
     @ElementCollection
     private List<String> dailyTime;
 
+
+
+
     @Builder
     public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer, List<String> dailyTime){
         this.tmp=tmp;

@@ -18,6 +18,8 @@ public class ScoreResultResponseDto {
     private List<String> weatherResult;
     private List<String> humidityResult;
     private List<String> windResult;
+
+    private int FineDustResult;
     private int uvResult;
     private int pollenRiskResult;
     private int coldResult;
