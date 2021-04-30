@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
@@ -39,7 +40,7 @@ public class OpenApiController {
     private final KakaoGeoOpenApi kakaoGeoOpenApi;
 
     @GetMapping("/api/weather/data")
-    public Region getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude) throws ParseException, IOException {
+    public WeatherDataResponseDto getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude) throws ParseException, IOException {
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
@@ -51,7 +52,8 @@ public class OpenApiController {
         openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
-        return region;
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region);
+        return responseDto;
     }
 
     @GetMapping("/api/corona/data")
