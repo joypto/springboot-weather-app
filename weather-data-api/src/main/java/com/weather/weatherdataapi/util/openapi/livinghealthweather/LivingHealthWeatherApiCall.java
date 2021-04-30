@@ -2,9 +2,8 @@ package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
-import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
-import com.weather.weatherdataapi.repository.region.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,7 +11,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
