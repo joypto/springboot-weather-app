@@ -19,8 +19,8 @@ public class Corona {
     @Column(name = "corona_id")
     private Long id;
 
-    @Column
-    private String sido_name;
+    @Column(name = "big_region")
+    private String bigRegion;
 
     @Column
     private LocalDate date;
@@ -32,7 +32,7 @@ public class Corona {
     private Integer newForeignCaseCount;
 
     public Corona(ICoronaItem item) {
-        this.sido_name = item.getRegionName();
+        this.bigRegion = item.getRegionName();
         this.date = item.getDate();
         this.newLocalCaseCount = item.getNewLocalCaseCount();
         this.newForeignCaseCount = item.getNewForeignCaseCount();
