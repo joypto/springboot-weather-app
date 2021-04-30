@@ -48,6 +48,11 @@ public class WeatherData {
         JSONObject jsonObject = (JSONObject) parser.parse(data);
         JSONObject livingHealthWeather = (JSONObject) jsonObject.get("livingHealthWeather");
         String uvToday = (String) livingHealthWeather.get("uvToday");
+        String asthmaToday = (String) livingHealthWeather.get("asthmaToday");
+        String coldToday = (String) livingHealthWeather.get("coldToday");
+        String pollenRiskToday = (String) livingHealthWeather.get("oakPollenRiskToday");
+        String foodPoisonToday = (String) livingHealthWeather.get("foodPoisonToday");
+
 
         RegionResponseDto regionResponseDto = new RegionResponseDto();
         // 일단 오늘 지수만 파싱을 해보았습니다.

@@ -48,6 +48,8 @@ public class ScoreService {
 
         // 각각의 기상 데이더를 백 점 만점의 점수로 반환해주는 작업입니다.
         Integer uvTodayScore = WeatherIdxConvertScore.convertHealthWthIdxToScore("1");
+
+        // 기상 데이터를 백 점 만점의 점수로 반환해주는 Response Dto 에 반환된 점수값을 넣는 작업입니다.
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
         scoreResultResponseDto.setUvResult(uvTodayScore);
 
