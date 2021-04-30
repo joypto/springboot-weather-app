@@ -51,6 +51,7 @@ public class OpenApiController {
         // OPEN API 호출
         openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
+        airPollutionService.getInfoByRegion(region);
 
         Corona corona = coronaService.getInfoByRegion(region);
 
