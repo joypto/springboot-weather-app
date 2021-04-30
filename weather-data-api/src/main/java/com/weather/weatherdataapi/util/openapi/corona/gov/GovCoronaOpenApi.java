@@ -9,8 +9,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import java.util.Optional;
-
 @Slf4j
 @Component
 public class GovCoronaOpenApi implements ICoronaOpenApi {
@@ -30,7 +28,7 @@ public class GovCoronaOpenApi implements ICoronaOpenApi {
     }
 
     @Override
-    public Optional<ICoronaInfo> getInfo() throws Exception {
+    public ICoronaInfo getInfo() throws Exception {
         Call<GovCoronaResponse> call = service.getResponseCall(SERVICE_KEY);
         GovCoronaResponse response = call.execute().body();
 
@@ -38,7 +36,6 @@ public class GovCoronaOpenApi implements ICoronaOpenApi {
             throw new RuntimeException("값을 정상적으로 조회하지 못했습니다.");
         }
 
-        return Optional.of(response.getBody());
-
+        return response.getBody();
     }
 }

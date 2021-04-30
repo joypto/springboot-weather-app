@@ -20,7 +20,7 @@ public class CoronaService {
     private final GovCoronaOpenApi govCoronaOpenApi;
 
     public List<Corona> fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
-        ICoronaInfo info = govCoronaOpenApi.getInfo().orElseThrow(() -> new RuntimeException("정보를 가져오지 못했습니다."));
+        ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         List<Corona> coronaList = new ArrayList<>(info.getItemList().size());
 
