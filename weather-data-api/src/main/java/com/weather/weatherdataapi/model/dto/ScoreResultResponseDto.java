@@ -8,7 +8,8 @@ import lombok.Setter;
 public class ScoreResultResponseDto {
 
     private int coronaResult;
-    private int fineDustResult;
+    private int pm10Result;
+    private int pm25Result;
     private int tempResult;
     private int rainPerResult;
     private int weatherResult;
