@@ -19,15 +19,20 @@ public class CoronaScheduler {
     @Scheduled(cron = "0 0 10 * * ?")
     public void cronJobSch() {
 
-        final String SCHEDULER_FORMAT = "{} SCHEDULER::Corona::OpenApi 호출을 통해 전일 코로나 확진자 정보를 갱신합니다.";
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+            Date now = new Date();
+            String strDate = sdf.format(now);
 
-        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
+            log.info("{} SCHEDULER::Corona::OpenApi 호출을 통해 전일 코로나 확진자 정보를 갱신합니다.", strDate);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-        Date now = new Date();
-        String strDate = sdf.format(now);
+            coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
 
-        log.info(SCHEDULER_FORMAT, strDate);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+        }
+
     }
-    
+
 }
