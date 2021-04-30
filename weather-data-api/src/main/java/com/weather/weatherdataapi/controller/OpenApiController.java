@@ -3,12 +3,14 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
 import com.weather.weatherdataapi.service.CoronaService;
+import com.weather.weatherdataapi.service.LivingHealthWeatherService;
 import com.weather.weatherdataapi.service.OpenApiService;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
@@ -31,6 +33,7 @@ import java.util.List;
 public class OpenApiController {
 
     private final OpenApiService openApiService;
+    private final LivingHealthWeatherService livingHealthWeatherService;
     private final RegionRepository regionRepository;
     private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
@@ -55,8 +58,13 @@ public class OpenApiController {
 
         Corona corona = coronaService.getInfoByRegion(region);
 
+        // 점수반환 객체 생성
+        ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
+        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, region);
+
         WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona);
         return responseDto;
+
     }
 
     @GetMapping("/api/corona/data")

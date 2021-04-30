@@ -8,5 +8,6 @@ import lombok.Setter;
 @Setter
 public class RegionResponseDto {
 
+    @Getter
     private Object region;
 }

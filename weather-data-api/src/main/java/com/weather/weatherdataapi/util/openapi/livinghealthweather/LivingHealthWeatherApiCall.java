@@ -35,14 +35,14 @@ public class LivingHealthWeatherApiCall {
         int hour = cal.get(Calendar.HOUR_OF_DAY);
 
         if (hour >= 6) {
-            SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd06");
+            SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
             Date dateSet = cal.getTime();
             sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
             dateResult = sdf.format(dateSet);
         } else if (hour < 6) {
             Date dDate = new Date();
             dDate = new Date(dDate.getTime()+(1000*60*60*24*-1));
-            SimpleDateFormat dSdf = new SimpleDateFormat("yyyyMMdd06", Locale.KOREA);
+            SimpleDateFormat dSdf = new SimpleDateFormat("yyyyMMdd", Locale.KOREA);
             dateResult = dSdf.format(dDate);
         }
 
@@ -71,7 +71,7 @@ public class LivingHealthWeatherApiCall {
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/" + method); /*URL*/
             urlBuilder.append("?" + URLEncoder.encode("serviceKey", "UTF-8") + "=" + URL_ENCODED_SERVICE_KEY); /*Service Key*/
             urlBuilder.append("&" + URLEncoder.encode("areaNo", "UTF-8") + "=" + URLEncoder.encode(admcode, "UTF-8")); /*서울지점*/
-            urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(dateResult, "UTF-8")); /*2017년6월8일6시*/
+            urlBuilder.append("&" + URLEncoder.encode("time", "UTF-8") + "=" + URLEncoder.encode(dateResult + "06", "UTF-8")); /*2017년6월8일6시*/
             urlBuilder.append("&" + URLEncoder.encode("dataType", "UTF-8") + "=" + URLEncoder.encode("json", "UTF-8")); /*xml, json 선택(미입력시 xml)*/
 
             URL url = new URL(urlBuilder.toString());
