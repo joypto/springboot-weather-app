@@ -26,7 +26,9 @@ public class WeatherDataResponseDto {
 
     private Corona coronaTotal;
 
-    public WeatherDataResponseDto(Region region, Corona corona, Corona coronaTotal) {
+    private int score;
+
+    public WeatherDataResponseDto(Region region, Corona corona, Corona coronaTotal, int score) {
         this.region = region;
         this.livingHealthWeather = region.getLivingHealthWeather();
         this.weekInfo = region.getWeekInfo();
@@ -34,6 +36,7 @@ public class WeatherDataResponseDto {
         this.airPollution = region.getAirPollution();
         this.corona = corona;
         this.coronaTotal = coronaTotal;
+        this.score = score;
     }
 
 }
