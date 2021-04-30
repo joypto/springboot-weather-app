@@ -33,7 +33,9 @@ public class Corona {
     private Integer newForeignCaseCount;
 
     public Corona(ICoronaItem item) {
-        this.bigRegion = RegionUtil.convertAliasToFullName(item.getRegionName());
+        String convertedFullName = RegionUtil.convertAliasToFullName(item.getRegionName());
+        this.bigRegion = convertedFullName != null ? convertedFullName : item.getRegionName();
+        
         this.date = item.getDate();
         this.newLocalCaseCount = item.getNewLocalCaseCount();
         this.newForeignCaseCount = item.getNewForeignCaseCount();
