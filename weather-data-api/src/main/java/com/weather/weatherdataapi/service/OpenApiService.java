@@ -136,6 +136,48 @@ public class OpenApiService {
 
 
     public ScoreResultResponseDto weekInfoConvertToScore(ScoreResultResponseDto scoreResultResponseDto, Region region){
+        // 날짜별 환산점수 변환 시작
+        List<String> getRainPer = new ArrayList<>();
+        List<String> getWeather = new ArrayList<>();
+        for(int i=0; i<region.getWeekInfo().getWeather().size(); i++){
+            // 날짜별 기온 변환점수
+
+            // 날짜별 강수확률 변환점수
+            if (Double.parseDouble(region.getWeekInfo().getRainPer().get(i))<= 0.2d) {
+                getRainPer.add("100");
+            }else if(Double.parseDouble(region.getWeekInfo().getRainPer().get(i) )<=0.5d){
+                getRainPer.add("70");
+            }else if(Double.parseDouble(region.getWeekInfo().getRainPer().get(i) )<=0.7d){
+                getRainPer.add("40");
+            }else{
+                getRainPer.add("10");
+            }
+
+            switch (region.getWeekInfo().getWeatherDes().get(i)){
+                case "clear sky":
+                case "few clouds":
+                    getWeather.add("100");
+                    break;
+                case "scattered clouds":
+                case "broken clouds":
+                    getWeather.add("70");
+                    break;
+                case "shower rain":
+                case "rain":
+                case "snow":
+                    getWeather.add("40");
+                    break;
+                case "thunderstorm":
+                case "mist":
+                    getWeather.add("10");
+                    break;
+
+            }
+        }
+        scoreResultResponseDto.setRainPerResult(getRainPer);
+        scoreResultResponseDto.setWeatherResult(getWeather);
+
+
         return scoreResultResponseDto;
     }
 }
