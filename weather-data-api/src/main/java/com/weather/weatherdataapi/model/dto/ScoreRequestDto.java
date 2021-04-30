@@ -41,4 +41,20 @@ public class ScoreRequestDto {
                 .foodPoisonRange(foodPoison);
     }
 
+    public int getSumOfAllRange() {
+        return this.coronaRange
+                + this.pm10Range
+                + this.pm25Range
+                + this.tempRange
+                + this.rainPerRange
+                + this.weatherRange
+                + this.humidityRange
+                + this.windRange
+                + this.uvRange
+                + this.pollenRiskRange
+                + this.coldRange
+                + this.asthmaRange
+                + this.foodPoisonRange;
+    }
+
 }
