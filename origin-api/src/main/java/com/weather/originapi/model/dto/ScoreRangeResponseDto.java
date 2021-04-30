@@ -3,10 +3,9 @@ package com.weather.originapi.model.dto;
 import lombok.Getter;
 import lombok.Setter;
 
+// 클라이언트에서 보내준 점수를 비중으로 변환한 점수
 @Getter
 @Setter
-
-// 클라이언트에서 보내준 점수를 비중으로 변환한 점수
 public class ScoreRangeResponseDto {
 
     private int coronaRangeConvert;
