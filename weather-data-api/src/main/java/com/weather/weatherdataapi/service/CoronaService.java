@@ -45,4 +45,22 @@ public class CoronaService {
     public Corona getTotalInfo() {
         return getInfoByRegion("합계");
     }
+
+    public int calculateScore(Corona corona) {
+        final int CORONA_LEVEL15 = 300;
+        final int CORONA_LEVEL2 = 400;
+        final int CORONA_LEVEL25 = 800;
+
+        int allNewCaseCount = corona.getNewLocalCaseCount() + corona.getNewForeignCaseCount();
+
+        // 코로나 단계별로 점수를 반환합니다.
+        if (allNewCaseCount <= CORONA_LEVEL15)
+            return 100;
+        else if (allNewCaseCount <= CORONA_LEVEL2)
+            return 70;
+        else if (allNewCaseCount <= CORONA_LEVEL25)
+            return 40;
+        else
+            return 10;
+    }
 }
