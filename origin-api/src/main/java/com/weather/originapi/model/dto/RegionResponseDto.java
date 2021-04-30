@@ -8,10 +8,5 @@ import lombok.Setter;
 @Setter
 public class RegionResponseDto {
 
-    private String uvToday;
-    private String asthmaToday;
-    private String coldToday;
-    private String foodPoisonToday;
-    private String pollenRiskToday;
     private Object region;
 }
