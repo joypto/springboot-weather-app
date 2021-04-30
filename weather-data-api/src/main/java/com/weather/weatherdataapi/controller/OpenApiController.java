@@ -1,17 +1,11 @@
 package com.weather.weatherdataapi.controller;
 
-import com.weather.weatherdataapi.model.dto.CoordinateDto;
-import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.dto.*;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
-import com.weather.weatherdataapi.service.AirPollutionService;
-import com.weather.weatherdataapi.service.CoronaService;
-import com.weather.weatherdataapi.service.LivingHealthWeatherService;
-import com.weather.weatherdataapi.service.OpenApiService;
+import com.weather.weatherdataapi.service.*;
 import com.weather.weatherdataapi.util.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoOpenApi;
@@ -34,6 +28,7 @@ public class OpenApiController {
 
     private final OpenApiService openApiService;
     private final LivingHealthWeatherService livingHealthWeatherService;
+    private final ScoreService scoreService;
     private final RegionRepository regionRepository;
     private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
     private final ReverseGeoCoding reverseGeoCoding;
@@ -43,7 +38,13 @@ public class OpenApiController {
     private final KakaoGeoOpenApi kakaoGeoOpenApi;
 
     @GetMapping("/api/weather/data")
-    public WeatherDataResponseDto getAllWeatherData(@RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude) throws ParseException, IOException {
+    public WeatherDataResponseDto getAllWeatherData(
+            @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @RequestParam("temp") int temp,
+            @RequestParam("rainPer") int rainPer, @RequestParam("weather") int weather, @RequestParam("humidity") int humidity,
+            @RequestParam("wind") int wind, @RequestParam("pm10") int pm10, @RequestParam("pm25") int pm25,
+            @RequestParam("corona") int corona, @RequestParam("uv") int uv, @RequestParam("pollenRisk") int pollenRisk,
+            @RequestParam("cold") int cold, @RequestParam("asthma") int asthma, @RequestParam("foodPoison") int foodPoison) throws ParseException, IOException {
+
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
@@ -55,9 +56,27 @@ public class OpenApiController {
         openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
         airPollutionService.getInfoByRegion(region);
-
-        Corona corona = coronaService.getInfoByRegion(region);
+        Corona coronaLocal = coronaService.getInfoByRegion(region);
         Corona coronaTotal = coronaService.getTotalInfo();
+
+        // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
+        ScoreRequestDto scoreRequestDto = ScoreRequestDto.hiddenBuilder()
+                .tempRange(temp)
+                .rainPerRange(rainPer)
+                .weatherRange(weather)
+                .humidityRange(humidity)
+                .windRange(wind)
+                .pm10Range(pm10)
+                .pm25Range(pm25)
+                .coronaRange(corona)
+                .uvRange(uv)
+                .pollenRiskRange(pollenRisk)
+                .coldRange(cold)
+                .asthmaRange(asthma)
+                .foodPoisonRange(foodPoison)
+                .build();
+
+        scoreService.getWeatherScore100(scoreRequestDto);
 
         // 점수반환 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
@@ -68,7 +87,7 @@ public class OpenApiController {
         // 주간날씨 점수 반환
         openApiService.weekInfoConvertToScore(scoreResultResponseDto, region);
 
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona, coronaTotal);
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, coronaLocal, coronaTotal);
         return responseDto;
 
     }
