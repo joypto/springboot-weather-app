@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.repository;
 
 import com.weather.weatherdataapi.model.entity.AirPollutionStation;
-import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.model.entity.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

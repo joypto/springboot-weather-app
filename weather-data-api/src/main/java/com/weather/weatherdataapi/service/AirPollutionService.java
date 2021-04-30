@@ -1,9 +1,9 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.entity.AirPollution;
-import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionRepository;
-import com.weather.weatherdataapi.repository.region.RegionRepository;
+import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionOpenApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;

@@ -4,7 +4,7 @@ import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
 import com.weather.weatherdataapi.model.entity.DayInfo;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
-import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.DayInfoRepository;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 

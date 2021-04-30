@@ -1,10 +1,9 @@
-package com.weather.weatherdataapi.repository.region;
+package com.weather.weatherdataapi.repository;
 
-import com.weather.weatherdataapi.model.entity.region.Region;
+import com.weather.weatherdataapi.model.entity.Region;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Set;
 
 public interface RegionRepository extends JpaRepository<Region, Long> {
     List<Region> findByBigRegionAndSmallRegion(String bigRegion, String smallRegion);
