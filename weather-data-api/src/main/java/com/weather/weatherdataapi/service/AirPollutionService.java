@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionRepository;
@@ -56,5 +57,38 @@ public class AirPollutionService {
             return null;
 
         return fetchedRespense.get().getStationName();
+    }
+
+    public void calculateScore(ScoreResultResponseDto responseDto, AirPollution airPollution) {
+        final int PM10_GOOD = 30;
+        final int PM10_NORMAL = 80;
+        final int PM10_BAD = 150;
+
+        final int PM25_GOOD = 15;
+        final int PM25_NORMAL = 35;
+        final int PM25_BAD = 75;
+
+        int pm10Score;
+        if (airPollution.getPm10Value() <= PM10_GOOD)
+            pm10Score = 100;
+        else if (airPollution.getPm10Value() <= PM10_NORMAL)
+            pm10Score = 70;
+        else if (airPollution.getPm10Value() <= PM10_BAD)
+            pm10Score = 40;
+        else
+            pm10Score = 10;
+
+        int pm25Score;
+        if (airPollution.getPm25Value() <= PM25_GOOD)
+            pm25Score = 100;
+        else if (airPollution.getPm25Value() <= PM25_NORMAL)
+            pm25Score = 70;
+        else if (airPollution.getPm25Value() <= PM25_BAD)
+            pm25Score = 40;
+        else
+            pm25Score = 10;
+
+        responseDto.setPm10Result(pm10Score);
+        responseDto.setPm25Result(pm25Score);
     }
 }
