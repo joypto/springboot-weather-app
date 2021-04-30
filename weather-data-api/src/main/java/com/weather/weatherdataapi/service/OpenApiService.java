@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.WeatherDataRequestDto;
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.entity.DayInfo;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
@@ -27,7 +27,7 @@ public class OpenApiService {
     private final WeekInfoRepository weekInfoRepository;
     private final DayInfoRepository dayInfoRepository;
 
-    public void callApi(WeatherDataRequestDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
+    public void callApi(CoordinateDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {
             LocalDate currentDate = LocalDate.now();
             System.out.println(currentDate.toString());
