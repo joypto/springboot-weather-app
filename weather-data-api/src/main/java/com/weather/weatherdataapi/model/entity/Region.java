@@ -1,12 +1,7 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.weather.weatherdataapi.model.entity.DayInfo;
-import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
-import com.weather.weatherdataapi.model.entity.WeekInfo;
-import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
 import lombok.Getter;
-import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -48,6 +43,10 @@ public class Region {
     @JoinColumn(name = "day_data_id")
     private DayInfo dayInfo;
 
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "air_pollution_id")
+    private AirPollution airPollution;
+
     public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
     }
@@ -57,7 +56,11 @@ public class Region {
     }
 
 
-    public void updateDayInfo(DayInfo dayInfo){
+    public void updateDayInfo(DayInfo dayInfo) {
         this.dayInfo = dayInfo;
+    }
+
+    public void updateAirPollution(AirPollution airPollution) {
+        this.airPollution = airPollution;
     }
 }
