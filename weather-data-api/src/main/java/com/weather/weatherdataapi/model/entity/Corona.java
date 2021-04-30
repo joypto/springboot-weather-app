@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.entity;
 
+import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,8 +20,8 @@ public class Corona {
     @Column(name = "corona_id")
     private Long id;
 
-    @Column
-    private String sido_name;
+    @Column(name = "big_region")
+    private String bigRegion;
 
     @Column
     private LocalDate date;
@@ -32,7 +33,9 @@ public class Corona {
     private Integer newForeignCaseCount;
 
     public Corona(ICoronaItem item) {
-        this.sido_name = item.getRegionName();
+        String convertedFullName = RegionUtil.convertAliasToFullName(item.getRegionName());
+        this.bigRegion = convertedFullName != null ? convertedFullName : item.getRegionName();
+        
         this.date = item.getDate();
         this.newLocalCaseCount = item.getNewLocalCaseCount();
         this.newForeignCaseCount = item.getNewForeignCaseCount();
