@@ -52,7 +52,9 @@ public class OpenApiController {
         openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
 
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region);
+        Corona corona = coronaService.getInfoByRegion(region);
+
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona);
         return responseDto;
     }
 

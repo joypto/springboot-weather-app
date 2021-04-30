@@ -22,12 +22,15 @@ public class WeatherDataResponseDto {
 
     private AirPollution airPollution;
 
-    public WeatherDataResponseDto(Region region) {
+    private Corona corona;
+
+    public WeatherDataResponseDto(Region region, Corona corona) {
         this.region = region;
         this.livingHealthWeather = region.getLivingHealthWeather();
         this.weekInfo = region.getWeekInfo();
         this.dayInfo = region.getDayInfo();
         this.airPollution = region.getAirPollution();
+        this.corona = corona;
     }
 
 }
