@@ -62,6 +62,9 @@ public class OpenApiController {
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
         livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, region);
 
+        // 주간날씨 점수 반환
+        openApiService.weekInfoConvertToScore(scoreResultResponseDto, region);
+
         WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona);
         return responseDto;
 

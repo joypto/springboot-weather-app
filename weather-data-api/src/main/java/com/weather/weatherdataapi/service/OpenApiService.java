@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.DayInfo;
 import com.weather.weatherdataapi.model.entity.WeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
@@ -131,5 +132,10 @@ public class OpenApiService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public ScoreResultResponseDto weekInfoConvertToScore(ScoreResultResponseDto scoreResultResponseDto, Region region){
+        return scoreResultResponseDto;
     }
 }
