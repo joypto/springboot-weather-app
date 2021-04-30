@@ -45,8 +45,8 @@ public class ScoreService {
     }
 
     public ScoreResultResponseDto calculateScore(RegionResponseDto regionResponseDto) {
-        System.out.println(regionResponseDto.getUvToday());
 
+        // 각각의 기상 데이더를 백 점 만점의 점수로 반환해주는 작업입니다.
         Integer uvTodayScore = WeatherIdxConvertScore.convertHealthWthIdxToScore("1");
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
         scoreResultResponseDto.setUvResult(uvTodayScore);

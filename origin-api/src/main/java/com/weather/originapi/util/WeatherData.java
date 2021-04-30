@@ -50,7 +50,14 @@ public class WeatherData {
         String uvToday = (String) livingHealthWeather.get("uvToday");
 
         RegionResponseDto regionResponseDto = new RegionResponseDto();
-        regionResponseDto.setUvToday(uvToday);
+        // 일단 오늘 지수만 파싱을 해보았습니다.
+        // 여기서 regionResponseDto 에 기상 데이터 값들을 세팅 해놓습니다.
+        // 작업하기 전에 먼저 RegionResponseDto 에 필드를 잊지 말고 추가해주세요!
+        regionResponseDto.setUvToday(uvToday); // 자외선 지수
+        regionResponseDto.setAsthmaToday(asthmaToday); // 천식폐질환지수
+        regionResponseDto.setColdToday(coldToday); // 감기가능지수
+        regionResponseDto.setPollenRiskToday(pollenRiskToday); // 꽃가루농도지수
+        regionResponseDto.setFoodPoisonToday(foodPoisonToday); // 식중독가능지수
 
         return regionResponseDto;
     }
