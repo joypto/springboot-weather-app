@@ -5,6 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
+
+// 클라이언트에서 보내준 range 값
 public class ScoreRequestDto {
 
     private int coronaRange;

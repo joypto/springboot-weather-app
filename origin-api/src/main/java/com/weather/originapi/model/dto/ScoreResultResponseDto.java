@@ -1,5 +1,8 @@
 package com.weather.originapi.model.dto;
 
+
+
+// 최종 외출 난이도 점수 구하기 위한 항목 이거 다 더하면 외출 난이도 점수임
 public class ScoreResultResponseDto {
 
     private int coronaResult;
