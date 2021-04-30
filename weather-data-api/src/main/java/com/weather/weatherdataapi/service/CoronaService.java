@@ -7,8 +7,10 @@ import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaOpenApi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CoronaService {
@@ -28,6 +30,8 @@ public class CoronaService {
             Corona corona = new Corona(item);
             coronaRepository.save(corona);
         }
+
+        log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
     public Corona getInfoByRegion(Region region) {
