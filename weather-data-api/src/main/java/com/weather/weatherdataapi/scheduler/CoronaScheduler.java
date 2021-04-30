@@ -6,9 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -18,17 +15,14 @@ public class CoronaScheduler {
 
     @Scheduled(cron = "0 0 10 * * ?")
     public void cronJobSch() {
-
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-            Date now = new Date();
-            String strDate = sdf.format(now);
-
-            log.info("{} SCHEDULER::Corona::OpenApi 호출을 통해 전일 코로나 확진자 정보를 갱신합니다.", strDate);
+            log.info("cronJobSch::전일 코로나 확진자 정보를 갱신합니다.");
 
             coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
 
+            log.info("cronJobSch::성공적으로 갱신하였습니다.");
         } catch (Exception e) {
+            log.error("cronJobSch::갱신하는데 실패하였습니다.");
             log.error(e.getMessage());
             e.printStackTrace();
         }
