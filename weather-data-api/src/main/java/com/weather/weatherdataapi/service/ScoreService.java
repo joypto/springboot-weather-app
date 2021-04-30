@@ -12,7 +12,7 @@ public class ScoreService {
     public int getCalculatedScore(ScoreRequestDto scoreRequestDto, ScoreResultResponseDto scoreResultResponseDto) {
         double temporaryValue = 0;
 
-        temporaryValue += Double.parseDouble(scoreResultResponseDto.getTempResult().get(0)) * scoreRequestDto.getTempRange();
+//        temporaryValue += Double.parseDouble(scoreResultResponseDto.getTempResult().get(0)) * scoreRequestDto.getTempRange();
         temporaryValue += Double.parseDouble(scoreResultResponseDto.getRainPerResult().get(0)) * scoreRequestDto.getRainPerRange();
         temporaryValue += Double.parseDouble(scoreResultResponseDto.getWeatherResult().get(0)) * scoreRequestDto.getWeatherRange();
         temporaryValue += Double.parseDouble(scoreResultResponseDto.getHumidityResult().get(0)) * scoreRequestDto.getHumidityRange();

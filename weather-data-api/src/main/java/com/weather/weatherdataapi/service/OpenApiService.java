@@ -144,6 +144,7 @@ public class OpenApiService {
         List<String> getWeather = new ArrayList<>();
         List<String> getWind = new ArrayList<>();
         List<String> getHumidity = new ArrayList<>();
+
         for(int i=0; i<region.getWeekInfo().getWeather().size(); i++){
             // 날짜별 기온 변환점수
 
@@ -201,6 +202,7 @@ public class OpenApiService {
 
             }
         }
+
         scoreResultResponseDto.setRainPerResult(getRainPer);
         scoreResultResponseDto.setWeatherResult(getWeather);
         scoreResultResponseDto.setHumidityResult(getHumidity);
