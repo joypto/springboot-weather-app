@@ -1,12 +1,17 @@
 package com.weather.originapi.service;
 
+import com.weather.originapi.model.dto.RegionResponseDto;
 import com.weather.originapi.model.dto.ScoreRangeResponseDto;
 import com.weather.originapi.model.dto.ScoreRequestDto;
+import com.weather.originapi.model.dto.ScoreResultResponseDto;
+import com.weather.originapi.util.WeatherIdxConvertScore;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 
 @Service
+@RequiredArgsConstructor
 public class ScoreService {
 
     public ScoreRangeResponseDto getWeatherScoreRange(ScoreRequestDto scoreRequestDto) {
@@ -39,6 +44,13 @@ public class ScoreService {
         return scoreRangeResponseDto;
     }
 
+    public ScoreResultResponseDto calculateScore(RegionResponseDto regionResponseDto) {
+        System.out.println(regionResponseDto.getUvToday());
 
+        Integer uvTodayScore = WeatherIdxConvertScore.convertHealthWthIdxToScore("1");
+        ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
+        scoreResultResponseDto.setUvResult(uvTodayScore);
 
+        return scoreResultResponseDto;
+    }
 }
