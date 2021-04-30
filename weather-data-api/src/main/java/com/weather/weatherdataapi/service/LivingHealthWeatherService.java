@@ -26,7 +26,7 @@ public class LivingHealthWeatherService {
         } else if (Integer.valueOf(region.getLivingHealthWeather().getFoodPoisonToday()) <= 85) {
             scoreResultResponseDto.setFoodPoisonResult(40);
         } else if (Integer.valueOf(region.getLivingHealthWeather().getFoodPoisonToday()) > 85) {
-            scoreResultResponseDto.setFineDustResult(10);
+            scoreResultResponseDto.setFoodPoisonResult(10);
         }
         // 자외선지수 점수변환
         scoreResultResponseDto.setUvResult(livingWthIdxConvertToScore(region.getLivingHealthWeather().getUvToday()));

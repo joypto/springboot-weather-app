@@ -76,16 +76,14 @@ public class OpenApiController {
                 .foodPoisonRange(foodPoison)
                 .build();
 
-        scoreService.getWeatherScore100(scoreRequestDto);
+        ScoreRangeResponseDto finalScoreRange = scoreService.getWeatherScore100(scoreRequestDto);
 
-        // 점수반환 객체 생성
+        // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
         livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, region);
         airPollutionService.calculateScore(scoreResultResponseDto, region.getAirPollution());
         scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotal));
-
-        // 주간날씨 점수 반환
-        openApiService.weekInfoConvertToScore(scoreResultResponseDto, region);
+        openApiService.weekInfoConvertToScore(scoreResultResponseDto, region); // 주간날씨 점수 반환
 
         WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, coronaLocal, coronaTotal);
         return responseDto;
