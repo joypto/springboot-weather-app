@@ -37,4 +37,8 @@ public class CoronaService {
     public Corona getInfoByRegion(String bigRegion) {
         return coronaRepository.findByBigRegion(bigRegion).orElseThrow(() -> new RuntimeException("해당하는 지역의 정보가 없습니다."));
     }
+
+    public Corona getTotalInfo() {
+        return getInfoByRegion("합계");
+    }
 }
