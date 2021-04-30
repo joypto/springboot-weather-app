@@ -31,18 +31,22 @@ public class Region {
     @Column(name = "latitude", nullable = false)
     private String latitude;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "living_health_wth_id")
     private LivingHealthWeather livingHealthWeather;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "week_data_id")
     private WeekInfo weekInfo;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "day_data_id")
     private DayInfo dayInfo;
 
+    @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "air_pollution_id")
     private AirPollution airPollution;
