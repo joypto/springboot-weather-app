@@ -2,8 +2,8 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.AirPollution;
 import com.weather.weatherdataapi.model.entity.Corona;
 import com.weather.weatherdataapi.model.entity.Region;
@@ -57,6 +57,7 @@ public class OpenApiController {
         airPollutionService.getInfoByRegion(region);
 
         Corona corona = coronaService.getInfoByRegion(region);
+        Corona coronaTotal = coronaService.getTotalInfo();
 
         // 점수반환 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
@@ -65,7 +66,7 @@ public class OpenApiController {
         // 주간날씨 점수 반환
         openApiService.weekInfoConvertToScore(scoreResultResponseDto, region);
 
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona);
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, corona, coronaTotal);
         return responseDto;
 
     }

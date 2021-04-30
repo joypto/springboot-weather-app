@@ -24,13 +24,16 @@ public class WeatherDataResponseDto {
 
     private Corona corona;
 
-    public WeatherDataResponseDto(Region region, Corona corona) {
+    private Corona coronaTotal;
+
+    public WeatherDataResponseDto(Region region, Corona corona, Corona coronaTotal) {
         this.region = region;
         this.livingHealthWeather = region.getLivingHealthWeather();
         this.weekInfo = region.getWeekInfo();
         this.dayInfo = region.getDayInfo();
         this.airPollution = region.getAirPollution();
         this.corona = corona;
+        this.coronaTotal = coronaTotal;
     }
 
 }
