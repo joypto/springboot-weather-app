@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,6 +24,10 @@ public class BigRegion {
     @JsonIgnore
     @OneToMany(mappedBy = "bigRegion")
     private List<SmallRegion> smallRegionList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "bigRegion")
+    private List<CoronaInfo> coronaInfoList;
 
     @Column(name = "big_region_name")
     private String bigRegionName;

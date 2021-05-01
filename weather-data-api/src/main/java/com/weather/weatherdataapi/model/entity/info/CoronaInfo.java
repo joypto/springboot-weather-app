@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.model.entity.info;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import lombok.Getter;
@@ -20,8 +22,10 @@ public class CoronaInfo {
     @Column(name = "corona_id")
     private Long id;
 
-    @Column(name = "big_region")
-    private String bigRegion;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "big_region_id")
+    private BigRegion bigRegion;
 
     @Column
     private LocalDate date;
@@ -34,8 +38,8 @@ public class CoronaInfo {
 
     public CoronaInfo(ICoronaItem item) {
         String convertedFullName = RegionUtil.convertAliasToFullName(item.getRegionName());
-        this.bigRegion = convertedFullName != null ? convertedFullName : item.getRegionName();
-        
+//        this.bigRegion = convertedFullName != null ? convertedFullName : item.getRegionName();
+
         this.date = item.getDate();
         this.newLocalCaseCount = item.getNewLocalCaseCount();
         this.newForeignCaseCount = item.getNewForeignCaseCount();

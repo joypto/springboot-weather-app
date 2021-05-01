@@ -21,6 +21,11 @@ public class AirPollutionStation {
     @JoinColumn(name = "region_id")
     private Region region;
 
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
+
     @Column(name = "station_name")
     private String stationName;
 

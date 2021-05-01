@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class WeatherWeekInfo extends Timestamped {
 
     @JsonIgnore
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
@@ -29,6 +30,11 @@ public class WeatherWeekInfo extends Timestamped {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id")
     private Region region;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
 
     @ElementCollection
     private List<String> maxTmp;
@@ -65,9 +71,8 @@ public class WeatherWeekInfo extends Timestamped {
     private List<String> rain;
 
 
-
     @Builder
-    public WeatherWeekInfo(List<String> weatherIcon, List<String> maxTmp, List<String> minTmp, List<String> tmp, List<String> humidity, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> rain, List<String> windSpeed){
+    public WeatherWeekInfo(List<String> weatherIcon, List<String> maxTmp, List<String> minTmp, List<String> tmp, List<String> humidity, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> rain, List<String> windSpeed) {
         this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;

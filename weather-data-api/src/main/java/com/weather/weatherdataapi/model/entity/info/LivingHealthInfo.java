@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,7 +17,7 @@ public class LivingHealthInfo {
 
     @JsonIgnore
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column
     Long id;
 
@@ -24,6 +25,11 @@ public class LivingHealthInfo {
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "region_id")
     private Region region;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
 
     @JsonIgnore
     @Column
