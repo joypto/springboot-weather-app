@@ -2,8 +2,8 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.util.HealthWthIdxConvertScore;
-import com.weather.weatherdataapi.util.LivingWthIdxConvertScore;
+import com.weather.weatherdataapi.util.HealthScoreUtil;
+import com.weather.weatherdataapi.util.LivingScoreUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -33,13 +33,13 @@ public class LivingHealthService {
 
     // 보건기상지수 중 식중독 지수 제외한 지수의 점수 변환
     public Integer healthWthIdxConvertToScore(String wthIdx) {
-        Integer score = HealthWthIdxConvertScore.convertHealthWthIdxToScore(wthIdx);
+        Integer score = HealthScoreUtil.convertHealthWthIdxToScore(wthIdx);
         return score;
     }
 
     // 생활기상지수 중 자외선 지수의 점수 변환
     public Integer livingWthIdxConvertToScore(String wthIdx) {
-        Integer score = LivingWthIdxConvertScore.convertHealthWthIdxToScore(wthIdx);
+        Integer score = LivingScoreUtil.convertHealthWthIdxToScore(wthIdx);
         return score;
     }
 

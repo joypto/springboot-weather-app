@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util;
+package com.weather.weatherdataapi.util.openapi;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import org.json.simple.JSONArray;

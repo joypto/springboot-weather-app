@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.util;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-public class LivingWthIdxConvertScore {
+public class LivingScoreUtil {
 
     private static Dictionary<String, Integer> livingScoreDict;
 

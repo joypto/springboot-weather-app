@@ -10,7 +10,7 @@ import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.*;
-import com.weather.weatherdataapi.util.ReverseGeoCoding;
+import com.weather.weatherdataapi.util.openapi.ReverseGeoCoding;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoOpenApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
