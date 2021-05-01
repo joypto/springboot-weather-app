@@ -35,14 +35,14 @@ public class OpenApiService {
             // 해당지역이 이전에 검색이 된적이있으면 이전값 반환
             if (wantRegion.getWeekInfo() != null) {
                if(wantRegion.getWeekInfo().getModifiedAt().toString().equals(currentDate.toString())){
-                   System.out.println("값이 존재하지만 아직 업데이트 시간은 아님");
+                   System.out.println("주간 날씨 정보가 존재하지만 아직 업데이트 시간은 아님");
                    return;
                }
-                System.out.println("값은 존재하지만 업데이트가 필요함");
+                System.out.println("주간 날씨 정보가 존재 하지만 업데이트가 필요함");
             }
 
             // 검색이 처음된것이면 값 가져오기
-                System.out.println("값을 불러오는 중");
+                System.out.println("주간 날씨 정보와 시간 정보를 불러오는 중");
                 JSONObject jObj;
                 JSONObject jObj1;
                 JSONArray jObj2;
@@ -150,7 +150,8 @@ public class OpenApiService {
         List<String> getWeather = new ArrayList<>();
         List<String> getWind = new ArrayList<>();
         List<String> getHumidity = new ArrayList<>();
-
+        List<String> getTemp = new ArrayList<>();
+        String getMonth = region.getDayInfo().getDailyTime().get(0).substring(0,2);
         for(int i=0; i<region.getWeekInfo().getWeather().size(); i++){
             // 날짜별 기온 변환점수
 
@@ -187,6 +188,7 @@ public class OpenApiService {
                 getHumidity.add("10");
             }
 
+            // 날짜별 날씨 변환 점수
             switch (region.getWeekInfo().getWeatherIcon().get(i)){
                 case "01d":
                 case "01n":
@@ -216,18 +218,74 @@ public class OpenApiService {
                     break;
 
             }
+
+            switch (getMonth){
+                // 봄
+                case "03":
+                case "04":
+                case "05":
+                    if (18d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 22d) {
+                        getTemp.add("100");
+                    }else if(15d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 25d){
+                        getTemp.add("70");
+                    }else if(12d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 28d){
+                        getTemp.add("40");
+                    }else{
+                        getTemp.add("10");
+                    }
+                    break;
+                //여름
+                case "06":
+                case "07":
+                case "08":
+                    if (Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 24d) {
+                        getTemp.add("100");
+                    }else if(Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 27d){
+                        getTemp.add("70");
+                    }else if(Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 30d){
+                        getTemp.add("40");
+                    }else{
+                        getTemp.add("10");
+                    }
+                    break;
+                //가을
+                case "09":
+                case "10":
+                case "11":
+                    if (14d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 18d) {
+                        getTemp.add("100");
+                    }else if(11d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 21d){
+                        getTemp.add("70");
+                    }else if(8d<=Double.parseDouble(region.getWeekInfo().getTmp().get(i)) && Double.parseDouble(region.getWeekInfo().getTmp().get(i))<= 24d){
+                        getTemp.add("40");
+                    }else{
+                        getTemp.add("10");
+                    }
+                    break;
+                //겨울
+                case "12":
+                case "01":
+                case "02":
+                    if (Double.parseDouble(region.getWeekInfo().getTmp().get(i))>= 2d) {
+                        getTemp.add("100");
+                    }else if(Double.parseDouble(region.getWeekInfo().getTmp().get(i))>=-1d){
+                        getTemp.add("70");
+                    }else if(Double.parseDouble(region.getWeekInfo().getTmp().get(i))>=-4){
+                        getTemp.add("40");
+                    }else{
+                        getTemp.add("10");
+                    }
+                    break;
+            }
+
         }
+
 
         scoreResultResponseDto.setRainPerResult(getRainPer);
         scoreResultResponseDto.setWeatherResult(getWeather);
         scoreResultResponseDto.setHumidityResult(getHumidity);
         scoreResultResponseDto.setWindResult(getWind);
-
-        System.out.println(scoreResultResponseDto.getRainPerResult());
-        System.out.println(scoreResultResponseDto.getWeatherResult());
-        System.out.println(scoreResultResponseDto.getHumidityResult());
-        System.out.println(scoreResultResponseDto.getWindResult());
-
+        scoreResultResponseDto.setTempResult(getTemp);
         return scoreResultResponseDto;
     }
 }
