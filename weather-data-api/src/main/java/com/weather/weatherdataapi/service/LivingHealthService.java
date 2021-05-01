@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class LivingHealthWeatherService {
+public class LivingHealthService {
 
     public ScoreResultResponseDto livingHealthWthIdxConvertToScore(ScoreResultResponseDto scoreResultResponseDto, Region region) {
         // 천식폐질환지수 점수변환

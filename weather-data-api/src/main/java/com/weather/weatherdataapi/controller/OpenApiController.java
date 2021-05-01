@@ -26,8 +26,8 @@ import java.util.List;
 @RestController
 public class OpenApiController {
 
-    private final OpenApiService openApiService;
-    private final LivingHealthWeatherService livingHealthWeatherService;
+    private final WeatherService openApiService;
+    private final LivingHealthService livingHealthWeatherService;
     private final ScoreService scoreService;
     private final RegionRepository regionRepository;
     private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;

@@ -23,7 +23,7 @@ import java.util.Locale;
 
 @RequiredArgsConstructor
 @Service
-public class OpenApiService {
+public class WeatherService {
     private final WeatherGatherApi weatherGatherApi;
     private final WeekInfoRepository weekInfoRepository;
     private final DayInfoRepository dayInfoRepository;
