@@ -24,8 +24,8 @@ public class RegionService {
 
     public void initialize() {
         try {
-
             log.info("initialize::resources/data/region.csv 파일을 읽어 지역정보를 초기화합니다.");
+            long startTime = System.currentTimeMillis();
 
             ClassPathResource regionCsvResource = new ClassPathResource("data/region.csv");
             List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getFile(), RegionCsvVO.getSchema());
@@ -34,7 +34,10 @@ public class RegionService {
                 log.info("initialize::모든 지역정보가 이미 DB에 존재합니다.");
             } else {
                 initializeRegionTable(regionList);
-                log.info("initialize::초기화를 성공적으로 마쳤습니다.");
+
+                long endTime = System.currentTimeMillis();
+                float diffTimeSec = (endTime - startTime) / 1000f;
+                log.info("initialize::초기화를 성공적으로 마쳤습니다. ({}sec)", diffTimeSec);
             }
 
         } catch (Exception e) {
