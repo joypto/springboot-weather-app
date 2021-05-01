@@ -35,4 +35,13 @@ public class SmallRegion {
 
     @Column(name = "latitude")
     private String latitude;
+
+    public SmallRegion(String smallRegionName, String admCode, String longitude, String latitude, BigRegion bigRegion) {
+        this.smallRegionName = smallRegionName;
+        this.admCode = admCode;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.bigRegion = bigRegion;
+    }
+
 }

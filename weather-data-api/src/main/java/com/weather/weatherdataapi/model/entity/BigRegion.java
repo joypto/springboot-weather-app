@@ -36,4 +36,11 @@ public class BigRegion {
     @Column(name = "latitude")
     private String latitude;
 
+    public BigRegion(String bigRegionName, String admCode, String longitude, String latitude) {
+        this.bigRegionName = bigRegionName;
+        this.admCode = admCode;
+        this.longitude = longitude;
+        this.latitude = latitude;
+    }
+
 }
