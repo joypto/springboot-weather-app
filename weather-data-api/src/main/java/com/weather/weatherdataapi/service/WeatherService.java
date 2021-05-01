@@ -6,8 +6,8 @@ import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.DayInfoRepository;
-import com.weather.weatherdataapi.repository.WeekInfoRepository;
+import com.weather.weatherdataapi.repository.WeatherDayInfoRepository;
+import com.weather.weatherdataapi.repository.WeatherWeekInfoRepository;
 import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -25,8 +25,8 @@ import java.util.Locale;
 @Service
 public class WeatherService {
     private final WeatherGatherApi weatherGatherApi;
-    private final WeekInfoRepository weekInfoRepository;
-    private final DayInfoRepository dayInfoRepository;
+    private final WeatherWeekInfoRepository weekInfoRepository;
+    private final WeatherDayInfoRepository dayInfoRepository;
 
     public void callApi(CoordinateDto requestDto, ReverseGeocodingResponseDto region, Region wantRegion) {
         try {

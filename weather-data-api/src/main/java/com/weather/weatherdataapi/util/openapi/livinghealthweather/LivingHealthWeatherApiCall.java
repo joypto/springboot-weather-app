@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
+import com.weather.weatherdataapi.repository.LivingHealthInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -25,7 +25,7 @@ import java.util.*;
 public class LivingHealthWeatherApiCall {
 
     private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
-    private final LivingHealthWeatherRepository livingHealthWeatherRepository;
+    private final LivingHealthInfoRepository livingHealthWeatherRepository;
 
     public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address, Region region) throws IOException, ParseException {
 
