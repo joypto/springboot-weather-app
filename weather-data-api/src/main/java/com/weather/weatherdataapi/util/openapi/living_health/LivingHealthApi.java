@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util.openapi.livinghealthweather;
+package com.weather.weatherdataapi.util.openapi.living_health;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
@@ -22,7 +22,7 @@ import java.util.*;
 
 @Component
 @RequiredArgsConstructor
-public class LivingHealthWeatherApiCall {
+public class LivingHealthApi {
 
     private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private final LivingHealthInfoRepository livingHealthWeatherRepository;

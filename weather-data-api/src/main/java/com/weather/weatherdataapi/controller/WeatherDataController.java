@@ -10,11 +10,11 @@ import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.*;
-import com.weather.weatherdataapi.util.openapi.ReverseGeoCoding;
+import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
-import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoOpenApi;
+import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
-import com.weather.weatherdataapi.util.openapi.livinghealthweather.LivingHealthWeatherApiCall;
+import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,12 +34,12 @@ public class WeatherDataController {
     private final LivingHealthService livingHealthWeatherService;
     private final ScoreService scoreService;
     private final RegionRepository regionRepository;
-    private final LivingHealthWeatherApiCall livingHealthWeatherApiCall;
-    private final ReverseGeoCoding reverseGeoCoding;
+    private final LivingHealthApi livingHealthWeatherApiCall;
+    private final ReverseGeoCodingApi reverseGeoCoding;
     private final CoronaService coronaService;
     private final AirPollutionService airPollutionService;
     private final AirKoreaStationUtil airKoreaStationUtil;
-    private final KakaoGeoOpenApi kakaoGeoOpenApi;
+    private final KakaoGeoApi kakaoGeoOpenApi;
 
     @GetMapping("/api/weather/data")
     public WeatherDataResponseDto getAllWeatherData(

@@ -11,13 +11,13 @@ import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 @Slf4j
 @Component
-public class GovCoronaOpenApi implements ICoronaOpenApi {
+public class GovCoronaApi implements ICoronaOpenApi {
 
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     private GovCoronaService service;
 
-    public GovCoronaOpenApi() {
+    public GovCoronaApi() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://openapi.data.go.kr/openapi/service/rest/Covid19/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())

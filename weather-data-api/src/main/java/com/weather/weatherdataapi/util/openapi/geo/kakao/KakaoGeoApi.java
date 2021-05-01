@@ -11,12 +11,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import java.io.IOException;
 
 @Component
-public class KakaoGeoOpenApi {
+public class KakaoGeoApi {
     private final static String REST_API_KEY = "KakaoAK 00fe8b530605b8965d56229072117e02";
 
     private final KakaoGeoService service;
 
-    public KakaoGeoOpenApi() {
+    public KakaoGeoApi() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://dapi.kakao.com/v2/local/geo/")
                 .addConverterFactory(GsonConverterFactory.create())

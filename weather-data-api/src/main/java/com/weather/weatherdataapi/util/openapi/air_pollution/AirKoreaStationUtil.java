@@ -5,8 +5,8 @@ import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionStationRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationOpenApi;
-import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoOpenApi;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
+import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,8 +22,8 @@ import java.util.List;
 @Component
 public class AirKoreaStationUtil {
 
-    private final AirKoreaStationOpenApi airKoreaStationOpenApi;
-    private final KakaoGeoOpenApi kakaoGeoOpenApi;
+    private final AirKoreaStationApi airKoreaStationOpenApi;
+    private final KakaoGeoApi kakaoGeoOpenApi;
     private final AirPollutionStationRepository airPollutionStationRepository;
     private final RegionRepository regionRepository;
 

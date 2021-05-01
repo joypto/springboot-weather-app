@@ -11,12 +11,12 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class AirKoreaStationOpenApi {
+public class AirKoreaStationApi {
 
     private final AirKoreaStationService service;
     private final String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
-    public AirKoreaStationOpenApi() {
+    public AirKoreaStationApi() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/B552584/MsrstnInfoInqireSvc/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())

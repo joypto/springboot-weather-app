@@ -7,9 +7,9 @@ import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionOpenApi;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationOpenApi;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +21,8 @@ public class AirPollutionService {
 
     private final AirPollutionInfoRepository airPollutionRepository;
 
-    private final AirKoreaAirPollutionOpenApi airKoreaAirPollutionOpenApi;
-    private final AirKoreaStationOpenApi airKoreaStationOpenApi;
+    private final AirKoreaAirPollutionApi airKoreaAirPollutionOpenApi;
+    private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
 
     private final RegionRepository regionRepository;

@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util.openapi;
+package com.weather.weatherdataapi.util.openapi.geo.naver;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import org.json.simple.JSONArray;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class ReverseGeoCoding {
+public class ReverseGeoCodingApi {
 
     public ReverseGeocodingResponseDto reverseGeocoding(String longitude, String latitude) throws ParseException {
         RestTemplate rest = new RestTemplate();

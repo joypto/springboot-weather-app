@@ -11,13 +11,13 @@ import java.util.Optional;
 
 @Slf4j
 @Component
-public class AirKoreaAirPollutionOpenApi {
+public class AirKoreaAirPollutionApi {
 
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     private final AirKoreaAirPollutionService service;
 
-    public AirKoreaAirPollutionOpenApi() {
+    public AirKoreaAirPollutionApi() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())

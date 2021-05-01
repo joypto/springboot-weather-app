@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util.openapi.weatherGather;
+package com.weather.weatherdataapi.util.openapi.weather;
 
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
@@ -11,7 +11,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 @Component
-public class WeatherGatherApi {
+public class WeatherApi {
     public String callWeather(CoordinateDto requestDto) throws IOException{
         StringBuilder result = new StringBuilder();
         String lat= requestDto.getLatitude();

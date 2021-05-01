@@ -5,7 +5,7 @@ import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
-import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaOpenApi;
+import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,7 +17,7 @@ public class CoronaService {
 
     private final CoronaInfoRepository coronaRepository;
 
-    private final GovCoronaOpenApi govCoronaOpenApi;
+    private final GovCoronaApi govCoronaOpenApi;
 
     public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
         ICoronaInfo info = govCoronaOpenApi.getInfo();

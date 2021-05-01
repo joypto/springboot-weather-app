@@ -8,7 +8,7 @@ import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.info.WeatherDayInfoRepository;
 import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
-import com.weather.weatherdataapi.util.openapi.weatherGather.WeatherGatherApi;
+import com.weather.weatherdataapi.util.openapi.weather.WeatherApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -24,7 +24,7 @@ import java.util.Locale;
 @RequiredArgsConstructor
 @Service
 public class WeatherService {
-    private final WeatherGatherApi weatherGatherApi;
+    private final WeatherApi weatherGatherApi;
     private final WeatherWeekInfoRepository weekInfoRepository;
     private final WeatherDayInfoRepository dayInfoRepository;
 
