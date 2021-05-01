@@ -2,7 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.CoronaInfoRepository;
+import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaOpenApi;

@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.repository;
+package com.weather.weatherdataapi.repository.info;
 
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import org.springframework.data.jpa.repository.JpaRepository;

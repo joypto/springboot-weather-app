@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.LivingHealthInfoRepository;
+import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

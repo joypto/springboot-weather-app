@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.AirPollutionInfoRepository;
+import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
