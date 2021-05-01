@@ -24,7 +24,7 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
-public class OpenApiController {
+public class WeatherDataController {
 
     private final WeatherService openApiService;
     private final LivingHealthService livingHealthWeatherService;
