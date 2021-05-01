@@ -82,6 +82,11 @@ public class RegionService {
         ClassPathResource regionCsvResource = new ClassPathResource("data/region.csv");
         List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getFile(), RegionCsvVO.getSchema());
 
+        // 레포지토리가 비어있다면 초기화가 되어있지 않다고 간주합니다.
+        if (bigRegionRepository.count() == 0 && smallRegionRepository.count() == 0) {
+            return false;
+        }
+
         for (RegionCsvVO regionVO : regionList) {
 
             // DB에 존재하는지 확인합니다.
