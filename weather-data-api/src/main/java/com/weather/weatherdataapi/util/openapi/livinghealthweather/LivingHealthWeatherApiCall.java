@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
 import lombok.RequiredArgsConstructor;
@@ -55,7 +55,7 @@ public class LivingHealthWeatherApiCall {
         String admcode = region.getAdmCode().toString();
 
         String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getOakPollenRiskIdx",  "LivingWthrIdxService01/getUVIdx"};
-        LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
+        LivingHealthInfo livingHealthWeather = new LivingHealthInfo();
         if (region.getLivingHealthWeather() != null) {
             livingHealthWeather = region.getLivingHealthWeather();
         }

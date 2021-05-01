@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import lombok.Getter;
 
@@ -38,7 +38,7 @@ public class Region {
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "living_health_wth_id")
-    private LivingHealthWeather livingHealthWeather;
+    private LivingHealthInfo livingHealthWeather;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
@@ -55,7 +55,7 @@ public class Region {
     @JoinColumn(name = "air_pollution_id")
     private AirPollutionInfo airPollution;
 
-    public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
+    public void updateLivingHealthWeather(LivingHealthInfo livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
     }
 

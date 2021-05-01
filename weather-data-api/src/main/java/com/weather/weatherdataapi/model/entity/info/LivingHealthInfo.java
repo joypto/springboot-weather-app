@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LivingHealthWeather {
+public class LivingHealthInfo {
 
     @JsonIgnore
     @Id

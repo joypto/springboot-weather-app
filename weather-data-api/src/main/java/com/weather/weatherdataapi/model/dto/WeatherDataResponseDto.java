@@ -15,7 +15,7 @@ public class WeatherDataResponseDto {
 
     private Region region;
 
-    private LivingHealthWeather livingHealthWeather;
+    private LivingHealthInfo livingHealthWeather;
 
     private WeatherWeekInfo weekInfo;
 
