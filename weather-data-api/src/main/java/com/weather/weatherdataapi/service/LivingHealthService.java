@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.util.HealthWthIdxConvertScore;
 import com.weather.weatherdataapi.util.LivingWthIdxConvertScore;

@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.model.dto;
+package com.weather.weatherdataapi.model.dto.responsedto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

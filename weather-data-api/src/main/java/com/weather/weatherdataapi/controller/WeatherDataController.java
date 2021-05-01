@@ -1,6 +1,10 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.*;
+import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;

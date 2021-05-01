@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.ScoreRequestDto;
-import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

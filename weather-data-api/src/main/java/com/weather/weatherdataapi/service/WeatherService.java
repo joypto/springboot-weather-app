@@ -1,8 +1,8 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
-import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;

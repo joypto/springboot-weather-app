@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.util;
 
-import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -8,10 +8,6 @@ import org.json.simple.parser.ParseException;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.List;
 
 @Component
 public class ReverseGeoCoding {

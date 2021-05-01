@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.model.dto;
+package com.weather.weatherdataapi.model.dto.responsedto;
 
 import com.weather.weatherdataapi.model.entity.*;
 import com.weather.weatherdataapi.model.entity.info.*;

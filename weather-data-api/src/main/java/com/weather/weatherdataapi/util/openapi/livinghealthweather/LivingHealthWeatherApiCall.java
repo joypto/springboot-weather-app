@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
-import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.LivingHealthInfoRepository;
