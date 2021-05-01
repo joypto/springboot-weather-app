@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface CoronaRepository extends JpaRepository<CoronaInfo, Long> {
+public interface CoronaInfoRepository extends JpaRepository<CoronaInfo, Long> {
 
     Optional<CoronaInfo> findByBigRegion(String bigRegion);
 }
