@@ -39,7 +39,7 @@ public class RegionService {
             for (RegionCsvVO regionVO : regionList) {
                 // BigRegion 에 대한 정보입니다.
                 // BigRegion 정보에 대한 행은 smallRegion 필드의 값이 비어있는 행입니다.
-                if (regionVO.getSmallRegion().trim().length() == 0) {
+                if (regionVO.isBigRegionInfo() == true) {
 
                     // 이미 존재한다면 추가하지 않습니다.
                     if (bigRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null) {
