@@ -45,14 +45,20 @@ public class DayInfo {
     private List<String> dailyTime;
 
 
+    // 날씨 아이콘
+    @ElementCollection
+    private List<String> weatherIcon;
+
+
 
 
     @Builder
-    public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer, List<String> dailyTime){
+    public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer, List<String> dailyTime, List<String> weatherIcon){
         this.tmp=tmp;
         this.weather=weather;
         this.weatherDes=weatherDes;
         this.rainPer=rainPer;
         this.dailyTime = dailyTime;
+        this.weatherIcon = weatherIcon;
     }
 }

@@ -64,6 +64,8 @@ public class OpenApiService {
                 List<String> hour_rainPer = new ArrayList<>();
                 List<String> hour_time = new ArrayList<>();
                 List<String> windSpeed = new ArrayList<>();
+                List<String> weatherIcon = new ArrayList<>();
+                List<String> hour_weatherIcon = new ArrayList<>();
 
                 // 주간 날씨 파씽
                 JSONArray array = (JSONArray) jsonObj.get("daily");
@@ -80,6 +82,7 @@ public class OpenApiService {
                     jObj2b = (JSONObject) jObj2.get(0);
                     weather.add(jObj2b.get("main").toString());
                     weatherDes.add(jObj2b.get("description").toString());
+                    weatherIcon.add(jObj2b.get("icon").toString());
                 }
                 WeekInfo weekInfo = WeekInfo.builder()
                         .maxTmp(maxTmp)
@@ -91,6 +94,7 @@ public class OpenApiService {
                         .rainPer(rainPer)
                         .rain(rain)
                         .windSpeed(windSpeed)
+                        .weatherIcon(weatherIcon)
                         .build();
 
                 // 파싱한 값 저장하고 매핑하기
@@ -118,6 +122,7 @@ public class OpenApiService {
                     hour_weather.add(jObj2b.get("main").toString());
                     // 날씨 설명
                     hour_weatherDes.add(jObj2b.get("description").toString());
+                    hour_weatherIcon.add(jObj2b.get("icon").toString());
                 }
                 DayInfo dayInfo = DayInfo.builder()
                         .rainPer(hour_rainPer)
@@ -125,6 +130,7 @@ public class OpenApiService {
                         .weather(hour_weather)
                         .weatherDes(hour_weatherDes)
                         .dailyTime(hour_time)
+                        .weatherIcon(hour_weatherIcon)
                         .build();
 
                 // 파싱한 값 저장, 매핑
@@ -181,22 +187,31 @@ public class OpenApiService {
                 getHumidity.add("10");
             }
 
-            switch (region.getWeekInfo().getWeatherDes().get(i)){
-                case "clear sky":
-                case "few clouds":
+            switch (region.getWeekInfo().getWeatherIcon().get(i)){
+                case "01d":
+                case "01n":
+                case "02d":
+                case "02n":
                     getWeather.add("100");
                     break;
-                case "scattered clouds":
-                case "broken clouds":
+                case "03d":
+                case "03n":
+                case "04d":
+                case "04n":
                     getWeather.add("70");
                     break;
-                case "shower rain":
-                case "rain":
-                case "snow":
+                case "09d":
+                case "09n":
+                case "10d":
+                case "10n":
+                case "13d":
+                case "13n":
                     getWeather.add("40");
                     break;
-                case "thunderstorm":
-                case "mist":
+                case "11d":
+                case "11n":
+                case "50d":
+                case "50n":
                     getWeather.add("10");
                     break;
 
@@ -208,7 +223,10 @@ public class OpenApiService {
         scoreResultResponseDto.setHumidityResult(getHumidity);
         scoreResultResponseDto.setWindResult(getWind);
 
-       
+        System.out.println(scoreResultResponseDto.getRainPerResult());
+        System.out.println(scoreResultResponseDto.getWeatherResult());
+        System.out.println(scoreResultResponseDto.getHumidityResult());
+        System.out.println(scoreResultResponseDto.getWindResult());
 
         return scoreResultResponseDto;
     }

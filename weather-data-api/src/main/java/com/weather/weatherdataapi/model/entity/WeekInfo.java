@@ -53,6 +53,10 @@ public class WeekInfo extends Timestamped{
     @ElementCollection
     private List<String> windSpeed;
 
+    // 날씨 아이콘
+    @ElementCollection
+    private List<String> weatherIcon;
+
     // 강수량
     @JsonIgnore
     @ElementCollection
@@ -61,7 +65,7 @@ public class WeekInfo extends Timestamped{
 
 
     @Builder
-    public WeekInfo(List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain, List<String> windSpeed){
+    public WeekInfo(List<String> weatherIcon,List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain, List<String> windSpeed){
         this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;
@@ -71,5 +75,6 @@ public class WeekInfo extends Timestamped{
         this.rainPer = rainPer;
         this.rain = rain;
         this.windSpeed = windSpeed;
+        this.weatherIcon = weatherIcon;
     }
 }
