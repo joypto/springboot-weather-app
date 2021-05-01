@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class AirPollution {
+public class AirPollutionInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class AirPollution {
     @Column
     private Integer pm25Value;
 
-    public AirPollution(AirKoreaAirPollutionItem item, Region region) {
+    public AirPollutionInfo(AirKoreaAirPollutionItem item, Region region) {
         this.region = region;
         this.dateTime = LocalDateTime.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.pm10Value = Integer.parseInt(item.getPm10Value());

@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.entity.Corona;
+import com.weather.weatherdataapi.model.entity.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.CoronaRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
@@ -27,26 +27,26 @@ public class CoronaService {
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
 
-            Corona corona = new Corona(item);
+            CoronaInfo corona = new CoronaInfo(item);
             coronaRepository.save(corona);
         }
 
         log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public Corona getInfoByRegion(Region region) {
+    public CoronaInfo getInfoByRegion(Region region) {
         return coronaRepository.findByBigRegion(region.getBigRegion()).orElseThrow(() -> new RuntimeException("해당하는 지역의 정보가 없습니다."));
     }
 
-    public Corona getInfoByRegion(String bigRegion) {
+    public CoronaInfo getInfoByRegion(String bigRegion) {
         return coronaRepository.findByBigRegion(bigRegion).orElseThrow(() -> new RuntimeException("해당하는 지역의 정보가 없습니다."));
     }
 
-    public Corona getTotalInfo() {
+    public CoronaInfo getTotalInfo() {
         return getInfoByRegion("합계");
     }
 
-    public int calculateScore(Corona corona) {
+    public int calculateScore(CoronaInfo corona) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;

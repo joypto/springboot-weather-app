@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.entity.AirPollution;
+import com.weather.weatherdataapi.model.entity.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;
@@ -27,7 +27,7 @@ public class AirPollutionService {
 
     private final RegionRepository regionRepository;
 
-    public AirPollution fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, Region region) {
+    public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, Region region) {
         Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(stationName);
 
         if (fetchedResponse.isPresent() == false) {
@@ -36,7 +36,7 @@ public class AirPollutionService {
 
         AirKoreaAirPollutionItem response = fetchedResponse.get();
 
-        AirPollution airPollution = new AirPollution(response, region);
+        AirPollutionInfo airPollution = new AirPollutionInfo(response, region);
         airPollutionRepository.save(airPollution);
 
         region.updateAirPollution(airPollution);
@@ -44,7 +44,7 @@ public class AirPollutionService {
         return airPollution;
     }
 
-    public AirPollution getInfoByRegion(Region region) {
+    public AirPollutionInfo getInfoByRegion(Region region) {
         String stationName = airKoreaStationUtil.getNearestStationNameByRegion(region);
 
         return fetchAndStoreAirPollutionInfoUsingOpenApi(stationName, region);
@@ -59,7 +59,7 @@ public class AirPollutionService {
         return fetchedRespense.get().getStationName();
     }
 
-    public void calculateScore(ScoreResultResponseDto responseDto, AirPollution airPollution) {
+    public void calculateScore(ScoreResultResponseDto responseDto, AirPollutionInfo airPollution) {
         final int PM10_GOOD = 30;
         final int PM10_NORMAL = 80;
         final int PM10_BAD = 150;

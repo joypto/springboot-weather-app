@@ -1,8 +1,8 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.*;
-import com.weather.weatherdataapi.model.entity.AirPollution;
-import com.weather.weatherdataapi.model.entity.Corona;
+import com.weather.weatherdataapi.model.entity.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.*;
@@ -56,8 +56,8 @@ public class OpenApiController {
         openApiService.callApi(coordinateDto, address, region);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
         airPollutionService.getInfoByRegion(region);
-        Corona coronaLocal = coronaService.getInfoByRegion(region);
-        Corona coronaTotal = coronaService.getTotalInfo();
+        CoronaInfo coronaLocal = coronaService.getInfoByRegion(region);
+        CoronaInfo coronaTotal = coronaService.getTotalInfo();
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = ScoreRequestDto.hiddenBuilder()
@@ -91,21 +91,21 @@ public class OpenApiController {
     }
 
     @GetMapping("/api/corona/data")
-    public Corona getCorona(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
+    public CoronaInfo getCorona(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
         return coronaService.getInfoByRegion(reverseGeocodingResponseDto.getBigRegion());
     }
 
     @GetMapping("/api/air_pollution/data")
-    public AirPollution getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
+    public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
         Region region = regionRepository.findByBigRegionAndSmallRegion(reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion()).get(0);
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegionName(region.getBigRegion(), region.getSmallRegion());
 
-        AirPollution airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(nearestStationName, region);
+        AirPollutionInfo airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(nearestStationName, region);
 
         return airPollution;
     }

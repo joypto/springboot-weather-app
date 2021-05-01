@@ -20,15 +20,15 @@ public class WeatherDataResponseDto {
 
     private DayInfo dayInfo;
 
-    private AirPollution airPollution;
+    private AirPollutionInfo airPollution;
 
-    private Corona corona;
+    private CoronaInfo corona;
 
-    private Corona coronaTotal;
+    private CoronaInfo coronaTotal;
 
     private int score;
 
-    public WeatherDataResponseDto(Region region, Corona corona, Corona coronaTotal, int score) {
+    public WeatherDataResponseDto(Region region, CoronaInfo corona, CoronaInfo coronaTotal, int score) {
         this.region = region;
         this.livingHealthWeather = region.getLivingHealthWeather();
         this.weekInfo = region.getWeekInfo();

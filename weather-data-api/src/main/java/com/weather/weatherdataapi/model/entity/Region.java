@@ -49,7 +49,7 @@ public class Region {
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "air_pollution_id")
-    private AirPollution airPollution;
+    private AirPollutionInfo airPollution;
 
     public void updateLivingHealthWeather(LivingHealthWeather livingHealthWeather) {
         this.livingHealthWeather = livingHealthWeather;
@@ -64,7 +64,7 @@ public class Region {
         this.dayInfo = dayInfo;
     }
 
-    public void updateAirPollution(AirPollution airPollution) {
+    public void updateAirPollution(AirPollutionInfo airPollution) {
         this.airPollution = airPollution;
     }
 }

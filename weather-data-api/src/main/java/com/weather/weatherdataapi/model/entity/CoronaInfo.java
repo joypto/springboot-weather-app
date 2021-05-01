@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Corona {
+public class CoronaInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,7 +32,7 @@ public class Corona {
     @Column
     private Integer newForeignCaseCount;
 
-    public Corona(ICoronaItem item) {
+    public CoronaInfo(ICoronaItem item) {
         String convertedFullName = RegionUtil.convertAliasToFullName(item.getRegionName());
         this.bigRegion = convertedFullName != null ? convertedFullName : item.getRegionName();
         
