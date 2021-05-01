@@ -33,4 +33,9 @@ public class RegionCsvVO {
 
         return schema;
     }
+
+    public boolean isBigRegionInfo() {
+        return smallRegion.trim().length() == 0;
+    }
+
 }
