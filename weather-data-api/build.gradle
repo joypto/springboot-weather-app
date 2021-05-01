@@ -35,7 +35,7 @@ dependencies {
     implementation group: 'com.squareup.retrofit2', name: 'adapter-rxjava2', version: '2.9.0'
 
     /* csv */
-    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.12.1'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.8.6'
 }
 
 test {
