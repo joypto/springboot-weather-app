@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.entity.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.AirPollutionRepository;
 import com.weather.weatherdataapi.repository.RegionRepository;

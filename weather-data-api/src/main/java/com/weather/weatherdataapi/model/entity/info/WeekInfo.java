@@ -1,6 +1,8 @@
-package com.weather.weatherdataapi.model.entity;
+package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WeekInfo extends Timestamped{
+public class WeekInfo extends Timestamped {
 
     @JsonIgnore
     @Id

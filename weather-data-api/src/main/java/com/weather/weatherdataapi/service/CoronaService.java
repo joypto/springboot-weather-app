@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.entity.CoronaInfo;
+import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.CoronaRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;

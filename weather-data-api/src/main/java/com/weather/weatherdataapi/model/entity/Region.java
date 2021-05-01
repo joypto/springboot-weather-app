@@ -1,6 +1,10 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.info.DayInfo;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.info.WeekInfo;
 import lombok.Getter;
 
 import javax.persistence.*;

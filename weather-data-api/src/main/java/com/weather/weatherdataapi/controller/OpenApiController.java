@@ -1,8 +1,8 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.*;
-import com.weather.weatherdataapi.model.entity.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.CoronaInfo;
+import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.service.*;

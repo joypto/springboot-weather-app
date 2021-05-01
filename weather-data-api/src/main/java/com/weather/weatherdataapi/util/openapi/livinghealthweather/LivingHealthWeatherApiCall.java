@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.livinghealthweather;
 
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.entity.LivingHealthWeather;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthWeather;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.LivingHealthWeatherRepository;
 import lombok.RequiredArgsConstructor;
@@ -95,7 +95,7 @@ public class LivingHealthWeatherApiCall {
             rd.close();
             conn.disconnect();
             String data = sb.toString();
-            
+
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(data);
             JSONObject response = (JSONObject) jsonObject.get("response");

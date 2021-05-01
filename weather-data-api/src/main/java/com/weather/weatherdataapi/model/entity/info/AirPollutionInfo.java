@@ -1,6 +1,7 @@
-package com.weather.weatherdataapi.model.entity;
+package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

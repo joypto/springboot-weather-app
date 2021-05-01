@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.dto;
 
 import com.weather.weatherdataapi.model.entity.*;
+import com.weather.weatherdataapi.model.entity.info.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

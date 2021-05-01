@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.model.entity;
+package com.weather.weatherdataapi.model.entity.info;
 
 import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
