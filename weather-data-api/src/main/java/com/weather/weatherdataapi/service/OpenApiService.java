@@ -171,11 +171,11 @@ public class OpenApiService {
             }
 
             // 날짜별 습도 변환점수
-            if (40d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 60d) {
+            if (40d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) && Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 60d) {
                 getHumidity.add("100");
-            }else if(30d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 70d){
+            }else if(30d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) && Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 70d){
                 getHumidity.add("70");
-            }else if(20d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) || Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 80d){
+            }else if(20d<=Double.parseDouble(region.getWeekInfo().getHumidity().get(i)) && Double.parseDouble(region.getWeekInfo().getHumidity().get(i))<= 80d){
                 getHumidity.add("40");
             }else{
                 getHumidity.add("10");
@@ -208,6 +208,7 @@ public class OpenApiService {
         scoreResultResponseDto.setHumidityResult(getHumidity);
         scoreResultResponseDto.setWindResult(getWind);
 
+       
 
         return scoreResultResponseDto;
     }
