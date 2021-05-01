@@ -12,6 +12,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -76,4 +77,24 @@ public class RegionService {
             log.error("initializeRegionTable::초기화하는 도중 문제가 발생하였습니다.");
         }
     }
+
+    public boolean checkRegionTableInitialized() throws IOException {
+        ClassPathResource regionCsvResource = new ClassPathResource("data/region.csv");
+        List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getFile(), RegionCsvVO.getSchema());
+
+        for (RegionCsvVO regionVO : regionList) {
+
+            // DB에 존재하는지 확인합니다.
+            boolean isAlreadyExist = regionVO.isBigRegionInfo() ?
+                    bigRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null :
+                    smallRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null;
+
+            if (isAlreadyExist == false) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
 }
