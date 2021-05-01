@@ -4,7 +4,7 @@ import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
-import com.weather.weatherdataapi.model.entity.info.WeekInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.DayInfoRepository;
 import com.weather.weatherdataapi.repository.WeekInfoRepository;
@@ -84,7 +84,7 @@ public class OpenApiService {
                     weatherDes.add(jObj2b.get("description").toString());
                     weatherIcon.add(jObj2b.get("icon").toString());
                 }
-                WeekInfo weekInfo = WeekInfo.builder()
+                WeatherWeekInfo weekInfo = WeatherWeekInfo.builder()
                         .maxTmp(maxTmp)
                         .minTmp(minTmp)
                         .tmp(tmp)

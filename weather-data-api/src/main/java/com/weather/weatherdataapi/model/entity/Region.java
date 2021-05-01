@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthWeather;
-import com.weather.weatherdataapi.model.entity.info.WeekInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -43,7 +43,7 @@ public class Region {
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "week_data_id")
-    private WeekInfo weekInfo;
+    private WeatherWeekInfo weekInfo;
 
     @JsonIgnore
     @OneToOne(fetch = FetchType.EAGER)
@@ -59,7 +59,7 @@ public class Region {
         this.livingHealthWeather = livingHealthWeather;
     }
 
-    public void updateWeekInfo(WeekInfo weekInfo) {
+    public void updateWeekInfo(WeatherWeekInfo weekInfo) {
         this.weekInfo = weekInfo;
     }
 

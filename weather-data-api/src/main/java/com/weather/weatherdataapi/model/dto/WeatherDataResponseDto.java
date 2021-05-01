@@ -17,7 +17,7 @@ public class WeatherDataResponseDto {
 
     private LivingHealthWeather livingHealthWeather;
 
-    private WeekInfo weekInfo;
+    private WeatherWeekInfo weekInfo;
 
     private WeatherDayInfo dayInfo;
 

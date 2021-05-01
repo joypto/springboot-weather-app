@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WeekInfo extends Timestamped {
+public class WeatherWeekInfo extends Timestamped {
 
     @JsonIgnore
     @Id
@@ -67,7 +67,7 @@ public class WeekInfo extends Timestamped {
 
 
     @Builder
-    public WeekInfo(List<String> weatherIcon,List<String> maxTmp,List<String> minTmp,List<String> tmp,List<String> humidity,List<String> weather,List<String> weatherDes,List<String> rainPer,List<String> rain, List<String> windSpeed){
+    public WeatherWeekInfo(List<String> weatherIcon, List<String> maxTmp, List<String> minTmp, List<String> tmp, List<String> humidity, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> rain, List<String> windSpeed){
         this.maxTmp = maxTmp;
         this.minTmp = minTmp;
         this.tmp = tmp;
