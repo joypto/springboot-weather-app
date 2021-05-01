@@ -19,7 +19,7 @@ public class WeatherDataResponseDto {
 
     private WeekInfo weekInfo;
 
-    private DayInfo dayInfo;
+    private WeatherDayInfo dayInfo;
 
     private AirPollutionInfo airPollution;
 

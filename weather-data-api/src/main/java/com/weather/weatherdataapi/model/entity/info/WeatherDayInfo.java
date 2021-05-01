@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class DayInfo {
+public class WeatherDayInfo {
     @JsonIgnore
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY)
@@ -40,12 +40,9 @@ public class DayInfo {
     // 강수확률
     @ElementCollection
     private List<String> rainPer;
-
     // 강수확률
     @ElementCollection
     private List<String> dailyTime;
-
-
     // 날씨 아이콘
     @ElementCollection
     private List<String> weatherIcon;
@@ -54,7 +51,7 @@ public class DayInfo {
 
 
     @Builder
-    public DayInfo(List<String> tmp,List<String> weather,List<String> weatherDes, List<String> rainPer, List<String> dailyTime, List<String> weatherIcon){
+    public WeatherDayInfo(List<String> tmp, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> dailyTime, List<String> weatherIcon){
         this.tmp=tmp;
         this.weather=weather;
         this.weatherDes=weatherDes;

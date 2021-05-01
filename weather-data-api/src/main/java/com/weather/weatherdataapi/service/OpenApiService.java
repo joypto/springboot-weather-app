@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.model.dto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.entity.info.DayInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeekInfo;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.DayInfoRepository;
@@ -124,7 +124,7 @@ public class OpenApiService {
                     hour_weatherDes.add(jObj2b.get("description").toString());
                     hour_weatherIcon.add(jObj2b.get("icon").toString());
                 }
-                DayInfo dayInfo = DayInfo.builder()
+                WeatherDayInfo dayInfo = WeatherDayInfo.builder()
                         .rainPer(hour_rainPer)
                         .tmp(hour_tmp)
                         .weather(hour_weather)
