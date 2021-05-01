@@ -16,8 +16,6 @@ public class LivingHealthWeatherService {
         scoreResultResponseDto.setAsthmaResult(healthWthIdxConvertToScore(region.getLivingHealthWeather().getAsthmaToday()));
         // 꽃가루지수 점수변환
         scoreResultResponseDto.setPollenRiskResult(healthWthIdxConvertToScore(region.getLivingHealthWeather().getOakPollenRiskToday()));
-        // 감기가능지수 점수변환
-        scoreResultResponseDto.setColdResult(healthWthIdxConvertToScore(region.getLivingHealthWeather().getColdToday()));
         // 식중독지수 점수변환
         if (Integer.valueOf(region.getLivingHealthWeather().getFoodPoisonToday()) <= 55) {
             scoreResultResponseDto.setFoodPoisonResult(100);

@@ -54,7 +54,7 @@ public class LivingHealthWeatherApiCall {
         // 해당 시/구 주소를 가진 Region의 행정동 주소 불러오기
         String admcode = region.getAdmCode().toString();
 
-        String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getColdIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "HealthWthrIdxService/getPinePollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
+        String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getOakPollenRiskIdx",  "LivingWthrIdxService01/getUVIdx"};
         LivingHealthWeather livingHealthWeather = new LivingHealthWeather();
         if (region.getLivingHealthWeather() != null) {
             livingHealthWeather = region.getLivingHealthWeather();
@@ -95,7 +95,7 @@ public class LivingHealthWeatherApiCall {
             rd.close();
             conn.disconnect();
             String data = sb.toString();
-
+            
             JSONParser parser = new JSONParser();
             JSONObject jsonObject = (JSONObject) parser.parse(data);
             JSONObject response = (JSONObject) jsonObject.get("response");
@@ -125,14 +125,6 @@ public class LivingHealthWeatherApiCall {
                 livingHealthWeather.setOakPollenRiskToday(today);
                 livingHealthWeather.setOakPollenRiskTomorrow(tomorrow);
                 livingHealthWeather.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "HealthWthrIdxService/getPinePollenRiskIdx") {
-                livingHealthWeather.setPinePollenRiskToday(today);
-                livingHealthWeather.setPinePollenRiskTomorrow(tomorrow);
-                livingHealthWeather.setPinePollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "HealthWthrIdxService/getColdIdx") {
-                livingHealthWeather.setColdToday(today);
-                livingHealthWeather.setColdTomorrow(tomorrow);
-                livingHealthWeather.setColdTheDayAfterTomorrow(theDayAfterTomorrow);
             } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
                 livingHealthWeather.setFoodPoisonToday(today);
                 livingHealthWeather.setFoodPoisonTomorrow(tomorrow);

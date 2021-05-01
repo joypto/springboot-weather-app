@@ -51,24 +51,6 @@ public class LivingHealthWeather {
     private String oakPollenRiskTheDayAfterTomorrow;
 
     @Column
-    private String pinePollenRiskToday;
-
-    @Column
-    private String pinePollenRiskTomorrow;
-
-    @Column
-    private String pinePollenRiskTheDayAfterTomorrow;
-
-    @Column
-    private String coldToday;
-
-    @Column
-    private String coldTomorrow;
-
-    @Column
-    private String coldTheDayAfterTomorrow;
-
-    @Column
     private String foodPoisonToday;
 
     @Column
