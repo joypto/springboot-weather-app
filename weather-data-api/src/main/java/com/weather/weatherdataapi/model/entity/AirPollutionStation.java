@@ -17,11 +17,6 @@ public class AirPollutionStation extends Timestamped {
     private Long id;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region_id")
-    private Region region;
-
-    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "small_region_id")
     private SmallRegion smallRegion;
@@ -29,8 +24,8 @@ public class AirPollutionStation extends Timestamped {
     @Column(name = "station_name")
     private String stationName;
 
-    public AirPollutionStation(Region region, String stationName) {
-        this.region = region;
+    public AirPollutionStation(SmallRegion smallRegion, String stationName) {
+        this.smallRegion = smallRegion;
         this.stationName = stationName;
     }
 }

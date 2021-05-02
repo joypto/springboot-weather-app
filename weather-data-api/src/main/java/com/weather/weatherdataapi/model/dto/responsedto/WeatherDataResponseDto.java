@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.dto.responsedto;
 
-import com.weather.weatherdataapi.model.entity.*;
+import com.weather.weatherdataapi.model.entity.BigRegion;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,7 +14,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WeatherDataResponseDto {
 
-    private Region region;
+    private BigRegion bigRegion;
+
+    private SmallRegion smallRegion;
 
     private LivingHealthInfo livingHealthWeather;
 
@@ -25,19 +28,21 @@ public class WeatherDataResponseDto {
 
     private CoronaInfo corona;
 
-    private CoronaInfo coronaTotal;
+    private int coronaTotalNewCaseCount;
 
     private int score;
 
-    public WeatherDataResponseDto(Region region, CoronaInfo corona, CoronaInfo coronaTotal, int score) {
-        this.region = region;
-        this.livingHealthWeather = region.getLivingHealthWeather();
-        this.weekInfo = region.getWeekInfo();
-        this.dayInfo = region.getDayInfo();
-        this.airPollution = region.getAirPollution();
+    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, CoronaInfo corona, int coronaTotalNewCaseCount, int score) {
+        this.bigRegion = bigRegion;
+        this.smallRegion = smallRegion;
         this.corona = corona;
-        this.coronaTotal = coronaTotal;
+        this.coronaTotalNewCaseCount = coronaTotalNewCaseCount;
         this.score = score;
+
+        this.livingHealthWeather = smallRegion.getLivingHealthInfoList().get(0);
+        this.weekInfo = smallRegion.getWeatherWeekInfoList().get(0);
+        this.dayInfo = smallRegion.getWeatherDayInfoList().get(0);
+        this.airPollution = smallRegion.getAirPollutionInfoList().get(0);
     }
 
 }

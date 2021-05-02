@@ -1,15 +1,14 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
-import com.weather.weatherdataapi.repository.RegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,9 @@ public class AirPollutionService {
     private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
 
-    private final RegionRepository regionRepository;
-
-    public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(String stationName, Region region) {
-        Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(stationName);
+    public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
+        String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
+        Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
 
         if (fetchedResponse.isPresent() == false) {
             return null;
@@ -36,18 +34,16 @@ public class AirPollutionService {
 
         AirKoreaAirPollutionItem response = fetchedResponse.get();
 
-        AirPollutionInfo airPollution = new AirPollutionInfo(response, region);
+        AirPollutionInfo airPollution = new AirPollutionInfo(response, smallRegion);
         airPollutionRepository.save(airPollution);
-
-        region.updateAirPollution(airPollution);
 
         return airPollution;
     }
 
-    public AirPollutionInfo getInfoByRegion(Region region) {
-        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(region);
+    public AirPollutionInfo getInfoByRegion(SmallRegion smallRegion) {
+        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
 
-        return fetchAndStoreAirPollutionInfoUsingOpenApi(stationName, region);
+        return fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
     }
 
     public String getStationNameUsingCoords(String tmX, String tmY) {
