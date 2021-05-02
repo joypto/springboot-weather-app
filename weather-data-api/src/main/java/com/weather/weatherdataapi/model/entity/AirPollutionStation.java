@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class AirPollutionStation {
+public class AirPollutionStation extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,15 +17,15 @@ public class AirPollutionStation {
     private Long id;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region_id")
-    private Region region;
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
 
     @Column(name = "station_name")
     private String stationName;
 
-    public AirPollutionStation(Region region, String stationName) {
-        this.region = region;
+    public AirPollutionStation(SmallRegion smallRegion, String stationName) {
+        this.smallRegion = smallRegion;
         this.stationName = stationName;
     }
 }

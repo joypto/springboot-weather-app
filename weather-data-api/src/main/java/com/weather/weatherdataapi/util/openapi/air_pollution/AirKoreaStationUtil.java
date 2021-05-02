@@ -1,18 +1,17 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution;
 
 import com.weather.weatherdataapi.model.entity.AirPollutionStation;
-import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.AirPollutionStationRepository;
-import com.weather.weatherdataapi.repository.RegionRepository;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
+import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
+import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
@@ -25,33 +24,33 @@ public class AirKoreaStationUtil {
     private final AirKoreaStationApi airKoreaStationOpenApi;
     private final KakaoGeoApi kakaoGeoOpenApi;
     private final AirPollutionStationRepository airPollutionStationRepository;
-    private final RegionRepository regionRepository;
+    private final SmallRegionRepository smallRegionRepository;
 
     private Dictionary<String, Dictionary<String, String>> regionNameStationNameDict;
 
-    @PostConstruct
-    private void InitializeRegionStationNameDict() {
+    public void InitializeRegionStationNameDict() {
         log.info("InitializeRegionStationNameDict::각 지역에 대응되는 미세먼지 측정소 매핑을 시작합니다.");
         long startTime = System.currentTimeMillis();
 
         try {
             regionNameStationNameDict = new Hashtable<>();
 
-            List<Region> allRegionList = regionRepository.findAll();
+            List<SmallRegion> allSmallRegionList = smallRegionRepository.findAll();
 
             // 이미 DB에 측정소 정보가 저장되어 있다면, DB에 저장되어 있는 정보를 그대로 가져다 사용하면 됩니다.
-            if (allRegionList.size() == airPollutionStationRepository.count()) {
+            if (allSmallRegionList.size() == airPollutionStationRepository.count()) {
                 log.info("InitializeRegionStationNameDict::모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
 
-                for (Region region : allRegionList) {
-                    AirPollutionStation station = airPollutionStationRepository.findByRegion(region).orElseThrow(() -> new RuntimeException("해당 지역에 매핑된 측정소 정보가 없습니다."));
+                for (SmallRegion smallRegion : allSmallRegionList) {
+                    AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion).orElseThrow(() -> new RuntimeException("해당 지역에 매핑된 측정소 정보가 없습니다."));
                     String nearestStationName = station.getStationName();
 
                     // BigRegion에 대응되는 SmallRegion을 담을 HashTable이 없다면, 인스턴스를 생성합니다.
-                    if (regionNameStationNameDict.get(region.getBigRegion()) == null)
-                        regionNameStationNameDict.put(region.getBigRegion(), new Hashtable<>());
+                    String bigRegionName = smallRegion.getBigRegion().getBigRegionName();
+                    if (regionNameStationNameDict.get(bigRegionName) == null)
+                        regionNameStationNameDict.put(bigRegionName, new Hashtable<>());
 
-                    regionNameStationNameDict.get(region.getBigRegion()).put(region.getSmallRegion(), nearestStationName);
+                    regionNameStationNameDict.get(bigRegionName).put(smallRegion.getSmallRegionName(), nearestStationName);
                 }
             }
             // 그렇지 않다면 OpenApi를 사용하여 측정소 정보를 매핑해야 합니다.
@@ -59,24 +58,26 @@ public class AirKoreaStationUtil {
             else {
 
                 // 일부분이 이미 저장되어 있던 상태라면, 테이블을 초기화한 뒤 매핑을 시작합니다.
-                if (allRegionList.size() != 0) {
+                if (allSmallRegionList.size() != 0) {
                     log.info("InitializeRegionStationNameDict::DB에 존재하는 매핑된 미세먼지 측정소 정보의 수가 모든 지역의 수와 다릅니다. 테이블을 초기화하고 다시 매핑합니다.");
                     airPollutionStationRepository.deleteAll();
                 }
 
                 // 각 region에 가장 가까운 미세먼지 측정소의 이름을 저장합니다.
-                for (Region region : allRegionList) {
-                    KakaoGeoTranscoordResponseDocument transcoord = kakaoGeoOpenApi.convertWGS84ToWTM(region.getLongitude(), region.getLatitude());
+                for (SmallRegion smallRegion : allSmallRegionList) {
+                    KakaoGeoTranscoordResponseDocument transcoord = kakaoGeoOpenApi.convertWGS84ToWTM(smallRegion.getLongitude(), smallRegion.getLatitude());
                     AirKoreaStationItem airKoreaStationItem = airKoreaStationOpenApi.getResponseItem(transcoord.getX(), transcoord.getY()).orElseThrow(() -> new RuntimeException());
                     String nearestStationName = airKoreaStationItem.getStationName();
 
                     // BigRegion에 대응되는 SmallRegion을 담을 HashTable이 없다면, 인스턴스를 생성합니다.
-                    if (regionNameStationNameDict.get(region.getBigRegion()) == null)
-                        regionNameStationNameDict.put(region.getBigRegion(), new Hashtable<>());
+                    String bigRegionName = smallRegion.getBigRegion().getBigRegionName();
 
-                    regionNameStationNameDict.get(region.getBigRegion()).put(region.getSmallRegion(), nearestStationName);
+                    if (regionNameStationNameDict.get(bigRegionName) == null)
+                        regionNameStationNameDict.put(bigRegionName, new Hashtable<>());
 
-                    AirPollutionStation newStation = new AirPollutionStation(region, nearestStationName);
+                    regionNameStationNameDict.get(bigRegionName).put(smallRegion.getSmallRegionName(), nearestStationName);
+
+                    AirPollutionStation newStation = new AirPollutionStation(smallRegion, nearestStationName);
                     airPollutionStationRepository.save(newStation);
                 }
             }
@@ -91,8 +92,8 @@ public class AirKoreaStationUtil {
         }
     }
 
-    public String getNearestStationNameByRegion(Region region) {
-        return regionNameStationNameDict.get(region.getBigRegion()).get(region.getSmallRegion());
+    public String getNearestStationNameByRegion(SmallRegion region) {
+        return regionNameStationNameDict.get(region.getBigRegion().getBigRegionName()).get(region.getSmallRegionName());
     }
 
     public String getNearestStationNameByRegionName(String bigRegion, String smallRegion) {

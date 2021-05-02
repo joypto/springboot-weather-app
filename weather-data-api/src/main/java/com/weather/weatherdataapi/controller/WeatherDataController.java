@@ -1,19 +1,21 @@
 package com.weather.weatherdataapi.controller;
 
-import com.weather.weatherdataapi.model.dto.*;
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.entity.BigRegion;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
-import com.weather.weatherdataapi.model.entity.Region;
-import com.weather.weatherdataapi.repository.RegionRepository;
+import com.weather.weatherdataapi.repository.BigRegionRepository;
+import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.service.*;
-import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
+import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -33,13 +34,14 @@ public class WeatherDataController {
     private final WeatherService openApiService;
     private final LivingHealthService livingHealthWeatherService;
     private final ScoreService scoreService;
-    private final RegionRepository regionRepository;
     private final LivingHealthApi livingHealthWeatherApiCall;
     private final ReverseGeoCodingApi reverseGeoCoding;
     private final CoronaService coronaService;
     private final AirPollutionService airPollutionService;
     private final AirKoreaStationUtil airKoreaStationUtil;
     private final KakaoGeoApi kakaoGeoOpenApi;
+    private final BigRegionRepository bigRegionRepository;
+    private final SmallRegionRepository smallRegionRepository;
 
     @GetMapping("/api/weather/data")
     public WeatherDataResponseDto getAllWeatherData(
@@ -53,15 +55,15 @@ public class WeatherDataController {
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
-        List<Region> regions = regionRepository.findByBigRegionAndSmallRegion(address.getBigRegion(), address.getSmallRegion());
-        Region region = regions.get(0);
+        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(address.getBigRegion());
+        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, address.getSmallRegion());
 
         // OPEN API 호출
-        openApiService.callApi(coordinateDto, address, region);
-        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, region);
-        airPollutionService.getInfoByRegion(region);
-        CoronaInfo coronaLocal = coronaService.getInfoByRegion(region);
-        CoronaInfo coronaTotal = coronaService.getTotalInfo();
+        openApiService.callApi(coordinateDto, currentSmallRegion);
+        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, currentSmallRegion);
+        airPollutionService.getInfoByRegion(currentSmallRegion);
+        CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
+        int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount();
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = ScoreRequestDto.hiddenBuilder()
@@ -82,14 +84,14 @@ public class WeatherDataController {
 
         // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
-        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, region);
-        airPollutionService.calculateScore(scoreResultResponseDto, region.getAirPollution());
-        scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotal));
-        openApiService.weekInfoConvertToScore(scoreResultResponseDto, region); // 주간날씨 점수 반환
+        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentSmallRegion);
+        airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
+        scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
+        openApiService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
 
         int calculatedScore = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
 
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(region, coronaLocal, coronaTotal, calculatedScore);
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, calculatedScore);
         return responseDto;
 
     }
@@ -98,18 +100,18 @@ public class WeatherDataController {
     public CoronaInfo getCorona(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
-        return coronaService.getInfoByRegion(reverseGeocodingResponseDto.getBigRegion());
+        BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
+        return coronaService.getInfoByBigRegion(bigRegion);
     }
 
     @GetMapping("/api/air_pollution/data")
     public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(longitude, latitude);
 
-        Region region = regionRepository.findByBigRegionAndSmallRegion(reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion()).get(0);
+        BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
+        SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, reverseGeocodingResponseDto.getSmallRegion());
 
-        String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegionName(region.getBigRegion(), region.getSmallRegion());
-
-        AirPollutionInfo airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(nearestStationName, region);
+        AirPollutionInfo airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
 
         return airPollution;
     }

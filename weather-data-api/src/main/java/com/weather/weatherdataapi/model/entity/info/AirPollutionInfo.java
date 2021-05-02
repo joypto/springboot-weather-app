@@ -1,7 +1,8 @@
 package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class AirPollutionInfo {
+public class AirPollutionInfo extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,9 +24,9 @@ public class AirPollutionInfo {
     private Long id;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region_id")
-    private Region region;
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
 
     @Column
     private LocalDateTime dateTime;
@@ -36,8 +37,8 @@ public class AirPollutionInfo {
     @Column
     private Integer pm25Value;
 
-    public AirPollutionInfo(AirKoreaAirPollutionItem item, Region region) {
-        this.region = region;
+    public AirPollutionInfo(AirKoreaAirPollutionItem item, SmallRegion smallRegion) {
+        this.smallRegion = smallRegion;
         this.dateTime = LocalDateTime.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         this.pm10Value = Integer.parseInt(item.getPm10Value());
         this.pm25Value = Integer.parseInt(item.getPm25Value());

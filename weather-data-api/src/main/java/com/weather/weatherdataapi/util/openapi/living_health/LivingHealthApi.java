@@ -1,8 +1,8 @@
 package com.weather.weatherdataapi.util.openapi.living_health;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
-import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -18,16 +18,19 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 @Component
 @RequiredArgsConstructor
 public class LivingHealthApi {
 
-    private  String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
+    private String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
     private final LivingHealthInfoRepository livingHealthWeatherRepository;
 
-    public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address, Region region) throws IOException, ParseException {
+    public void livingHealthWeatherApiCall(ReverseGeocodingResponseDto address, SmallRegion smallRegion) throws IOException, ParseException {
 
         // 예보 기준일 생성
         String dateResult = "2021042706";
@@ -41,31 +44,25 @@ public class LivingHealthApi {
             dateResult = sdf.format(dateSet);
         } else if (hour < 6) {
             Date dDate = new Date();
-            dDate = new Date(dDate.getTime()+(1000*60*60*24*-1));
+            dDate = new Date(dDate.getTime() + (1000 * 60 * 60 * 24 * -1));
             SimpleDateFormat dSdf = new SimpleDateFormat("yyyyMMdd", Locale.KOREA);
             dateResult = dSdf.format(dDate);
         }
 
         // 24시간 이내에 요청이 된 시/구 주소인지 검사
-        if (region.getLivingHealthWeather() != null && dateResult.toString().equals(region.getLivingHealthWeather().getDate().toString())) {
+        LivingHealthInfo latestLivingHealth = livingHealthWeatherRepository.findFirstBySmallRegionOrderByCreatedAt(smallRegion);
+        if (latestLivingHealth != null && latestLivingHealth.getDate().equals(dateResult.toString())) {
             return;
         }
 
         // 해당 시/구 주소를 가진 Region의 행정동 주소 불러오기
-        String admcode = region.getAdmCode().toString();
+        String admcode = smallRegion.getAdmCode().toString();
 
-        String [] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getOakPollenRiskIdx",  "LivingWthrIdxService01/getUVIdx"};
+        String[] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
         LivingHealthInfo livingHealthWeather = new LivingHealthInfo();
-        if (region.getLivingHealthWeather() != null) {
-            livingHealthWeather = region.getLivingHealthWeather();
-        }
-
-        // Region Table 과 LivingWeatherTable @OneToOne Mapping 과정
-        region.updateLivingHealthWeather(livingHealthWeather);
-        livingHealthWeather.setRegion(region);
 
         // for 문으로 반복하며 OPEN API에 여러 요청들을 보내는 코드
-        for(int i=0; i<methods.length; i++) {
+        for (int i = 0; i < methods.length; i++) {
 
             String method = methods[i];
             StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/1360000/" + method); /*URL*/
@@ -135,6 +132,8 @@ public class LivingHealthApi {
                 livingHealthWeather.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
             }
         }
+
+        livingHealthWeather.setSmallRegion(smallRegion);
 
         // DB에 저장
         livingHealthWeatherRepository.save(livingHealthWeather);

@@ -2,7 +2,8 @@ package com.weather.weatherdataapi.model.entity.info;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.weather.weatherdataapi.model.entity.Region;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,18 +16,17 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public class WeatherDayInfo {
+public class WeatherDayInfo extends Timestamped {
     @JsonIgnore
     @Id
-    @GeneratedValue( strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private Long id;
 
     @JsonIgnore
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "region_id")
-    private Region region;
-
+    @ManyToOne
+    @JoinColumn(name = "small_region_id")
+    private SmallRegion smallRegion;
 
     // 기온
     @ElementCollection
@@ -48,14 +48,12 @@ public class WeatherDayInfo {
     private List<String> weatherIcon;
 
 
-
-
     @Builder
-    public WeatherDayInfo(List<String> tmp, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> dailyTime, List<String> weatherIcon){
-        this.tmp=tmp;
-        this.weather=weather;
-        this.weatherDes=weatherDes;
-        this.rainPer=rainPer;
+    public WeatherDayInfo(List<String> tmp, List<String> weather, List<String> weatherDes, List<String> rainPer, List<String> dailyTime, List<String> weatherIcon) {
+        this.tmp = tmp;
+        this.weather = weather;
+        this.weatherDes = weatherDes;
+        this.rainPer = rainPer;
         this.dailyTime = dailyTime;
         this.weatherIcon = weatherIcon;
     }
