@@ -7,7 +7,7 @@ import lombok.Setter;
 // 클라이언트에서 보내준 range 값
 @Getter
 @Setter
-@Builder(builderMethodName = "hiddenBuilder")
+@Builder
 public class ScoreRequestDto {
 
     private int coronaRange;
@@ -23,23 +23,6 @@ public class ScoreRequestDto {
     private int coldRange;
     private int asthmaRange;
     private int foodPoisonRange;
-
-    public static ScoreRequestDtoBuilder builder(int temp, int rainPer, int weather, int humidity, int wind, int pm10, int pm25, int corona, int uv, int pollenRisk, int cold, int asthma, int foodPoison) {
-        return hiddenBuilder()
-                .tempRange(temp)
-                .rainPerRange(rainPer)
-                .weatherRange(weather)
-                .humidityRange(humidity)
-                .windRange(wind)
-                .pm10Range(pm10)
-                .pm25Range(pm25)
-                .coronaRange(corona)
-                .uvRange(uv)
-                .pollenRiskRange(pollenRisk)
-                .coldRange(cold)
-                .asthmaRange(asthma)
-                .foodPoisonRange(foodPoison);
-    }
 
     public int getSumOfAllRange() {
         return this.coronaRange

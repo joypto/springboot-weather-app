@@ -66,7 +66,7 @@ public class WeatherDataController {
         int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount();
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
-        ScoreRequestDto scoreRequestDto = ScoreRequestDto.hiddenBuilder()
+        ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()
                 .tempRange(temp)
                 .rainPerRange(rainPer)
                 .weatherRange(weather)
