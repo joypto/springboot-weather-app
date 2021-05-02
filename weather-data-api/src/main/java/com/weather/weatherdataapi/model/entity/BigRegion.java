@@ -27,6 +27,7 @@ public class BigRegion {
 
     @JsonIgnore
     @OneToMany(mappedBy = "bigRegion")
+    @OrderBy("date DESC")
     private List<CoronaInfo> coronaInfoList;
 
     @Column(name = "big_region_name")

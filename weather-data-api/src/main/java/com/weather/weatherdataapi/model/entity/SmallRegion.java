@@ -31,6 +31,7 @@ public class SmallRegion {
 
     @JsonIgnore
     @OneToMany(mappedBy = "smallRegion")
+    @OrderBy("dateTime DESC")
     private List<AirPollutionInfo> airPollutionInfoList;
 
     @JsonIgnore
@@ -39,14 +40,17 @@ public class SmallRegion {
 
     @JsonIgnore
     @OneToMany(mappedBy = "smallRegion")
+    @OrderBy("date DESC")
     private List<LivingHealthInfo> livingHealthInfoList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "smallRegion")
+    @OrderBy("createdAt DESC")
     private List<WeatherDayInfo> weatherDayInfoList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "smallRegion")
+    @OrderBy("createdAt DESC")
     private List<WeatherWeekInfo> weatherWeekInfoList;
 
     @Column(name = "small_region_name")
