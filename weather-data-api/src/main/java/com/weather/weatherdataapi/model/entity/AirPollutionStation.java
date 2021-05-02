@@ -9,7 +9,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @Entity
-public class AirPollutionStation {
+public class AirPollutionStation extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

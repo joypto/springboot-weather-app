@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.model.entity.info;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.Region;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +17,7 @@ import java.time.format.DateTimeFormatter;
 @Setter
 @NoArgsConstructor
 @Entity
-public class AirPollutionInfo {
+public class AirPollutionInfo extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
