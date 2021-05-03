@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -39,7 +40,7 @@ public class LivingHealthService {
         for (int i = 0; i < bigRegionList.size(); i++) {
             BigRegion bigRegion = bigRegionList.get(i);
             String admCode = bigRegionList.get(i).getAdmCode();
-            LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion,admCode);
+            LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
             livingHealthInfoRepository.save(livingHealthInfo);
         }
         log.info("fetchAndStoreLivingHealth::생활기상지수 데이터를 성공적으로 갱신하였습니다.");
@@ -69,36 +70,44 @@ public class LivingHealthService {
         LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
 
         // 천식폐질환지수 점수변환
-        List<Integer> asthmaInfoList = scoreResultResponseDto.getAsthmaResult();
+        List<Integer> asthmaInfoList = new ArrayList<>();
         asthmaInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getAsthmaToday()));
         asthmaInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getAsthmaTomorrow()));
         for (int i = 0; i < 5; i++) {
             asthmaInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getAsthmaTheDayAfterTomorrow()));
         }
 
+        scoreResultResponseDto.setAsthmaResult(asthmaInfoList);
+
         // 꽃가루지수 점수변환
-        List<Integer> pollenRiskInfoList = scoreResultResponseDto.getPollenRiskResult();
+        List<Integer> pollenRiskInfoList = new ArrayList<>();
         pollenRiskInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getOakPollenRiskToday()));
         pollenRiskInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getOakPollenRiskTomorrow()));
         for (int i = 0; i < 5; i++) {
             pollenRiskInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getOakPollenRiskTheDayAfterTomorrow()));
         }
 
+        scoreResultResponseDto.setPollenRiskResult(pollenRiskInfoList);
+
         // 식중독지수 점수변환
-        List<Integer> foodPoisonInfoList = scoreResultResponseDto.getFoodPoisonResult();
+        List<Integer> foodPoisonInfoList = new ArrayList<>();
         foodPoisonInfoList.add(foodPoisonIdxConvertToScore(livingHealthInfo.getFoodPoisonToday()));
         foodPoisonInfoList.add(foodPoisonIdxConvertToScore(livingHealthInfo.getFoodPoisonTomorrow()));
         for (int i = 0; i < 5; i++) {
-            pollenRiskInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
+            foodPoisonInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
         }
 
+        scoreResultResponseDto.setFoodPoisonResult(foodPoisonInfoList);
+
         // 자외선지수 점수변환
-        List<Integer> uvInfoList = scoreResultResponseDto.getUvResult();
+        List<Integer> uvInfoList = new ArrayList<>();
         uvInfoList.add(livingWthIdxConvertToScore(livingHealthInfo.getUvToday()));
         uvInfoList.add(livingWthIdxConvertToScore(livingHealthInfo.getUvTomorrow()));
         for (int i = 0; i < 5; i++) {
             uvInfoList.add(livingWthIdxConvertToScore(livingHealthInfo.getUvTheDayAfterTomorrow()));
         }
+
+        scoreResultResponseDto.setUvResult(uvInfoList);
 
         return scoreResultResponseDto;
     }
