@@ -30,9 +30,8 @@ import java.util.TimeZone;
 public class LivingHealthApi {
 
     private String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
-    private final LivingHealthInfoRepository livingHealthWeatherRepository;
 
-    public LivingHealthInfo livingHealthWeatherApiCall(BigRegion bigRegion, String admCode) throws IOException, ParseException {
+    public LivingHealthInfo livingHealthApi(BigRegion bigRegion, String admCode) throws IOException, ParseException {
 
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
@@ -44,7 +43,7 @@ public class LivingHealthApi {
         String admcode = admCode;
 
         String[] methods = {"HealthWthrIdxService/getAsthmaIdx", "HealthWthrIdxService/getFoodPoisoningIdx", "HealthWthrIdxService/getOakPollenRiskIdx", "LivingWthrIdxService01/getUVIdx"};
-        LivingHealthInfo livingHealthWeather = new LivingHealthInfo();
+        LivingHealthInfo livingHealthInfo = new LivingHealthInfo();
 
         // for 문으로 반복하며 OPEN API에 여러 요청들을 보내는 코드
         for (int i = 0; i < methods.length; i++) {
@@ -93,33 +92,33 @@ public class LivingHealthApi {
             String tomorrow = (String) itemObject.get("tomorrow");
             String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-            livingHealthWeather.setDate(date);
+            livingHealthInfo.setDate(date);
 
-            if (livingHealthWeather.getAreaNo() == null) {
-                livingHealthWeather.setAreaNo(areaNo);
+            if (livingHealthInfo.getAreaNo() == null) {
+                livingHealthInfo.setAreaNo(areaNo);
             }
 
             if (method == "HealthWthrIdxService/getAsthmaIdx") {
-                livingHealthWeather.setAsthmaToday(today);
-                livingHealthWeather.setAsthmaTomorrow(tomorrow);
-                livingHealthWeather.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
+                livingHealthInfo.setAsthmaToday(today);
+                livingHealthInfo.setAsthmaTomorrow(tomorrow);
+                livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
             } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
-                livingHealthWeather.setOakPollenRiskToday(today);
-                livingHealthWeather.setOakPollenRiskTomorrow(tomorrow);
-                livingHealthWeather.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
+                livingHealthInfo.setOakPollenRiskToday(today);
+                livingHealthInfo.setOakPollenRiskTomorrow(tomorrow);
+                livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
             } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
-                livingHealthWeather.setFoodPoisonToday(today);
-                livingHealthWeather.setFoodPoisonTomorrow(tomorrow);
-                livingHealthWeather.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
+                livingHealthInfo.setFoodPoisonToday(today);
+                livingHealthInfo.setFoodPoisonTomorrow(tomorrow);
+                livingHealthInfo.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
             } else if (method == "LivingWthrIdxService01/getUVIdx") {
-                livingHealthWeather.setUvToday(today);
-                livingHealthWeather.setUvTomorrow(tomorrow);
-                livingHealthWeather.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
+                livingHealthInfo.setUvToday(today);
+                livingHealthInfo.setUvTomorrow(tomorrow);
+                livingHealthInfo.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
             }
         }
 
-        livingHealthWeather.setBigRegion(bigRegion);
-        return livingHealthWeather;
+        livingHealthInfo.setBigRegion(bigRegion);
+        return livingHealthInfo;
     }
 
 }
