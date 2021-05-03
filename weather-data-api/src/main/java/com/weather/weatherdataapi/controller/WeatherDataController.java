@@ -21,10 +21,7 @@ import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import retrofit2.http.Header;
 
 import java.io.IOException;
@@ -47,9 +44,10 @@ public class WeatherDataController {
     private final SmallRegionRepository smallRegionRepository;
     private final UserPreferenceRepository userPreferenceRepository;
 
+    // 식별자 있는 기상 데이터
     @GetMapping("/api/weather/data")
     public WeatherDataResponseDto getAllWeatherData(
-            @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @Header("token") String token) throws ParseException, IOException {
+            @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @RequestHeader("token") String token) throws ParseException, IOException {
 
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(coordinateDto);
@@ -66,7 +64,12 @@ public class WeatherDataController {
         int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
 
         // 식별값으로 DB에서 유저 선호도 불러오기
-        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+        UserPreference userPreference = new UserPreference();
+        if (token != "") {
+            userPreference = userPreferenceRepository.findByIdentification(token);
+        } else {
+            userPreference = new UserPreference("default");
+        }
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()
@@ -92,7 +95,6 @@ public class WeatherDataController {
         openApiService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
 
         int calculatedScore = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
-
         WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, calculatedScore);
         return responseDto;
 

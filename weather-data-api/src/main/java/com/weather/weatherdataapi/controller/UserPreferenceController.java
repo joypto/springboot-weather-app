@@ -15,6 +15,11 @@ public class UserPreferenceController {
 
     private final UserPreferenceRepository userPreferenceRepository;
 
+    @GetMapping("/api/user/preferences")
+    public UserPreference getDefaultUserPreference() {
+        return new UserPreference("default");
+    }
+
     @PostMapping("/api/user/preferences")
     public UserPreference saveUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
         UserPreference userPreference = new UserPreference(token, scoreRequestDto);
