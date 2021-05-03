@@ -22,7 +22,6 @@ public class ScoreService {
         temporaryValue += scoreResultResponseDto.getCoronaResult() * scoreRequestDto.getCoronaRange();
         temporaryValue += scoreResultResponseDto.getUvResult() * scoreRequestDto.getUvRange();
         temporaryValue += scoreResultResponseDto.getPollenRiskResult() * scoreRequestDto.getPollenRiskRange();
-        temporaryValue += scoreResultResponseDto.getColdResult() * scoreRequestDto.getColdRange();
         temporaryValue += scoreResultResponseDto.getAsthmaResult() * scoreRequestDto.getAsthmaRange();
         temporaryValue += scoreResultResponseDto.getFoodPoisonResult() * scoreRequestDto.getFoodPoisonRange();
 

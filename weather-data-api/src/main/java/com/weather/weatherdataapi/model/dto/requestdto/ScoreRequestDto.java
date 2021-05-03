@@ -20,7 +20,6 @@ public class ScoreRequestDto {
     private int windRange;
     private int uvRange;
     private int pollenRiskRange;
-    private int coldRange;
     private int asthmaRange;
     private int foodPoisonRange;
 
@@ -35,7 +34,6 @@ public class ScoreRequestDto {
                 + this.windRange
                 + this.uvRange
                 + this.pollenRiskRange
-                + this.coldRange
                 + this.asthmaRange
                 + this.foodPoisonRange;
     }

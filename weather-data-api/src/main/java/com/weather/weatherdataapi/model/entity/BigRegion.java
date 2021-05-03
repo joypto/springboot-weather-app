@@ -33,12 +33,15 @@ public class BigRegion {
     @Column(name = "big_region_name")
     private String bigRegionName;
 
+    @JsonIgnore
     @Column(name = "adm_code")
     private String admCode;
 
+    @JsonIgnore
     @Column(name = "longitude")
     private String longitude;
 
+    @JsonIgnore
     @Column(name = "latitude")
     private String latitude;
 

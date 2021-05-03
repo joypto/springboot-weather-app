@@ -7,10 +7,12 @@ import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.UserPreference;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
+import com.weather.weatherdataapi.repository.UserPreferenceRepository;
 import com.weather.weatherdataapi.service.*;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import retrofit2.http.Header;
 
 import java.io.IOException;
 
@@ -42,14 +45,11 @@ public class WeatherDataController {
     private final KakaoGeoApi kakaoGeoOpenApi;
     private final BigRegionRepository bigRegionRepository;
     private final SmallRegionRepository smallRegionRepository;
+    private final UserPreferenceRepository userPreferenceRepository;
 
     @GetMapping("/api/weather/data")
     public WeatherDataResponseDto getAllWeatherData(
-            @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @RequestParam("temp") int temp,
-            @RequestParam("rainPer") int rainPer, @RequestParam("weather") int weather, @RequestParam("humidity") int humidity,
-            @RequestParam("wind") int wind, @RequestParam("pm10") int pm10, @RequestParam("pm25") int pm25,
-            @RequestParam("corona") int corona, @RequestParam("uv") int uv, @RequestParam("pollenRisk") int pollenRisk,
-            @RequestParam("cold") int cold, @RequestParam("asthma") int asthma, @RequestParam("foodPoison") int foodPoison) throws ParseException, IOException {
+            @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @Header("token") String token) throws ParseException, IOException {
 
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(coordinateDto);
@@ -65,21 +65,23 @@ public class WeatherDataController {
         CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
         int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
 
+        // 식별값으로 DB에서 유저 선호도 불러오기
+        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()
-                .tempRange(temp)
-                .rainPerRange(rainPer)
-                .weatherRange(weather)
-                .humidityRange(humidity)
-                .windRange(wind)
-                .pm10Range(pm10)
-                .pm25Range(pm25)
-                .coronaRange(corona)
-                .uvRange(uv)
-                .pollenRiskRange(pollenRisk)
-                .coldRange(cold)
-                .asthmaRange(asthma)
-                .foodPoisonRange(foodPoison)
+                .tempRange(userPreference.getTemp())
+                .rainPerRange(userPreference.getRainPer())
+                .weatherRange(userPreference.getWeather())
+                .humidityRange(userPreference.getHumidity())
+                .windRange(userPreference.getWind())
+                .pm10Range(userPreference.getPm10())
+                .pm25Range(userPreference.getPm25())
+                .coronaRange(userPreference.getCorona())
+                .uvRange(userPreference.getUv())
+                .pollenRiskRange(userPreference.getPollenRisk())
+                .asthmaRange(userPreference.getAsthma())
+                .foodPoisonRange(userPreference.getFoodPoison())
                 .build();
 
         // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성

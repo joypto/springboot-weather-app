@@ -56,6 +56,7 @@ public class SmallRegion {
     @Column(name = "small_region_name")
     private String smallRegionName;
 
+    @JsonIgnore
     @Column(name = "adm_code")
     private String admCode;
 
