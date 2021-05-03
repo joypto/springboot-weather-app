@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import lombok.Getter;
@@ -25,6 +26,11 @@ public class LivingHealthInfo extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "small_region_id")
     private SmallRegion smallRegion;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "big_region_id")
+    private BigRegion bigRegion;
 
     @JsonIgnore
     @Column

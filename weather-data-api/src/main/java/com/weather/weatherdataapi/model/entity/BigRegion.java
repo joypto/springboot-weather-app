@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,11 @@ public class BigRegion {
     @OneToMany(mappedBy = "bigRegion")
     @OrderBy("date DESC")
     private List<CoronaInfo> coronaInfoList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "bigRegion")
+    @OrderBy("createdAt DESC")
+    private List<LivingHealthInfo> livingHealthInfoList;
 
     @Column(name = "big_region_name")
     private String bigRegionName;

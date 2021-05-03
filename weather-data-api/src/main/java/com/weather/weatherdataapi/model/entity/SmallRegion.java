@@ -40,11 +40,6 @@ public class SmallRegion {
 
     @JsonIgnore
     @OneToMany(mappedBy = "smallRegion")
-    @OrderBy("date DESC")
-    private List<LivingHealthInfo> livingHealthInfoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "smallRegion")
     @OrderBy("createdAt DESC")
     private List<WeatherDayInfo> weatherDayInfoList;
 

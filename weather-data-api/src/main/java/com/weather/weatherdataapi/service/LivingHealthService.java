@@ -1,19 +1,73 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import com.weather.weatherdataapi.util.HealthScoreUtil;
 import com.weather.weatherdataapi.util.LivingScoreUtil;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
+import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
+import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.List;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LivingHealthService {
 
     private final LivingHealthInfoRepository livingHealthInfoRepository;
+    private final LivingHealthApi livingHealthApi;
+    private final BigRegionRepository bigRegionRepository;
+
+    /**
+     * 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
+     */
+
+    @Transactional
+    public void fetchAndStoreLivingHealthInfoUsingOpenApi() throws Exception {
+        if (checkAlreadyHasLatestLivingHealthInfo() == true)
+            return;
+
+        List<BigRegion> bigRegionList = bigRegionRepository.findAll();
+
+        for (int i = 0; i < bigRegionList.size(); i++) {
+            BigRegion bigRegion = bigRegionList.get(i);
+            String admCode = bigRegionList.get(i).getAdmCode();
+            LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthWeatherApiCall(bigRegion,admCode);
+            livingHealthInfoRepository.save(livingHealthInfo);
+        }
+        log.info("fetchAndStoreLivingHealth::생활기상지수 데이터를 성공적으로 갱신하였습니다.");
+    }
+
+    private boolean checkAlreadyHasLatestLivingHealthInfo() {
+        LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAt();
+        LocalDate current = LocalDate.now();
+        if (latestData == null)
+            return false;
+        return latestData.getCreatedAt().isEqual(current);
+    }
+
+    /**
+     * 정보 요청이 왔을 때, DB 에서 해당 지역에 맞는 정보를 찾는 코드입니다.
+     */
+    public LivingHealthInfo getLivingHealthInfoByBigRegion(BigRegion bigRegion) {
+        return livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+    }
+
+
+    /**
+     * 여기서부터는 생활보건기상지수의 점수 변환 관련 로직입니다.
+     */
 
     public ScoreResultResponseDto livingHealthWthIdxConvertToScore(ScoreResultResponseDto scoreResultResponseDto, SmallRegion smallRegion) {
 

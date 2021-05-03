@@ -22,7 +22,6 @@ import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Header;
 
 import java.io.IOException;
 
@@ -58,7 +57,7 @@ public class WeatherDataController {
 
         // OPEN API 호출
         openApiService.callApi(currentSmallRegion);
-        livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, currentSmallRegion);
+        livingHealthWeatherService.getLivingHealthInfoByBigRegion(currentBigRegion);
         airPollutionService.getInfoByRegion(currentSmallRegion);
         CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
         int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
