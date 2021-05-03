@@ -16,15 +16,17 @@ public class UserPreferenceController {
     private final UserPreferenceRepository userPreferenceRepository;
 
     @PostMapping("/api/user/preferences")
-    public void saveUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
+    public UserPreference saveUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
         UserPreference userPreference = new UserPreference(token, scoreRequestDto);
         userPreferenceRepository.save(userPreference);
+        return userPreference;
     }
 
     @PutMapping("/api/user/preferences")
-    public void updateUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
+    public UserPreference updateUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
         UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
         userPreference.updateUserPreference(scoreRequestDto);
         userPreferenceRepository.save(userPreference);
+        return userPreference;
     }
 }
