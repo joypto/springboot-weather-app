@@ -39,7 +39,7 @@ public class WeatherDataResponseDto {
         this.coronaTotalNewCaseCount = coronaTotalNewCaseCount;
         this.score = score;
 
-        this.livingHealthWeather = smallRegion.getLivingHealthInfoList().get(0);
+        this.livingHealthWeather = bigRegion.getLivingHealthInfoList().get(0);
         this.weekInfo = smallRegion.getWeatherWeekInfoList().get(0);
         this.dayInfo = smallRegion.getWeatherDayInfoList().get(0);
         this.airPollution = smallRegion.getAirPollutionInfoList().get(0);
