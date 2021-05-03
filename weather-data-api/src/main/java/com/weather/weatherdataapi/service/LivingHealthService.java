@@ -94,7 +94,7 @@ public class LivingHealthService {
         foodPoisonInfoList.add(foodPoisonIdxConvertToScore(livingHealthInfo.getFoodPoisonToday()));
         foodPoisonInfoList.add(foodPoisonIdxConvertToScore(livingHealthInfo.getFoodPoisonTomorrow()));
         for (int i = 0; i < 5; i++) {
-            foodPoisonInfoList.add(healthWthIdxConvertToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
+            foodPoisonInfoList.add(foodPoisonIdxConvertToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
         }
 
         scoreResultResponseDto.setFoodPoisonResult(foodPoisonInfoList);
