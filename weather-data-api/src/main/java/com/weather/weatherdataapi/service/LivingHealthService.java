@@ -29,7 +29,6 @@ public class LivingHealthService {
     /**
      * 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
      */
-
     @Transactional
     public void fetchAndStoreLivingHealthInfoUsingOpenApi() throws Exception {
         if (checkAlreadyHasLatestLivingHealthInfo() == true)
