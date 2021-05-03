@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
@@ -7,10 +9,13 @@ import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
+import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -23,10 +28,28 @@ public class CoronaService {
 
     private final GovCoronaApi govCoronaOpenApi;
 
-    public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
-        ICoronaInfo info = govCoronaOpenApi.getInfo();
+    private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-        coronaRepository.deleteAll();
+    public CoronaInfo getLatestInfoByBigRegion(CoordinateDto coordinateDto) {
+        try {
+            ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+
+            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
+            return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+
+    @Transactional
+    public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
+        if (checkAlreadyHasLatestData() == true)
+            return;
+
+        ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
@@ -46,8 +69,8 @@ public class CoronaService {
         return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
     }
 
-    public int getTotalNewCaseCount() {
-        List<CoronaInfo> coronaInfoList = coronaRepository.findAll();
+    public int getTotalNewCaseCount(LocalDate date) {
+        List<CoronaInfo> coronaInfoList = coronaRepository.findAllByDate(date);
         int totalNewCaseCount = coronaInfoList.stream().mapToInt(coronaInfo -> coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount()).sum();
         return totalNewCaseCount;
     }
@@ -66,5 +89,15 @@ public class CoronaService {
             return 40;
         else
             return 10;
+    }
+
+    private boolean checkAlreadyHasLatestData() {
+        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAt();
+        LocalDate current = LocalDate.now();
+
+        if (latestData == null)
+            return false;
+
+        return latestData.getDate().isEqual(current);
     }
 }
