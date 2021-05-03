@@ -88,7 +88,7 @@ public class WeatherDataController {
 
         // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
-        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentSmallRegion);
+        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
         airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
         scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
         openApiService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환

@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LivingHealthInfoRepository extends JpaRepository<LivingHealthInfo, Long> {
     LivingHealthInfo findByAreaNo(String areaNo);
 
-    LivingHealthInfo findFirstBySmallRegionOrderByCreatedAt(SmallRegion smallRegion);
-
     LivingHealthInfo findFirstByBigRegionOrderByCreatedAt(BigRegion bigRegion);
 
     LivingHealthInfo findFirstByOrderByCreatedAt();
