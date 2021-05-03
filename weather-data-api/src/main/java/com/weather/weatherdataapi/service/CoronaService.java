@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
@@ -7,6 +9,7 @@ import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
+import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,22 @@ public class CoronaService {
     private final BigRegionRepository bigRegionRepository;
 
     private final GovCoronaApi govCoronaOpenApi;
+
+    private final ReverseGeoCodingApi reverseGeoCodingApi;
+
+    public CoronaInfo getLatestInfoByBigRegion(CoordinateDto coordinateDto) {
+        try {
+            ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+
+            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
+            return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 
     public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
         ICoronaInfo info = govCoronaOpenApi.getInfo();

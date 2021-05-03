@@ -97,12 +97,8 @@ public class WeatherDataController {
     }
 
     @GetMapping("/api/corona/data")
-    public CoronaInfo getCorona(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
-        CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
-        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCoding.reverseGeocoding(coordinateDto);
-
-        BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
-        return coronaService.getInfoByBigRegion(bigRegion);
+    public CoronaInfo getCorona(CoordinateDto coordinateDto) {
+        return coronaService.getLatestInfoByBigRegion(coordinateDto);
     }
 
     @GetMapping("/api/air_pollution/data")
