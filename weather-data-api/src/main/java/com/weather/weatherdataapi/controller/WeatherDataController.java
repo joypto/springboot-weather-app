@@ -63,7 +63,7 @@ public class WeatherDataController {
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, currentSmallRegion);
         airPollutionService.getInfoByRegion(currentSmallRegion);
         CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
-        int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount();
+        int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()

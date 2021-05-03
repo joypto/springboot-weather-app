@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -42,10 +44,12 @@ public class CoronaService {
 
     }
 
+    @Transactional
     public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
-        ICoronaInfo info = govCoronaOpenApi.getInfo();
+        if (checkAlreadyHasLatestData() == true)
+            return;
 
-        coronaRepository.deleteAll();
+        ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
@@ -65,8 +69,8 @@ public class CoronaService {
         return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
     }
 
-    public int getTotalNewCaseCount() {
-        List<CoronaInfo> coronaInfoList = coronaRepository.findAll();
+    public int getTotalNewCaseCount(LocalDate date) {
+        List<CoronaInfo> coronaInfoList = coronaRepository.findAllByDate(date);
         int totalNewCaseCount = coronaInfoList.stream().mapToInt(coronaInfo -> coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount()).sum();
         return totalNewCaseCount;
     }
@@ -85,5 +89,15 @@ public class CoronaService {
             return 40;
         else
             return 10;
+    }
+
+    private boolean checkAlreadyHasLatestData() {
+        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAt();
+        LocalDate current = LocalDate.now();
+
+        if (latestData == null)
+            return false;
+
+        return latestData.getDate().isEqual(current);
     }
 }
