@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface WeatherWeekInfoRepository extends JpaRepository<WeatherWeekInfo, Long> {
 
-    WeatherWeekInfo findFirstBySmallRegionOrderByCreatedAt(SmallRegion smallRegion);
+    WeatherWeekInfo findFirstBySmallRegionOrderByCreatedAtDesc(SmallRegion smallRegion);
 }

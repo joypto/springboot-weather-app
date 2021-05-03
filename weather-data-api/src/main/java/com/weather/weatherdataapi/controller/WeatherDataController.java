@@ -59,7 +59,7 @@ public class WeatherDataController {
         SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, address.getSmallRegion());
 
         // OPEN API 호출
-        openApiService.callApi(coordinateDto, currentSmallRegion);
+        openApiService.callApi(currentSmallRegion);
         livingHealthWeatherApiCall.livingHealthWeatherApiCall(address, currentSmallRegion);
         airPollutionService.getInfoByRegion(currentSmallRegion);
         CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
