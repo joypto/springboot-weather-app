@@ -1,30 +1,24 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
-import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
-import com.weather.weatherdataapi.model.entity.UserPreference;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
-import com.weather.weatherdataapi.repository.UserPreferenceRepository;
-import com.weather.weatherdataapi.service.*;
-import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
+import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.service.CoronaService;
+import com.weather.weatherdataapi.service.TotalDataService;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
-import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -92,11 +86,6 @@ public class WeatherDataController {
 //        List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
 //        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, dayScoreList);
 //        return responseDto;
-    }
-
-    @GetMapping("/api/corona/data")
-    public CoronaInfo getCorona(CoordinateDto coordinateDto) {
-        return coronaService.getLatestInfoByBigRegion(coordinateDto);
     }
 
     @GetMapping("/api/air_pollution/data")

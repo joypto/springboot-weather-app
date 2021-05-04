@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.CoordinateDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
@@ -30,18 +30,18 @@ public class CoronaService {
 
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-    public CoronaInfo getLatestInfoByBigRegion(CoordinateDto coordinateDto) {
-        try {
-            ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
+        CoronaInfo coronaInfo = getLatestInfoByBigRegion(currentBigRegion);
 
-            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
-            return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
+        weatherDataResponseDto.setCorona(coronaInfo);
 
+        convertInfoToScore(coronaInfo, scoreResultResponseDto);
+    }
+
+    public CoronaInfo getLatestInfoByBigRegion(BigRegion bigRegion) {
+        CoronaInfo coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+
+        return coronaInfo;
     }
 
     @Transactional
@@ -75,20 +75,25 @@ public class CoronaService {
         return totalNewCaseCount;
     }
 
-    public int calculateScore(int newCaseCount) {
+    public void convertInfoToScore(CoronaInfo coronaInfo, ScoreResultResponseDto scoreResultResponseDto) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
 
+        int newCaseCount = getTotalNewCaseCount(coronaInfo.getDate());
+        int score = 0;
+
         // 코로나 단계별로 점수를 반환합니다.
         if (newCaseCount <= CORONA_LEVEL15)
-            return 100;
+            score = 100;
         else if (newCaseCount <= CORONA_LEVEL2)
-            return 70;
+            score = 70;
         else if (newCaseCount <= CORONA_LEVEL25)
-            return 40;
+            score = 40;
         else
-            return 10;
+            score = 10;
+
+        scoreResultResponseDto.setCoronaResult(score);
     }
 
     private boolean checkAlreadyHasLatestData() {
