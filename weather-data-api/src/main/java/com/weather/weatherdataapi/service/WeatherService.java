@@ -33,9 +33,11 @@ public class WeatherService {
             LocalDate currentDate = LocalDate.now();
 
             // 해당지역이 이전에 검색이 된적이있으면 이전값 반환
-            WeatherWeekInfo latestWeekInfo = weekInfoRepository.findFirstBySmallRegionOrderByCreatedAtDesc(wantRegion);
-            if (latestWeekInfo.getCreatedAt().toString().equals(currentDate.toString())) {
+            if (wantRegion.getWeatherWeekInfoList().get(wantRegion.getWeatherWeekInfoList().size()-1).getCreatedAt().toString().equals(currentDate.toString())) {
                 System.out.println("주간 날씨 정보가 존재하지만 아직 업데이트 시간은 아님");
+                weatherDataResponseDto.setWeekInfo(wantRegion.getWeatherWeekInfoList().get(0));
+                weatherDataResponseDto.setDayInfo(wantRegion.getWeatherDayInfoList().get(0));
+                convertInfoToScore(scoreResultResponseDto, wantRegion);
                 return;
             }
             System.out.println("주간 날씨 정보가 존재 하지만 업데이트가 필요함");
@@ -59,8 +61,10 @@ public class WeatherService {
         List<String> getTemp = new ArrayList<>();
 
         String getMonth = smallRegion.getWeatherDayInfoList().get(0).getDailyTime().get(0).substring(0, 2);
-
-        for (int i = 0; i < smallRegion.getWeatherWeekInfoList().get(0).getWeather().size(); i++) {
+        System.out.println(getMonth);
+        System.out.println(smallRegion.getWeatherWeekInfoList().get(0));
+        System.out.println(smallRegion.getWeatherWeekInfoList().get(0).toString());
+        for (int i = 0; i < 7; i++) {
             getRainScore(smallRegion, getRainPer, i);
             getWindScore(smallRegion, getWind, i);
             getHumidityScore(smallRegion, getHumidity, i);
@@ -73,7 +77,6 @@ public class WeatherService {
         scoreResultResponseDto.setHumidityResult(getHumidity);
         scoreResultResponseDto.setWindResult(getWind);
         scoreResultResponseDto.setTempResult(getTemp);
-
     }
 
     public void getRainScore(SmallRegion smallRegion, List<String> getRainPer, int i) {
