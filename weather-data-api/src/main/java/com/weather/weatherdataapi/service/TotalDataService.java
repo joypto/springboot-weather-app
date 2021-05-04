@@ -43,7 +43,7 @@ public class TotalDataService {
 
         // 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
-        WeatherDataResponseDto weatherDataResponseDto = new WeatherDataResponseDto();
+        WeatherDataResponseDto weatherDataResponseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion);
 
         // 여기서부터 setInfoAndScore 로직 시작
         coronaService.setInfoAndScore(currentBigRegion, scoreResultResponseDto, weatherDataResponseDto);

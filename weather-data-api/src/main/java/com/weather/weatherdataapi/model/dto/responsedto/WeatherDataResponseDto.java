@@ -32,6 +32,11 @@ public class WeatherDataResponseDto {
 
     private List<Integer> dayScoreList;
 
+    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion) {
+        this.bigRegion = bigRegion;
+        this.smallRegion = smallRegion;
+    }
+
     public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, List<Integer> dayScoreList) {
         this.bigRegion = bigRegion;
         this.smallRegion = smallRegion;
