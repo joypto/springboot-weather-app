@@ -1,32 +1,21 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
-import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
-import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
-import com.weather.weatherdataapi.repository.info.WeatherDayInfoRepository;
-import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
 import com.weather.weatherdataapi.util.openapi.weather.WeatherApi;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
-
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+
 
 @RequiredArgsConstructor
 @Service
 public class WeatherService {
     private final WeatherApi weatherGatherApi;
-    private final WeatherWeekInfoRepository weekInfoRepository;
 
     public void setInfoAndScore(SmallRegion wantRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) throws IOException {
         try {
@@ -61,9 +50,7 @@ public class WeatherService {
         List<String> getTemp = new ArrayList<>();
 
         String getMonth = smallRegion.getWeatherDayInfoList().get(0).getDailyTime().get(0).substring(0, 2);
-        System.out.println(getMonth);
-        System.out.println(smallRegion.getWeatherWeekInfoList().size());
-        System.out.println(smallRegion.getWeatherWeekInfoList().get(0).toString());
+
         for (int i = 0; i < 7; i++) {
             getRainScore(smallRegion, getRainPer, i);
             getWindScore(smallRegion, getWind, i);
