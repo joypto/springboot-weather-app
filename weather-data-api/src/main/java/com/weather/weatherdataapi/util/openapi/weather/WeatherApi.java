@@ -6,8 +6,10 @@ import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
+import com.weather.weatherdataapi.model.vo.redis.WeatherWeekRedisVO;
 import com.weather.weatherdataapi.repository.info.WeatherDayInfoRepository;
 import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
+import com.weather.weatherdataapi.repository.redis.WeatherWeekRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -29,6 +31,7 @@ import java.util.Locale;
 public class WeatherApi {
     private final WeatherWeekInfoRepository weekInfoRepository;
     private final WeatherDayInfoRepository dayInfoRepository;
+    private final WeatherWeekRedisRepository weatherWeekRedisRepository;
 
     public void callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
         StringBuilder result = new StringBuilder();
@@ -120,6 +123,8 @@ public class WeatherApi {
             week.add(weekInfo);
             wantRegion.setWeatherWeekInfoList(week);
             weatherDataResponseDto.setWeekInfo(weekInfo);
+            WeatherWeekRedisVO test = new WeatherWeekRedisVO(weekInfo);
+            weatherWeekRedisRepository.save(test);
 
             // 하루 시간별 날씨 파싱
             array = (JSONArray) jsonObj.get("hourly");
