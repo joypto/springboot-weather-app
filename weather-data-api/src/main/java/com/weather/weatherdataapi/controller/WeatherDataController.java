@@ -45,7 +45,6 @@ public class WeatherDataController {
             @RequestParam("latitude") String latitude, @RequestParam("longitude") String longitude, @RequestHeader("token") String token) throws ParseException, IOException {
 
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
-        ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(coordinateDto);
         return totalDataService.getTotalData(coordinateDto, token);
 
 //        // 해당 시/구 주소를 가진 Region 객체 가져오기
