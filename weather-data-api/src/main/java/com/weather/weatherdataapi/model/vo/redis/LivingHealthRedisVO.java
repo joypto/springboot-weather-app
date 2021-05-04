@@ -10,11 +10,9 @@ import javax.persistence.Id;
 @RedisHash("living_health")
 public class LivingHealthRedisVO {
     @Id
-    private final String smallRegionName;
+    private final String bigRegionName;
 
     private final long id;
-
-    private final long smallRegionId;
 
     private final long bigRegionId;
 
@@ -47,10 +45,9 @@ public class LivingHealthRedisVO {
     private final String asthmaTheDayAfterTomorrow;
 
     public LivingHealthRedisVO(LivingHealthInfo livingHealthInfo) {
-        this.smallRegionName = livingHealthInfo.getSmallRegion().getSmallRegionName();
+        this.bigRegionName = livingHealthInfo.getBigRegion().getBigRegionName();
 
         this.id = livingHealthInfo.getId();
-        this.smallRegionId = livingHealthInfo.getSmallRegion().getId();
         this.bigRegionId = livingHealthInfo.getBigRegion().getId();
         this.date = livingHealthInfo.getDate();
         this.areaNo = livingHealthInfo.getAreaNo();
