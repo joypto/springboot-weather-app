@@ -10,11 +10,7 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.UserPreference;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
-import com.weather.weatherdataapi.repository.UserPreferenceRepository;
-import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
-import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
-import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
@@ -61,7 +57,7 @@ public class TotalDataService {
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);
 
         // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
-        livingHealthService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
+        livingHealthService.convertInfoToScore(scoreResultResponseDto, currentBigRegion);
         airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
         scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
         weatherService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
