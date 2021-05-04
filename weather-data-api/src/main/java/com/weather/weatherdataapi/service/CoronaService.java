@@ -4,8 +4,10 @@ import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
+import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
+import com.weather.weatherdataapi.repository.redis.CoronaRedisRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
@@ -24,6 +26,7 @@ import java.util.List;
 public class CoronaService {
 
     private final CoronaInfoRepository coronaRepository;
+    private final CoronaRedisRepository coronaRedisRepository;
     private final BigRegionRepository bigRegionRepository;
 
     private final GovCoronaApi govCoronaOpenApi;
@@ -39,7 +42,17 @@ public class CoronaService {
     }
 
     public CoronaInfo getLatestInfoByBigRegion(BigRegion bigRegion) {
-        CoronaInfo coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        CoronaInfo coronaInfo;
+
+        // 캐시 데이터가 있다면 캐시 데이터를 먼저 사용합니다.
+        if (coronaRedisRepository.existsById(bigRegion.getBigRegionName())) {
+            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getBigRegionName()).get();
+            coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
+        } else {
+            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+            CoronaRedisVO coronaRedisVO = new CoronaRedisVO(coronaInfo);
+            coronaRedisRepository.save(coronaRedisVO);
+        }
 
         return coronaInfo;
     }
@@ -48,6 +61,8 @@ public class CoronaService {
     public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
         if (checkAlreadyHasLatestData() == true)
             return;
+
+        coronaRedisRepository.deleteAll();
 
         ICoronaInfo info = govCoronaOpenApi.getInfo();
 
@@ -60,6 +75,9 @@ public class CoronaService {
 
             CoronaInfo corona = new CoronaInfo(item, bigRegionRepository);
             coronaRepository.save(corona);
+
+            CoronaRedisVO coronaRedisVO = new CoronaRedisVO(corona);
+            coronaRedisRepository.save(coronaRedisVO);
         }
 
         log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
