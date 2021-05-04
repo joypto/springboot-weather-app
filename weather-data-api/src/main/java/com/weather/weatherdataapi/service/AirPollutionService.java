@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
@@ -24,6 +25,20 @@ public class AirPollutionService {
     private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
 
+    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
+        AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
+
+        weatherDataResponseDto.setAirPollution(airPollutionInfo);
+
+        convertInfoToScore(airPollutionInfo, scoreResultResponseDto);
+    }
+
+    public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
+        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
+
+        return fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+    }
+
     public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
         Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
@@ -40,12 +55,6 @@ public class AirPollutionService {
         return airPollution;
     }
 
-    public AirPollutionInfo getInfoByRegion(SmallRegion smallRegion) {
-        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-
-        return fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
-    }
-
     public String getStationNameUsingCoords(String tmX, String tmY) {
         Optional<AirKoreaStationItem> fetchedRespense = airKoreaStationOpenApi.getResponseItem(tmX, tmY);
 
@@ -55,7 +64,7 @@ public class AirPollutionService {
         return fetchedRespense.get().getStationName();
     }
 
-    public void calculateScore(ScoreResultResponseDto responseDto, AirPollutionInfo airPollution) {
+    public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultResponseDto scoreResultResponseDto) {
         final int PM10_GOOD = 30;
         final int PM10_NORMAL = 80;
         final int PM10_BAD = 150;
@@ -84,7 +93,7 @@ public class AirPollutionService {
         else
             pm25Score = 10;
 
-        responseDto.setPm10Result(pm10Score);
-        responseDto.setPm25Result(pm25Score);
+        scoreResultResponseDto.setPm10Result(pm10Score);
+        scoreResultResponseDto.setPm25Result(pm25Score);
     }
 }

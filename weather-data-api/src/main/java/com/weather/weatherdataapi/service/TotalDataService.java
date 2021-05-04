@@ -57,8 +57,7 @@ public class TotalDataService {
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);
 
         // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
-        livingHealthService.convertInfoToScore(scoreResultResponseDto, currentBigRegion);
-        airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
+        livingHealthService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
         scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
         weatherService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
 
