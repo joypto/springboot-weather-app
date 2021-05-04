@@ -58,7 +58,7 @@ public class TotalDataService {
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);
 
         List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, dayScoreList);
+        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, dayScoreList);
         return responseDto;
 
     }

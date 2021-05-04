@@ -30,21 +30,12 @@ public class WeatherDataResponseDto {
 
     private CoronaInfo corona;
 
-    private int coronaTotalNewCaseCount;
-
     private List<Integer> dayScoreList;
 
-    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, CoronaInfo corona, int coronaTotalNewCaseCount, List<Integer> dayScoreList) {
+    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, List<Integer> dayScoreList) {
         this.bigRegion = bigRegion;
         this.smallRegion = smallRegion;
-        this.corona = corona;
-        this.coronaTotalNewCaseCount = coronaTotalNewCaseCount;
         this.dayScoreList = dayScoreList;
-
-        this.livingHealthWeather = bigRegion.getLivingHealthInfoList().get(0);
-        this.weekInfo = smallRegion.getWeatherWeekInfoList().get(0);
-        this.dayInfo = smallRegion.getWeatherDayInfoList().get(0);
-        this.airPollution = smallRegion.getAirPollutionInfoList().get(0);
     }
 
 }
