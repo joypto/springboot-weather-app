@@ -62,6 +62,8 @@ public class CoronaService {
         if (checkAlreadyHasLatestData() == true)
             return;
 
+        coronaRedisRepository.deleteAll();
+
         ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
@@ -73,6 +75,9 @@ public class CoronaService {
 
             CoronaInfo corona = new CoronaInfo(item, bigRegionRepository);
             coronaRepository.save(corona);
+
+            CoronaRedisVO coronaRedisVO = new CoronaRedisVO(corona);
+            coronaRedisRepository.save(coronaRedisVO);
         }
 
         log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
