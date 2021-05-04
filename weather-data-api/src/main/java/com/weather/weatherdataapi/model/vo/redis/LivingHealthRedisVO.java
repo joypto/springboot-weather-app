@@ -1,48 +1,50 @@
 package com.weather.weatherdataapi.model.vo.redis;
 
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
-
-import javax.persistence.Id;
 
 @Getter
 @RedisHash("living_health")
+@NoArgsConstructor
 public class LivingHealthRedisVO {
     @Id
-    private final String bigRegionName;
+    private String bigRegionName;
 
-    private final long id;
+    private long id;
 
-    private final long bigRegionId;
+    private long bigRegionId;
 
-    private final String date;
+    private String date;
 
-    private final String areaNo;
+    private String areaNo;
 
-    private final String uvToday;
+    private String uvToday;
 
-    private final String uvTomorrow;
+    private String uvTomorrow;
 
-    private final String uvTheDayAfterTomorrow;
+    private String uvTheDayAfterTomorrow;
 
-    private final String oakPollenRiskToday;
+    private String oakPollenRiskToday;
 
-    private final String oakPollenRiskTomorrow;
+    private String oakPollenRiskTomorrow;
 
-    private final String oakPollenRiskTheDayAfterTomorrow;
+    private String oakPollenRiskTheDayAfterTomorrow;
 
-    private final String foodPoisonToday;
+    private String foodPoisonToday;
 
-    private final String foodPoisonTomorrow;
+    private String foodPoisonTomorrow;
 
-    private final String foodPoisonTheDayAfterTomorrow;
+    private String foodPoisonTheDayAfterTomorrow;
 
-    private final String asthmaToday;
+    private String asthmaToday;
 
-    private final String asthmaTomorrow;
+    private String asthmaTomorrow;
 
-    private final String asthmaTheDayAfterTomorrow;
+    private String asthmaTheDayAfterTomorrow;
 
     public LivingHealthRedisVO(LivingHealthInfo livingHealthInfo) {
         this.bigRegionName = livingHealthInfo.getBigRegion().getBigRegionName();
