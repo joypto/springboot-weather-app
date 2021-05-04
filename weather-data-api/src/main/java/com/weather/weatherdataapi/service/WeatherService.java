@@ -33,7 +33,7 @@ public class WeatherService {
             LocalDate currentDate = LocalDate.now();
 
             // 해당지역이 이전에 검색이 된적이있으면 이전값 반환
-            if (wantRegion.getWeatherWeekInfoList().get(wantRegion.getWeatherWeekInfoList().size()-1).getCreatedAt().toString().equals(currentDate.toString())) {
+            if (wantRegion.getWeatherWeekInfoList().get(0).getCreatedAt().toString().equals(currentDate.toString())) {
                 System.out.println("주간 날씨 정보가 존재하지만 아직 업데이트 시간은 아님");
                 weatherDataResponseDto.setWeekInfo(wantRegion.getWeatherWeekInfoList().get(0));
                 weatherDataResponseDto.setDayInfo(wantRegion.getWeatherDayInfoList().get(0));
@@ -62,7 +62,7 @@ public class WeatherService {
 
         String getMonth = smallRegion.getWeatherDayInfoList().get(0).getDailyTime().get(0).substring(0, 2);
         System.out.println(getMonth);
-        System.out.println(smallRegion.getWeatherWeekInfoList().get(0));
+        System.out.println(smallRegion.getWeatherWeekInfoList().size());
         System.out.println(smallRegion.getWeatherWeekInfoList().get(0).toString());
         for (int i = 0; i < 7; i++) {
             getRainScore(smallRegion, getRainPer, i);

@@ -81,6 +81,8 @@ public class WeatherApi {
             List<String> windSpeed = new ArrayList<>();
             List<String> weatherIcon = new ArrayList<>();
             List<String> hour_weatherIcon = new ArrayList<>();
+            List<WeatherWeekInfo> week = wantRegion.getWeatherWeekInfoList();
+            List<WeatherDayInfo> day = wantRegion.getWeatherDayInfoList();
 
             // 주간 날씨 파씽
             JSONArray array = (JSONArray) jsonObj.get("daily");
@@ -115,6 +117,8 @@ public class WeatherApi {
             // 파싱한 값 저장하고 매핑하기
             weekInfo.setSmallRegion(wantRegion);
             weekInfoRepository.save(weekInfo);
+            week.add(weekInfo);
+            wantRegion.setWeatherWeekInfoList(week);
             weatherDataResponseDto.setWeekInfo(weekInfo);
 
             // 하루 시간별 날씨 파싱
@@ -151,6 +155,8 @@ public class WeatherApi {
             // 파싱한 값 저장, 매핑
             dayInfo.setSmallRegion(wantRegion);
             dayInfoRepository.save(dayInfo);
+            day.add(dayInfo);
+            wantRegion.setWeatherDayInfoList(day);
             weatherDataResponseDto.setDayInfo(dayInfo);
         }catch (Exception e){
             e.printStackTrace();
