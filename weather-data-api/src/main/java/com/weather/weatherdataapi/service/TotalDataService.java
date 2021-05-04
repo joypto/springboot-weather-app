@@ -49,10 +49,10 @@ public class TotalDataService {
         WeatherDataResponseDto weatherDataResponseDto = new WeatherDataResponseDto();
 
         // 여기서부터 setInfoAndScore 로직 시작
-        coronaService.setInfoAndScore(currentBigRegion);
-        livingHealthService.setInfoAndScore(currentBigRegion);
-        weatherService.setInfoAndScore(currentSmallRegion);
-        airPollutionService.setInfoAndScore(currentSmallRegion);
+        coronaService.setInfoAndScore(currentBigRegion, scoreResultResponseDto, weatherDataResponseDto);
+        livingHealthService.setInfoAndScore(currentBigRegion, scoreResultResponseDto, weatherDataResponseDto);
+        weatherService.setInfoAndScore(currentSmallRegion, scoreResultResponseDto, weatherDataResponseDto);
+        airPollutionService.setInfoAndScore(currentSmallRegion, scoreResultResponseDto, weatherDataResponseDto);
 
         // 식별값으로 DB 에서 유저 선호도 불러오기
         UserPreference currentUserPreference = userPreferenceService.getCurrentUserPreference(token);
