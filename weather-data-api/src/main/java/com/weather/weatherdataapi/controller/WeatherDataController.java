@@ -31,18 +31,13 @@ import java.util.List;
 @RestController
 public class WeatherDataController {
 
-    private final WeatherService openApiService;
-    private final LivingHealthService livingHealthWeatherService;
-    private final ScoreService scoreService;
-    private final LivingHealthApi livingHealthWeatherApiCall;
     private final ReverseGeoCodingApi reverseGeoCoding;
     private final CoronaService coronaService;
     private final AirPollutionService airPollutionService;
-    private final AirKoreaStationUtil airKoreaStationUtil;
     private final KakaoGeoApi kakaoGeoOpenApi;
     private final BigRegionRepository bigRegionRepository;
     private final SmallRegionRepository smallRegionRepository;
-    private final UserPreferenceRepository userPreferenceRepository;
+    private final TotalDataService totalDataService;
 
     // 식별자 있는 기상 데이터
     @GetMapping("/api/weather/data")
@@ -51,53 +46,53 @@ public class WeatherDataController {
 
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto address = reverseGeoCoding.reverseGeocoding(coordinateDto);
+        return totalDataService.getTotalData(coordinateDto, token);
 
-        // 해당 시/구 주소를 가진 Region 객체 가져오기
-        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(address.getBigRegion());
-        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, address.getSmallRegion());
-
-        // OPEN API 호출
-        openApiService.callApi(currentSmallRegion);
-        livingHealthWeatherService.getLivingHealthInfoByBigRegion(currentBigRegion);
-        airPollutionService.getInfoByRegion(currentSmallRegion);
-        CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
-        int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
-
-        // 식별값으로 DB에서 유저 선호도 불러오기
-        UserPreference userPreference = new UserPreference();
-        if (token != "") {
-            userPreference = userPreferenceRepository.findByIdentification(token);
-        } else {
-            userPreference = new UserPreference("default");
-        }
-
-        // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
-        ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()
-                .tempRange(userPreference.getTemp())
-                .rainPerRange(userPreference.getRainPer())
-                .weatherRange(userPreference.getWeather())
-                .humidityRange(userPreference.getHumidity())
-                .windRange(userPreference.getWind())
-                .pm10Range(userPreference.getPm10())
-                .pm25Range(userPreference.getPm25())
-                .coronaRange(userPreference.getCorona())
-                .uvRange(userPreference.getUv())
-                .pollenRiskRange(userPreference.getPollenRisk())
-                .asthmaRange(userPreference.getAsthma())
-                .foodPoisonRange(userPreference.getFoodPoison())
-                .build();
-
-        // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
-        ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
-        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
-        airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
-        scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
-        openApiService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
-
-        List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, dayScoreList);
-        return responseDto;
-
+//        // 해당 시/구 주소를 가진 Region 객체 가져오기
+//        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(address.getBigRegion());
+//        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, address.getSmallRegion());
+//
+//        // OPEN API 호출
+//        openApiService.callApi(currentSmallRegion);
+//        livingHealthWeatherService.getLivingHealthInfoByBigRegion(currentBigRegion);
+//        airPollutionService.getInfoByRegion(currentSmallRegion);
+//        CoronaInfo coronaLocal = coronaService.getInfoByBigRegion(currentBigRegion);
+//        int coronaTotalNewCaseCount = coronaService.getTotalNewCaseCount(coronaLocal.getDate());
+//
+//        // 식별값으로 DB에서 유저 선호도 불러오기
+//        UserPreference userPreference = new UserPreference();
+//        if (token != "") {
+//            userPreference = userPreferenceRepository.findByIdentification(token);
+//        } else {
+//            userPreference = new UserPreference("default");
+//        }
+//
+//        // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
+//        ScoreRequestDto scoreRequestDto = ScoreRequestDto.builder()
+//                .tempRange(userPreference.getTemp())
+//                .rainPerRange(userPreference.getRainPer())
+//                .weatherRange(userPreference.getWeather())
+//                .humidityRange(userPreference.getHumidity())
+//                .windRange(userPreference.getWind())
+//                .pm10Range(userPreference.getPm10())
+//                .pm25Range(userPreference.getPm25())
+//                .coronaRange(userPreference.getCorona())
+//                .uvRange(userPreference.getUv())
+//                .pollenRiskRange(userPreference.getPollenRisk())
+//                .asthmaRange(userPreference.getAsthma())
+//                .foodPoisonRange(userPreference.getFoodPoison())
+//                .build();
+//
+//        // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
+//        ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
+//        livingHealthWeatherService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
+//        airPollutionService.calculateScore(scoreResultResponseDto, currentSmallRegion.getAirPollutionInfoList().get(0));
+//        scoreResultResponseDto.setCoronaResult(coronaService.calculateScore(coronaTotalNewCaseCount));
+//        openApiService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
+//
+//        List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
+//        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, dayScoreList);
+//        return responseDto;
     }
 
     @GetMapping("/api/corona/data")

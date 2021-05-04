@@ -10,23 +10,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserPreferenceService {
 
-    public UserPreference getUserPreferenceForClient(UserPreference userPreference) {
-        UserPreference userPreferenceForClient = new UserPreference().builder()
-                .identification(userPreference.getIdentification())
-                .temp(userPreference.getTemp()/10)
-                .rainPer(userPreference.getRainPer()/10)
-                .weather(userPreference.getWeather()/10)
-                .humidity(userPreference.getHumidity()/10)
-                .wind(userPreference.getWind()/10)
-                .pm10(userPreference.getPm10()/10)
-                .pm25(userPreference.getPm25()/10)
-                .corona(userPreference.getCorona()/10)
-                .uv(userPreference.getUv()/10)
-                .pollenRisk(userPreference.getPollenRisk()/10)
-                .asthma(userPreference.getAsthma()/10)
-                .foodPoison(userPreference.getFoodPoison()/10)
-                .build();
-        return userPreferenceForClient;
+    private final UserPreferenceRepository userPreferenceRepository;
+
+    public UserPreference getCurrentUserPreference(String token) {
+        UserPreference userPreference = new UserPreference();
+        if (token != "") {
+            userPreference = userPreferenceRepository.findByIdentification(token);
+        } else {
+            userPreference = new UserPreference("default");
+        }
+        return userPreference;
     }
 
 }

@@ -28,8 +28,7 @@ public class RegionService {
             long startTime = System.currentTimeMillis();
 
             ClassPathResource regionCsvResource = new ClassPathResource("data/region.csv");
-            List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getFile(), RegionCsvVO.getSchema());
-
+            List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getInputStream(), RegionCsvVO.getSchema());
             if (checkRegionTableInitialized(regionList) == true) {
                 log.info("initialize::모든 지역정보가 이미 DB에 존재합니다.");
             } else {
