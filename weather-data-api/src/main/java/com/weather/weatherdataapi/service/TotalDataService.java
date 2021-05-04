@@ -58,8 +58,8 @@ public class TotalDataService {
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);
 
         List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
-        WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, dayScoreList);
-        return responseDto;
+        weatherDataResponseDto.setDayScoreList(dayScoreList);
+        return weatherDataResponseDto;
 
     }
 }
