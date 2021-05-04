@@ -4,8 +4,10 @@ import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
+import com.weather.weatherdataapi.repository.redis.LivingHealthRedisRepository;
 import com.weather.weatherdataapi.util.HealthScoreUtil;
 import com.weather.weatherdataapi.util.LivingScoreUtil;
 import com.weather.weatherdataapi.util.openapi.living_health.LivingHealthApi;
@@ -24,8 +26,10 @@ import java.util.List;
 public class LivingHealthService {
 
     private final LivingHealthInfoRepository livingHealthInfoRepository;
-    private final LivingHealthApi livingHealthApi;
+    private final LivingHealthRedisRepository livingHealthRedisRepository;
     private final BigRegionRepository bigRegionRepository;
+    private final LivingHealthApi livingHealthApi;
+
 
     /**
      * 여기서부터는 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
@@ -35,6 +39,8 @@ public class LivingHealthService {
         if (checkAlreadyHasLatestLivingHealthInfo() == true)
             return;
 
+        livingHealthInfoRepository.deleteAll();
+
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
 
         for (int i = 0; i < bigRegionList.size(); i++) {
@@ -42,6 +48,9 @@ public class LivingHealthService {
             String admCode = bigRegionList.get(i).getAdmCode();
             LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
             livingHealthInfoRepository.save(livingHealthInfo);
+
+            LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
+            livingHealthRedisRepository.save(livingHealthRedisVO);
         }
         log.info("fetchAndStoreLivingHealth::생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
@@ -66,7 +75,20 @@ public class LivingHealthService {
      * 여기서부터는 해당 지역의 생활보건기상지수 정보를 DB 에서 찾아서 반환해주는 메서드입니다.
      */
     public LivingHealthInfo getInfoByBigRegion(BigRegion bigRegion) {
-        return livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        LivingHealthInfo livingHealthInfo;
+
+        if(livingHealthRedisRepository.existsById(bigRegion.getBigRegionName())) {
+            System.out.println("레디스 캐시 데이터베이스를 사용합니다.");
+            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getBigRegionName()).get();
+            livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
+        } else {
+            System.out.println("MySql 데이터베이스를 사용합니다.");
+            livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+            LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
+            livingHealthRedisRepository.save(livingHealthRedisVO);
+        }
+
+        return livingHealthInfo;
     }
 
     /**

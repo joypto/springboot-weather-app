@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
+import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
+import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -70,5 +72,23 @@ public class LivingHealthInfo extends Timestamped {
 
     @Column
     private String asthmaTheDayAfterTomorrow;
+
+    public LivingHealthInfo(LivingHealthRedisVO livingHealthRedisVO, BigRegion bigRegion) {
+        this.id = livingHealthRedisVO.getId();
+        this.bigRegion = bigRegion;
+        this.areaNo = livingHealthRedisVO.getAreaNo();
+        this.uvToday = livingHealthRedisVO.getUvToday();
+        this.uvTomorrow = livingHealthRedisVO.getUvTomorrow();
+        this.uvTheDayAfterTomorrow = livingHealthRedisVO.getUvTheDayAfterTomorrow();
+        this.oakPollenRiskToday = livingHealthRedisVO.getOakPollenRiskToday();
+        this.oakPollenRiskTomorrow = livingHealthRedisVO.getOakPollenRiskTomorrow();
+        this.oakPollenRiskTheDayAfterTomorrow = livingHealthRedisVO.getOakPollenRiskTheDayAfterTomorrow();
+        this.foodPoisonToday = livingHealthRedisVO.getFoodPoisonToday();
+        this.foodPoisonTomorrow = livingHealthRedisVO.getFoodPoisonTomorrow();
+        this.foodPoisonTheDayAfterTomorrow = livingHealthRedisVO.getFoodPoisonTheDayAfterTomorrow();
+        this.asthmaToday = livingHealthRedisVO.getAsthmaToday();
+        this.asthmaTomorrow = livingHealthRedisVO.getAsthmaTomorrow();
+        this.asthmaTheDayAfterTomorrow = livingHealthRedisVO.getAsthmaTheDayAfterTomorrow();
+    }
 
 }
