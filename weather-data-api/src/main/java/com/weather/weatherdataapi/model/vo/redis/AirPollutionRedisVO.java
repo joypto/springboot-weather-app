@@ -2,26 +2,28 @@ package com.weather.weatherdataapi.model.vo.redis;
 
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 @RedisHash("air_pollution")
 public class AirPollutionRedisVO {
     @Id
-    private final String smallRegionName;
+    private String smallRegionName;
 
-    private final long id;
+    private long id;
 
-    private final long smallRegionId;
+    private long smallRegionId;
 
-    private final LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
-    private final int pm10Value;
+    private int pm10Value;
 
-    private final int pm25Value;
+    private int pm25Value;
 
     public AirPollutionRedisVO(AirPollutionInfo airPollutionInfo) {
         this.smallRegionName = airPollutionInfo.getSmallRegion().getSmallRegionName();

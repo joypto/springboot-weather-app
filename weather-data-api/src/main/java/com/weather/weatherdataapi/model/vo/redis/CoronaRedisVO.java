@@ -2,26 +2,28 @@ package com.weather.weatherdataapi.model.vo.redis;
 
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import javax.persistence.Id;
 import java.time.LocalDate;
 
 @Getter
 @RedisHash("corona")
+@NoArgsConstructor
 public class CoronaRedisVO {
     @Id
-    private final String bigRegionName;
+    private String bigRegionName;
 
-    private final long id;
+    private long id;
 
-    private final long bigRegionId;
+    private long bigRegionId;
 
-    private final LocalDate date;
+    private LocalDate date;
 
-    private final int newLocalCaseCount;
+    private int newLocalCaseCount;
 
-    private final int newForeignCaseCount;
+    private int newForeignCaseCount;
 
     public CoronaRedisVO(CoronaInfo coronaInfo) {
         this.bigRegionName = coronaInfo.getBigRegion().getBigRegionName();
