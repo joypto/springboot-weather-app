@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.model.entity.info;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
+import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
@@ -46,6 +47,14 @@ public class CoronaInfo extends Timestamped {
         this.date = item.getDate();
         this.newLocalCaseCount = item.getNewLocalCaseCount();
         this.newForeignCaseCount = item.getNewForeignCaseCount();
+    }
+
+    public CoronaInfo(CoronaRedisVO coronaRedisVO, BigRegion bigRegion) {
+        this.id = coronaRedisVO.getId();
+        this.bigRegion = bigRegion;
+        this.date = coronaRedisVO.getDate();
+        this.newLocalCaseCount = coronaRedisVO.getNewLocalCaseCount();
+        this.newForeignCaseCount = coronaRedisVO.getNewForeignCaseCount();
     }
 
 }
