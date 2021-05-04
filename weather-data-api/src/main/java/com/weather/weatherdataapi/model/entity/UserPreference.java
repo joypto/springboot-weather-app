@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,9 @@ import javax.persistence.*;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class UserPreference {
 
     @JsonIgnore

@@ -16,7 +16,10 @@ public class UserPreferenceController {
     private final UserPreferenceRepository userPreferenceRepository;
 
     @GetMapping("/api/user/preferences")
-    public UserPreference getDefaultUserPreference() {
+    public UserPreference getDefaultUserPreference(@RequestHeader("token") String token) {
+        if (token != "") {
+             return userPreferenceRepository.findByIdentification(token);
+        }
         return new UserPreference("default");
     }
 

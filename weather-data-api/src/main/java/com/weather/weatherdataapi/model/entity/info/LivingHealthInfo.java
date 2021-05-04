@@ -24,11 +24,6 @@ public class LivingHealthInfo extends Timestamped {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "small_region_id")
-    private SmallRegion smallRegion;
-
-    @JsonIgnore
-    @ManyToOne
     @JoinColumn(name = "big_region_id")
     private BigRegion bigRegion;
 

@@ -27,7 +27,7 @@ public class LivingHealthService {
     private final BigRegionRepository bigRegionRepository;
 
     /**
-     * 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
+     * 여기서부터는 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
      */
     @Transactional
     public void fetchAndStoreLivingHealthInfoUsingOpenApi() throws Exception {
@@ -54,7 +54,7 @@ public class LivingHealthService {
     }
 
     /**
-     * 정보 요청이 왔을 때, DB 에서 해당 지역에 맞는 정보를 찾는 코드입니다.
+     * 정보 요청이 왔을 때, DB 에서 해당 지역에 맞는 정보를 찾는 메서드입니다.
      */
     public LivingHealthInfo getLivingHealthInfoByBigRegion(BigRegion bigRegion) {
         return livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
@@ -62,7 +62,7 @@ public class LivingHealthService {
 
 
     /**
-     * 여기서부터는 생활보건기상지수의 점수 변환 관련 로직입니다.
+     * 여기서부터는 생활보건기상지수의 점수 변환 관련 메서드입니다.
      */
     public ScoreResultResponseDto livingHealthWthIdxConvertToScore(ScoreResultResponseDto scoreResultResponseDto, BigRegion bigRegion) {
 
@@ -111,7 +111,7 @@ public class LivingHealthService {
         return scoreResultResponseDto;
     }
 
-    // 보건기상지수 중 식중독 지수 제외한 지수의 점수 변환
+    // 보건기상지수 중 식중독 지수 제외한 그 외 지수의 점수 변환
     public Integer healthWthIdxConvertToScore(String wthIdx) {
         Integer score = HealthScoreUtil.convertHealthWthIdxToScore(wthIdx);
         return score;
