@@ -4,7 +4,9 @@ import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
+import com.weather.weatherdataapi.model.vo.redis.AirPollutionRedisVO;
 import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
+import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
@@ -20,6 +22,7 @@ import java.util.Optional;
 public class AirPollutionService {
 
     private final AirPollutionInfoRepository airPollutionRepository;
+    private final AirPollutionRedisRepository airPollutionRedisRepository;
 
     private final AirKoreaAirPollutionApi airKoreaAirPollutionOpenApi;
     private final AirKoreaStationApi airKoreaStationOpenApi;
@@ -34,9 +37,22 @@ public class AirPollutionService {
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
-        String stationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
+        AirPollutionInfo airPollutionInfo;
 
-        return fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+        // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
+        if (airPollutionRedisRepository.existsById(smallRegion.getSmallRegionName())) {
+            AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getSmallRegionName()).orElseThrow(() -> new RuntimeException());
+            airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
+        }
+        // 그렇지 않다면 OpenApi를 사용하여 값을 가져옵니다.
+        else {
+            airPollutionInfo = fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+
+            AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(airPollutionInfo);
+            airPollutionRedisRepository.save(airPollutionRedisVO);
+        }
+
+        return airPollutionInfo;
     }
 
     public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
@@ -96,4 +112,5 @@ public class AirPollutionService {
         scoreResultResponseDto.setPm10Result(pm10Score);
         scoreResultResponseDto.setPm25Result(pm25Score);
     }
+
 }
