@@ -57,10 +57,6 @@ public class TotalDataService {
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);
 
-        // 날씨 수치들을 100점으로 반환한 점수를 담는 객체 생성
-        livingHealthService.livingHealthWthIdxConvertToScore(scoreResultResponseDto, currentBigRegion);
-        weatherService.weekInfoConvertToScore(scoreResultResponseDto, currentSmallRegion); // 주간날씨 점수 반환
-
         List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
         WeatherDataResponseDto responseDto = new WeatherDataResponseDto(currentBigRegion, currentSmallRegion, coronaLocal, coronaTotalNewCaseCount, dayScoreList);
         return responseDto;
