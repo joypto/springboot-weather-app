@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -31,7 +32,7 @@ public class TotalDataService {
     private final SmallRegionRepository smallRegionRepository;
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-    public WeatherDataResponseDto getTotalData(CoordinateDto coordinateDto, String token) throws ParseException {
+    public WeatherDataResponseDto getTotalData(CoordinateDto coordinateDto, String token) throws ParseException, IOException {
 
         // 해당 위경도로 시/구 주소 문자열 반환
         ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);

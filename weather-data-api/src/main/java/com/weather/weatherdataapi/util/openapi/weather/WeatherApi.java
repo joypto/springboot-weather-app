@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.util.openapi.weather;
 
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
@@ -29,7 +30,7 @@ public class WeatherApi {
     private final WeatherWeekInfoRepository weekInfoRepository;
     private final WeatherDayInfoRepository dayInfoRepository;
 
-    public void callWeather(SmallRegion wantRegion) throws IOException{
+    public void callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
         StringBuilder result = new StringBuilder();
         String lat = wantRegion.getLatitude();
         String lon = wantRegion.getLongitude();
@@ -51,10 +52,10 @@ public class WeatherApi {
 
         urlConnection.disconnect();
 
-        initData(result.toString(),wantRegion);
+        initData(result.toString(),wantRegion,weatherDataResponseDto);
 
     }
-    public void initData(String jsonData, SmallRegion wantRegion){
+    public void initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
         try {
             System.out.println("주간 날씨 정보와 시간 정보를 불러오는 중");
             JSONObject jObj;
@@ -114,6 +115,7 @@ public class WeatherApi {
             // 파싱한 값 저장하고 매핑하기
             weekInfo.setSmallRegion(wantRegion);
             weekInfoRepository.save(weekInfo);
+            weatherDataResponseDto.setWeekInfo(weekInfo);
 
             // 하루 시간별 날씨 파싱
             array = (JSONArray) jsonObj.get("hourly");
@@ -149,6 +151,7 @@ public class WeatherApi {
             // 파싱한 값 저장, 매핑
             dayInfo.setSmallRegion(wantRegion);
             dayInfoRepository.save(dayInfo);
+            weatherDataResponseDto.setDayInfo(dayInfo);
         }catch (Exception e){
             e.printStackTrace();
         }

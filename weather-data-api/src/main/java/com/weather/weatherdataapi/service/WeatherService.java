@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
@@ -27,7 +28,7 @@ public class WeatherService {
     private final WeatherApi weatherGatherApi;
     private final WeatherWeekInfoRepository weekInfoRepository;
 
-    public void callApi(SmallRegion wantRegion) throws IOException {
+    public void setInfoAndScore(SmallRegion wantRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) throws IOException {
         try {
             LocalDate currentDate = LocalDate.now();
 
@@ -39,15 +40,17 @@ public class WeatherService {
             }
             System.out.println("주간 날씨 정보가 존재 하지만 업데이트가 필요함");
 
-            weatherGatherApi.callWeather(wantRegion);
+            weatherGatherApi.callWeather(wantRegion,weatherDataResponseDto);
+            convertInfoToScore(scoreResultResponseDto, wantRegion);
         } catch (Exception e) {
             System.out.println("값이 존재하지 않음");
-            weatherGatherApi.callWeather(wantRegion);
+            weatherGatherApi.callWeather(wantRegion,weatherDataResponseDto);
+            convertInfoToScore(scoreResultResponseDto, wantRegion);
         }
     }
 
 
-    public ScoreResultResponseDto weekInfoConvertToScore(ScoreResultResponseDto scoreResultResponseDto, SmallRegion smallRegion) {
+    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, SmallRegion smallRegion) {
         // 날짜별 환산점수 변환 시작
         List<String> getRainPer = new ArrayList<>();
         List<String> getWeather = new ArrayList<>();
@@ -64,13 +67,13 @@ public class WeatherService {
             getWeatherScore(smallRegion, getWeather, i);
             getWeatherScore(smallRegion,getTemp,i,getMonth);
         }
-        
+
         scoreResultResponseDto.setRainPerResult(getRainPer);
         scoreResultResponseDto.setWeatherResult(getWeather);
         scoreResultResponseDto.setHumidityResult(getHumidity);
         scoreResultResponseDto.setWindResult(getWind);
         scoreResultResponseDto.setTempResult(getTemp);
-        return scoreResultResponseDto;
+
     }
 
     public void getRainScore(SmallRegion smallRegion, List<String> getRainPer, int i) {
