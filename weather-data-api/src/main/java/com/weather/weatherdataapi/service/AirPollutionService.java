@@ -8,6 +8,7 @@ import com.weather.weatherdataapi.model.vo.redis.AirPollutionRedisVO;
 import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
+import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
@@ -15,8 +16,6 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.Ai
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -29,6 +28,7 @@ public class AirPollutionService {
     private final AirKoreaAirPollutionApi airKoreaAirPollutionOpenApi;
     private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
+    private final AirKoreaUtil airKoreaUtil;
 
     public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
@@ -48,13 +48,19 @@ public class AirPollutionService {
         }
         // 그렇지 않다면 DB에서 값을 가져옵니다.
         else {
-            airPollutionInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+            AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+            AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
 
-            // DB에 값이 없다면 OpenApi를 사용해 fetch합니다.
-            if (airPollutionInfo == null) {
-                AirKoreaAirPollutionItem fetched = fetchUsingOpenApi(smallRegion);
-                airPollutionInfo = new AirPollutionInfo(fetched, smallRegion);
+            // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
+            // 또는 최신 데이터가 아닐 경우
+            // OpenApi로 가져온 정보를 DB에 저장한 후 사용합니다.
+            if (existedInfo == null || airKoreaUtil.checkLatestInfoAlreadyExists(existedInfo, fetchedItem) == false) {
+                airPollutionInfo = new AirPollutionInfo(fetchedItem, smallRegion);
                 airPollutionRepository.save(airPollutionInfo);
+            }
+            // 그렇지 않은 경우 DB에 있는 데이터를 바로 사용합니다.
+            else {
+                airPollutionInfo = existedInfo;
             }
 
             AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(airPollutionInfo);
@@ -112,32 +118,13 @@ public class AirPollutionService {
         scoreResultResponseDto.setPm25Result(pm25Score);
     }
 
-    private boolean checkAlreadyHasLatestData(SmallRegion smallRegion) {
+    public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
         AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
-
-        if (latestData == null)
-            return false;
-
-        // 데이터 갱신 여부는 시간 단위 이상의 값으로만 판별합니다.
-        // 분 단위 이하의 값은 고려하지 않습니다.
-        LocalDateTime latestDataTime = LocalDateTime.of(
-                latestData.getDateTime().getYear(),
-                latestData.getDateTime().getMonth(),
-                latestData.getDateTime().getDayOfMonth(),
-                latestData.getDateTime().getHour(),
-                0,
-                0,
-                0
-        );
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
         AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
-        LocalDateTime latestFetchedDataTime = LocalDateTime.parse(latestFetchedData.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH"));
 
-        if (latestDataTime.isBefore(latestFetchedDataTime))
-            return false;
-
-        return true;
+        return airKoreaUtil.checkLatestInfoAlreadyExists(latestData, latestFetchedData);
     }
 
 }
