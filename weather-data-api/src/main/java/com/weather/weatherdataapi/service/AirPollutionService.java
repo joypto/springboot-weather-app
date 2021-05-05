@@ -15,6 +15,8 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.Ai
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -111,6 +113,34 @@ public class AirPollutionService {
 
         scoreResultResponseDto.setPm10Result(pm10Score);
         scoreResultResponseDto.setPm25Result(pm25Score);
+    }
+
+    private boolean checkAlreadyHasLatestData(SmallRegion smallRegion) {
+        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+
+        if (latestData == null)
+            return false;
+
+        // 데이터 갱신 여부는 시간 단위 이상의 값으로만 판별합니다.
+        // 분 단위 이하의 값은 고려하지 않습니다.
+        LocalDateTime latestDataTime = LocalDateTime.of(
+                latestData.getDateTime().getYear(),
+                latestData.getDateTime().getMonth(),
+                latestData.getDateTime().getDayOfMonth(),
+                latestData.getDateTime().getHour(),
+                0,
+                0,
+                0
+        );
+
+        String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
+        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName).orElseThrow(() -> new RuntimeException());
+        LocalDateTime latestFetchedDataTime = LocalDateTime.parse(latestFetchedData.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH"));
+
+        if (latestDataTime.isBefore(latestFetchedDataTime))
+            return false;
+
+        return true;
     }
 
 }
