@@ -56,7 +56,7 @@ public class LivingHealthService {
     }
 
     private boolean checkAlreadyHasLatestLivingHealthInfo() {
-        LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAt();
+        LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
         LocalDate current = LocalDate.now();
         if (latestData == null)
             return false;
@@ -83,7 +83,7 @@ public class LivingHealthService {
             livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
         } else {
             System.out.println("MySql 데이터베이스를 사용합니다.");
-            livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+            livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
         }
@@ -96,7 +96,7 @@ public class LivingHealthService {
      */
     public ScoreResultResponseDto convertInfoToScore(BigRegion bigRegion, ScoreResultResponseDto scoreResultResponseDto) {
 
-        LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
 
         // 천식폐질환지수 점수변환
         List<Integer> asthmaInfoList = new ArrayList<>();

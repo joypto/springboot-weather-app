@@ -49,7 +49,7 @@ public class CoronaService {
             CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getBigRegionName()).get();
             coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
         } else {
-            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
             CoronaRedisVO coronaRedisVO = new CoronaRedisVO(coronaInfo);
             coronaRedisRepository.save(coronaRedisVO);
         }
@@ -84,7 +84,7 @@ public class CoronaService {
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
-        return coronaRepository.findFirstByBigRegionOrderByCreatedAt(bigRegion);
+        return coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
     }
 
     public int getTotalNewCaseCount(LocalDate date) {
@@ -115,7 +115,7 @@ public class CoronaService {
     }
 
     private boolean checkAlreadyHasLatestData() {
-        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAt();
+        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc();
         LocalDate current = LocalDate.now();
 
         if (latestData == null)

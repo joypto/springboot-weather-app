@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AirPollutionInfoRepository extends JpaRepository<AirPollutionInfo, Long> {
 
-    AirPollutionInfo findFirstBySmallRegionOrderByCreatedAt(SmallRegion smallRegion);
+    AirPollutionInfo findFirstBySmallRegionOrderByCreatedAtDesc(SmallRegion smallRegion);
 }

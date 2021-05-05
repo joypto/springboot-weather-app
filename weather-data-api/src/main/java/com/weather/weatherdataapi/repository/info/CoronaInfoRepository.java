@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface CoronaInfoRepository extends JpaRepository<CoronaInfo, Long> {
 
-    CoronaInfo findFirstByBigRegionOrderByCreatedAt(BigRegion bigRegion);
+    CoronaInfo findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
-    CoronaInfo findFirstByOrderByCreatedAt();
+    CoronaInfo findFirstByOrderByCreatedAtDesc();
 
     List<CoronaInfo> findAllByDate(LocalDate date);
 }
