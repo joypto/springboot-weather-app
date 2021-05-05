@@ -26,7 +26,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
     public void run(ApplicationArguments args) throws Exception {
         log.info("run::OpenAPI를 사용하여 DB의 데이터를 갱신합니다.");
         coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
-        livingHealthService.fetchAndStoreLivingHealthInfoUsingOpenApi();
+        livingHealthService.fetchAndStoreInfoUsingOpenApi();
         log.info("run::성공적으로 갱신했습니다.");
 
         regionService.initialize();

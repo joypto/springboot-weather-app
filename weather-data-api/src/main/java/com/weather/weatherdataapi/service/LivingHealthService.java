@@ -35,11 +35,11 @@ public class LivingHealthService {
      * 여기서부터는 매일 아침 6시에 생활보건기상지수를 업데이트하는 스케줄러에 쓰이는 메서드입니다.
      */
     @Transactional
-    public void fetchAndStoreLivingHealthInfoUsingOpenApi() throws Exception {
-        if (checkAlreadyHasLatestLivingHealthInfo() == true)
+    public void fetchAndStoreInfoUsingOpenApi() throws Exception {
+        if (checkAlreadyHasLatestInfo() == true)
             return;
 
-        livingHealthInfoRepository.deleteAll();
+        livingHealthRedisRepository.deleteAll();
 
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
 
@@ -55,7 +55,7 @@ public class LivingHealthService {
         log.info("fetchAndStoreLivingHealth::생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    private boolean checkAlreadyHasLatestLivingHealthInfo() {
+    private boolean checkAlreadyHasLatestInfo() {
         LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
         LocalDate current = LocalDate.now();
         if (latestData == null)
