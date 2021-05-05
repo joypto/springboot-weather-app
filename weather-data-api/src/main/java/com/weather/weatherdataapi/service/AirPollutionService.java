@@ -59,13 +59,7 @@ public class AirPollutionService {
 
     public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-        Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
-
-        if (fetchedResponse.isPresent() == false) {
-            return null;
-        }
-
-        AirKoreaAirPollutionItem response = fetchedResponse.get();
+        AirKoreaAirPollutionItem response = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
 
         AirPollutionInfo airPollution = new AirPollutionInfo(response, smallRegion);
         airPollutionRepository.save(airPollution);
@@ -134,7 +128,7 @@ public class AirPollutionService {
         );
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName).orElseThrow(() -> new RuntimeException());
+        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
         LocalDateTime latestFetchedDataTime = LocalDateTime.parse(latestFetchedData.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH"));
 
         if (latestDataTime.isBefore(latestFetchedDataTime))
