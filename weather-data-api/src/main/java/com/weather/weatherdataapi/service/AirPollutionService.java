@@ -46,9 +46,16 @@ public class AirPollutionService {
             AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getSmallRegionName()).orElseThrow(() -> new RuntimeException());
             airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
         }
-        // 그렇지 않다면 OpenApi를 사용하여 값을 가져옵니다.
+        // 그렇지 않다면 DB에서 값을 가져옵니다.
         else {
-            airPollutionInfo = fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+            airPollutionInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+
+            // DB에 값이 없다면 OpenApi를 사용해 fetch합니다.
+            if (airPollutionInfo == null) {
+                AirKoreaAirPollutionItem fetched = fetchUsingOpenApi(smallRegion);
+                airPollutionInfo = new AirPollutionInfo(fetched, smallRegion);
+                airPollutionRepository.save(airPollutionInfo);
+            }
 
             AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(airPollutionInfo);
             airPollutionRedisRepository.save(airPollutionRedisVO);
@@ -57,14 +64,10 @@ public class AirPollutionService {
         return airPollutionInfo;
     }
 
-    public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
+    private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
         AirKoreaAirPollutionItem response = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
-
-        AirPollutionInfo airPollution = new AirPollutionInfo(response, smallRegion);
-        airPollutionRepository.save(airPollution);
-
-        return airPollution;
+        return response;
     }
 
     public String getStationNameUsingCoords(String tmX, String tmY) {

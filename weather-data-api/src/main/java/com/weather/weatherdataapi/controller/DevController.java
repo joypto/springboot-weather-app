@@ -37,7 +37,7 @@ public class DevController {
         BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
         SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, reverseGeocodingResponseDto.getSmallRegion());
 
-        AirPollutionInfo airPollution = airPollutionService.fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+        AirPollutionInfo airPollution = airPollutionService.getInfoBySmallRegion(smallRegion);
 
         return airPollution;
     }
