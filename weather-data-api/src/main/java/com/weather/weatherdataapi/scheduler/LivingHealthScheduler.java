@@ -20,10 +20,10 @@ public class LivingHealthScheduler {
 
             livingHealthService.fetchAndStoreInfoUsingOpenApi();
 
-            log.info("cronJobSch:: 생활기상지수 정보를 성공적으로 갱신하였습니다.");
+            log.info("cronJobSch:: 생활보건기상지수 정보를 성공적으로 갱신하였습니다.");
 
         } catch (Exception e) {
-            log.error("cronJobSch::생활기상지수 정보를 갱신하는데 실패하였습니다.");
+            log.error("cronJobSch::생활보건기상지수 정보를 갱신하는데 실패하였습니다.");
             log.error(e.getMessage());
             e.printStackTrace();
         }
