@@ -33,7 +33,16 @@ public class AirKoreaUtil {
                 0
         );
 
-        LocalDateTime latestFetchedDataTime = LocalDateTime.parse(fetchedItem.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH"));
+        LocalDateTime latestFetchedDataTime = LocalDateTime.parse(fetchedItem.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        latestFetchedDataTime = LocalDateTime.of(
+                latestFetchedDataTime.getYear(),
+                latestFetchedDataTime.getMonth(),
+                latestFetchedDataTime.getDayOfMonth(),
+                latestFetchedDataTime.getHour(),
+                0,
+                0,
+                0
+        );
 
         if (latestDataTime.isBefore(latestFetchedDataTime))
             return false;
