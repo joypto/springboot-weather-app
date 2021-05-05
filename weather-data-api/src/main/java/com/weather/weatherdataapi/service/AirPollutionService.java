@@ -8,6 +8,7 @@ import com.weather.weatherdataapi.model.vo.redis.AirPollutionRedisVO;
 import com.weather.weatherdataapi.repository.info.AirPollutionInfoRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
+import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
@@ -27,6 +28,7 @@ public class AirPollutionService {
     private final AirKoreaAirPollutionApi airKoreaAirPollutionOpenApi;
     private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
+    private final AirKoreaUtil airKoreaUtil;
 
     public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
@@ -44,9 +46,22 @@ public class AirPollutionService {
             AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getSmallRegionName()).orElseThrow(() -> new RuntimeException());
             airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
         }
-        // 그렇지 않다면 OpenApi를 사용하여 값을 가져옵니다.
+        // 그렇지 않다면 DB에서 값을 가져옵니다.
         else {
-            airPollutionInfo = fetchAndStoreAirPollutionInfoUsingOpenApi(smallRegion);
+            AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+            AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
+
+            // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
+            // 또는 최신 데이터가 아닐 경우
+            // OpenApi로 가져온 정보를 DB에 저장한 후 사용합니다.
+            if (existedInfo == null || airKoreaUtil.checkLatestInfoAlreadyExists(existedInfo, fetchedItem) == false) {
+                airPollutionInfo = new AirPollutionInfo(fetchedItem, smallRegion);
+                airPollutionRepository.save(airPollutionInfo);
+            }
+            // 그렇지 않은 경우 DB에 있는 데이터를 바로 사용합니다.
+            else {
+                airPollutionInfo = existedInfo;
+            }
 
             AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(airPollutionInfo);
             airPollutionRedisRepository.save(airPollutionRedisVO);
@@ -55,20 +70,10 @@ public class AirPollutionService {
         return airPollutionInfo;
     }
 
-    public AirPollutionInfo fetchAndStoreAirPollutionInfoUsingOpenApi(SmallRegion smallRegion) {
+    private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-        Optional<AirKoreaAirPollutionItem> fetchedResponse = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
-
-        if (fetchedResponse.isPresent() == false) {
-            return null;
-        }
-
-        AirKoreaAirPollutionItem response = fetchedResponse.get();
-
-        AirPollutionInfo airPollution = new AirPollutionInfo(response, smallRegion);
-        airPollutionRepository.save(airPollution);
-
-        return airPollution;
+        AirKoreaAirPollutionItem response = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+        return response;
     }
 
     public String getStationNameUsingCoords(String tmX, String tmY) {
@@ -111,6 +116,15 @@ public class AirPollutionService {
 
         scoreResultResponseDto.setPm10Result(pm10Score);
         scoreResultResponseDto.setPm25Result(pm25Score);
+    }
+
+    public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
+        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+
+        String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
+        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+
+        return airKoreaUtil.checkLatestInfoAlreadyExists(latestData, latestFetchedData);
     }
 
 }
