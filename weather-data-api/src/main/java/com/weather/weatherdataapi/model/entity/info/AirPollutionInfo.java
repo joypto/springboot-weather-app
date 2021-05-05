@@ -41,8 +41,19 @@ public class AirPollutionInfo extends Timestamped {
     public AirPollutionInfo(AirKoreaAirPollutionItem item, SmallRegion smallRegion) {
         this.smallRegion = smallRegion;
         this.dateTime = LocalDateTime.parse(item.getDataTime(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-        this.pm10Value = Integer.parseInt(item.getPm10Value());
-        this.pm25Value = Integer.parseInt(item.getPm25Value());
+
+        try {
+            this.pm10Value = Integer.parseInt(item.getPm10Value());
+        } catch (Exception e) {
+            this.pm10Value = -1;
+        }
+
+        try {
+            this.pm25Value = Integer.parseInt(item.getPm25Value());
+        } catch (Exception e) {
+            this.pm25Value = -1;
+        }
+
     }
 
     public AirPollutionInfo(AirPollutionRedisVO airPollutionRedisVO, SmallRegion smallRegion) {
