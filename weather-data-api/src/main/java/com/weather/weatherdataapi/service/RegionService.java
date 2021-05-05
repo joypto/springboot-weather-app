@@ -48,9 +48,7 @@ public class RegionService {
 
     @Transactional
     public void initializeRegionTable(List<RegionCsvVO> regionList) {
-        smallRegionRepository.deleteAll();
-        bigRegionRepository.deleteAll();
-
+        
         BigRegion latestBigRegion = null;
 
         for (RegionCsvVO regionVO : regionList) {

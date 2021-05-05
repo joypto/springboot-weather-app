@@ -34,7 +34,8 @@ public class RegionUtil {
     }
 
     public static String convertAliasToFullName(String alias) {
-        return aliasAndFullNameDict.get(alias);
+        String convertedFullName = aliasAndFullNameDict.get(alias);
+        return convertedFullName == null ? alias : convertedFullName;
     }
 
 }
