@@ -4,6 +4,7 @@ package com.weather.weatherdataapi.model.entity.info;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
+import com.weather.weatherdataapi.model.vo.redis.WeatherDayRedisVO;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,5 +57,14 @@ public class WeatherDayInfo extends Timestamped {
         this.rainPer = rainPer;
         this.dailyTime = dailyTime;
         this.weatherIcon = weatherIcon;
+    }
+
+    public WeatherDayInfo(WeatherDayRedisVO weatherDayRedisVO) {
+        this.tmp = weatherDayRedisVO.getTmp();
+        this.weather = weatherDayRedisVO.getWeather();
+        this.weatherDes = weatherDayRedisVO.getWeatherDes();
+        this.rainPer = weatherDayRedisVO.getRainPer();
+        this.dailyTime = weatherDayRedisVO.getDailyTime();
+        this.weatherIcon = weatherDayRedisVO.getWeatherIcon();
     }
 }

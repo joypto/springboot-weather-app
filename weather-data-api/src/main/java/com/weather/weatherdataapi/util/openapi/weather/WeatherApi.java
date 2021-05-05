@@ -4,9 +4,11 @@ import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
+import com.weather.weatherdataapi.model.vo.redis.WeatherDayRedisVO;
 import com.weather.weatherdataapi.model.vo.redis.WeatherWeekRedisVO;
 import com.weather.weatherdataapi.repository.info.WeatherDayInfoRepository;
 import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
+import com.weather.weatherdataapi.repository.redis.WeatherDayRedisRepository;
 import com.weather.weatherdataapi.repository.redis.WeatherWeekRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -30,8 +32,9 @@ public class WeatherApi {
     private final WeatherWeekInfoRepository weekInfoRepository;
     private final WeatherDayInfoRepository dayInfoRepository;
     private final WeatherWeekRedisRepository weatherWeekRedisRepository;
+    private final WeatherDayRedisRepository weatherDayRedisRepository;
 
-    public void callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
+    public WeatherWeekInfo callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
         StringBuilder result = new StringBuilder();
         String lat = wantRegion.getLatitude();
         String lon = wantRegion.getLongitude();
@@ -53,10 +56,9 @@ public class WeatherApi {
 
         urlConnection.disconnect();
 
-        initData(result.toString(),wantRegion,weatherDataResponseDto);
-
+        return initData(result.toString(),wantRegion,weatherDataResponseDto);
     }
-    public void initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
+    public WeatherWeekInfo initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
         try {
             System.out.println("주간 날씨 정보와 시간 정보를 불러오는 중");
             JSONObject jObj;
@@ -121,8 +123,8 @@ public class WeatherApi {
             week.add(weekInfo);
             wantRegion.setWeatherWeekInfoList(week);
             weatherDataResponseDto.setWeekInfo(weekInfo);
-            WeatherWeekRedisVO test = new WeatherWeekRedisVO(weekInfo);
-            weatherWeekRedisRepository.save(test);
+            WeatherWeekRedisVO weekCache = new WeatherWeekRedisVO(weekInfo);
+            weatherWeekRedisRepository.save(weekCache);
 
             // 하루 시간별 날씨 파싱
             array = (JSONArray) jsonObj.get("hourly");
@@ -161,8 +163,12 @@ public class WeatherApi {
             day.add(dayInfo);
             wantRegion.setWeatherDayInfoList(day);
             weatherDataResponseDto.setDayInfo(dayInfo);
+            WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo);
+            weatherDayRedisRepository.save(dayCache);
+            return weekInfo;
         }catch (Exception e){
             e.printStackTrace();
+            return null;
         }
     }
 }

@@ -2,61 +2,84 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
+import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
+import com.weather.weatherdataapi.model.vo.redis.WeatherDayRedisVO;
+import com.weather.weatherdataapi.model.vo.redis.WeatherWeekRedisVO;
+import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
+import com.weather.weatherdataapi.repository.redis.WeatherDayRedisRepository;
+import com.weather.weatherdataapi.repository.redis.WeatherWeekRedisRepository;
 import com.weather.weatherdataapi.util.openapi.weather.WeatherApi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class WeatherService {
     private final WeatherApi weatherGatherApi;
+    private final WeatherWeekRedisRepository weatherWeekRedisRepository;
+    private final WeatherDayRedisRepository weatherDayRedisRepository;
 
+
+    // 하루 지난 캐쉬 삭제
+    @Transactional
+    public void fetchAndStoreWeatherInfoUsingOpenApi() {
+        weatherDayRedisRepository.deleteAll();
+        weatherWeekRedisRepository.deleteAll();
+        log.info("fetchAndStoreWeatherInfo:: 날씨정보 캐시를 비웠습니다.");
+
+    }
+
+    // 날씨 정보 셋팅
     public void setInfoAndScore(SmallRegion wantRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) throws IOException {
         try {
-            LocalDate currentDate = LocalDate.now();
-
-            // 해당지역이 이전에 검색이 된적이있으면 이전값 반환
-            if (wantRegion.getWeatherWeekInfoList().get(0).getCreatedAt().toString().equals(currentDate.toString())) {
-                System.out.println("주간 날씨 정보가 존재하지만 아직 업데이트 시간은 아님");
-                weatherDataResponseDto.setWeekInfo(wantRegion.getWeatherWeekInfoList().get(0));
-                weatherDataResponseDto.setDayInfo(wantRegion.getWeatherDayInfoList().get(0));
-                convertInfoToScore(scoreResultResponseDto, wantRegion);
-                return;
-            }
-            System.out.println("주간 날씨 정보가 존재 하지만 업데이트가 필요함");
-
-            weatherGatherApi.callWeather(wantRegion,weatherDataResponseDto);
-            convertInfoToScore(scoreResultResponseDto, wantRegion);
+            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getSmallRegionName()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getSmallRegionName()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherWeekInfo weekInfo = new WeatherWeekInfo(weekInfoRedis);
+            WeatherDayInfo dayInfo = new WeatherDayInfo(dayInfoRedis);
+            weatherDataResponseDto.setWeekInfo(weekInfo);
+            weatherDataResponseDto.setDayInfo(dayInfo);
+            convertInfoToScore(scoreResultResponseDto, weekInfo);
+            System.out.println("redis 캐시 사용");
         } catch (Exception e) {
-            System.out.println("값이 존재하지 않음");
-            weatherGatherApi.callWeather(wantRegion,weatherDataResponseDto);
-            convertInfoToScore(scoreResultResponseDto, wantRegion);
+            e.printStackTrace();
+            System.out.println("redis 캐시 사용 실패");
+            WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
+            convertInfoToScore(scoreResultResponseDto, weekInfo);
         }
     }
 
 
-    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, SmallRegion smallRegion) {
+    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, WeatherWeekInfo weekInfo) {
         // 날짜별 환산점수 변환 시작
         List<String> getRainPer = new ArrayList<>();
         List<String> getWeather = new ArrayList<>();
         List<String> getWind = new ArrayList<>();
         List<String> getHumidity = new ArrayList<>();
         List<String> getTemp = new ArrayList<>();
-
-        String getMonth = smallRegion.getWeatherDayInfoList().get(0).getDailyTime().get(0).substring(0, 2);
-
+//        System.out.println(weekInfo.getCreatedAt().toString());
+//        String getMonth = weekInfo.getCreatedAt().toString().substring(5,7);
+        String getMonth = "05";
+        System.out.println(getMonth);
         for (int i = 0; i < 7; i++) {
-            getRainScore(smallRegion, getRainPer, i);
-            getWindScore(smallRegion, getWind, i);
-            getHumidityScore(smallRegion, getHumidity, i);
-            getWeatherScore(smallRegion, getWeather, i);
-            getWeatherScore(smallRegion,getTemp,i,getMonth);
+            getRainScore(weekInfo, getRainPer, i);
+            getWindScore(weekInfo, getWind, i);
+            getHumidityScore(weekInfo, getHumidity, i);
+            getWeatherScore(weekInfo, getWeather, i);
+            getWeatherScore(weekInfo, getTemp, i, getMonth);
         }
 
         scoreResultResponseDto.setRainPerResult(getRainPer);
@@ -66,45 +89,48 @@ public class WeatherService {
         scoreResultResponseDto.setTempResult(getTemp);
     }
 
-    public void getRainScore(SmallRegion smallRegion, List<String> getRainPer, int i) {
-        // 날짜별 강수확률 변환점수
-        if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getRainPer().get(i)) <= 0.2d) {
+    // 날짜별 강수확률 변환점수
+    public void getRainScore(WeatherWeekInfo weekInfo, List<String> getRainPer, int i) {
+        if (Double.parseDouble(weekInfo.getRainPer().get(i)) <= 0.2d) {
             getRainPer.add("100");
-        } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getRainPer().get(i)) <= 0.5d) {
+        } else if (Double.parseDouble(weekInfo.getRainPer().get(i)) <= 0.5d) {
             getRainPer.add("70");
-        } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getRainPer().get(i)) <= 0.7d) {
+        } else if (Double.parseDouble(weekInfo.getRainPer().get(i)) <= 0.7d) {
             getRainPer.add("40");
         } else {
             getRainPer.add("10");
         }
     }
 
-    public void getWindScore(SmallRegion smallRegion, List<String> getWind, int i) {
-        if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getWindSpeed().get(i)) <= 3.3d) {
+    //바람 점수를 반환
+    public void getWindScore(WeatherWeekInfo weekInfo, List<String> getWind, int i) {
+        if (Double.parseDouble(weekInfo.getWindSpeed().get(i)) <= 3.3d) {
             getWind.add("100");
-        } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getWindSpeed().get(i)) <= 5.4d) {
+        } else if (Double.parseDouble(weekInfo.getWindSpeed().get(i)) <= 5.4d) {
             getWind.add("70");
-        } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getWindSpeed().get(i)) <= 10.7d) {
+        } else if (Double.parseDouble(weekInfo.getWindSpeed().get(i)) <= 10.7d) {
             getWind.add("40");
         } else {
             getWind.add("10");
         }
     }
 
-    public void getHumidityScore(SmallRegion smallRegion, List<String> getHumidity, int i) {
-        if (40d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) <= 60d) {
+    //습도 점수를 반환
+    public void getHumidityScore(WeatherWeekInfo weekInfo, List<String> getHumidity, int i) {
+        if (40d <= Double.parseDouble(weekInfo.getHumidity().get(i)) && Double.parseDouble(weekInfo.getHumidity().get(i)) <= 60d) {
             getHumidity.add("100");
-        } else if (30d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) <= 70d) {
+        } else if (30d <= Double.parseDouble(weekInfo.getHumidity().get(i)) && Double.parseDouble(weekInfo.getHumidity().get(i)) <= 70d) {
             getHumidity.add("70");
-        } else if (20d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getHumidity().get(i)) <= 80d) {
+        } else if (20d <= Double.parseDouble(weekInfo.getHumidity().get(i)) && Double.parseDouble(weekInfo.getHumidity().get(i)) <= 80d) {
             getHumidity.add("40");
         } else {
             getHumidity.add("10");
         }
     }
 
-    public void getWeatherScore(SmallRegion smallRegion, List<String> getWeather, int i) {
-        switch (smallRegion.getWeatherWeekInfoList().get(0).getWeatherIcon().get(i)) {
+    //날씨 점수 반환
+    public void getWeatherScore(WeatherWeekInfo weekInfo, List<String> getWeather, int i) {
+        switch (weekInfo.getWeatherIcon().get(i)) {
             case "01d":
             case "01n":
             case "02d":
@@ -134,17 +160,18 @@ public class WeatherService {
 
         }
     }
-    public void getWeatherScore(SmallRegion smallRegion, List<String> getTemp, int i,String getMonth) {
+
+    public void getWeatherScore(WeatherWeekInfo weekInfo, List<String> getTemp, int i, String getMonth) {
         switch (getMonth) {
             // 봄
             case "03":
             case "04":
             case "05":
-                if (18d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 22d) {
+                if (18d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 22d) {
                     getTemp.add("100");
-                } else if (15d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 25d) {
+                } else if (15d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 25d) {
                     getTemp.add("70");
-                } else if (12d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 28d) {
+                } else if (12d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 28d) {
                     getTemp.add("40");
                 } else {
                     getTemp.add("10");
@@ -154,11 +181,11 @@ public class WeatherService {
             case "06":
             case "07":
             case "08":
-                if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 24d) {
+                if (Double.parseDouble(weekInfo.getTmp().get(i)) <= 24d) {
                     getTemp.add("100");
-                } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 27d) {
+                } else if (Double.parseDouble(weekInfo.getTmp().get(i)) <= 27d) {
                     getTemp.add("70");
-                } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 30d) {
+                } else if (Double.parseDouble(weekInfo.getTmp().get(i)) <= 30d) {
                     getTemp.add("40");
                 } else {
                     getTemp.add("10");
@@ -168,11 +195,11 @@ public class WeatherService {
             case "09":
             case "10":
             case "11":
-                if (14d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 18d) {
+                if (14d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 18d) {
                     getTemp.add("100");
-                } else if (11d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 21d) {
+                } else if (11d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 21d) {
                     getTemp.add("70");
-                } else if (8d <= Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) && Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) <= 24d) {
+                } else if (8d <= Double.parseDouble(weekInfo.getTmp().get(i)) && Double.parseDouble(weekInfo.getTmp().get(i)) <= 24d) {
                     getTemp.add("40");
                 } else {
                     getTemp.add("10");
@@ -182,11 +209,11 @@ public class WeatherService {
             case "12":
             case "01":
             case "02":
-                if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) >= 2d) {
+                if (Double.parseDouble(weekInfo.getTmp().get(i)) >= 2d) {
                     getTemp.add("100");
-                } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) >= -1d) {
+                } else if (Double.parseDouble(weekInfo.getTmp().get(i)) >= -1d) {
                     getTemp.add("70");
-                } else if (Double.parseDouble(smallRegion.getWeatherWeekInfoList().get(0).getTmp().get(i)) >= -4) {
+                } else if (Double.parseDouble(weekInfo.getTmp().get(i)) >= -4) {
                     getTemp.add("40");
                 } else {
                     getTemp.add("10");
