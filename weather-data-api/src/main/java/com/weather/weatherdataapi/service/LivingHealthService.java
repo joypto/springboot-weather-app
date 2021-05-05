@@ -43,7 +43,7 @@ public class LivingHealthService {
 
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
 
-        for (int i = 0; i < bigRegionList.size(); i++) {
+        for (int i = 0; i < 19; i++) {
             BigRegion bigRegion = bigRegionList.get(i);
             String admCode = bigRegionList.get(i).getAdmCode();
             LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
