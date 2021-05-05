@@ -8,5 +8,5 @@ public interface AirPollutionInfoRepository extends JpaRepository<AirPollutionIn
 
     AirPollutionInfo findFirstBySmallRegionOrderByCreatedAtDesc(SmallRegion smallRegion);
 
-    AirPollutionInfo findFirstByOrOrderByDateTimeDesc();
+    AirPollutionInfo findFirstByOrderByDateTimeDesc();
 }
