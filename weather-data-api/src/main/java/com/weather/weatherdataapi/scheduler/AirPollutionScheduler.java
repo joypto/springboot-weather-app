@@ -1,7 +1,6 @@
 package com.weather.weatherdataapi.scheduler;
 
 import com.weather.weatherdataapi.model.entity.SmallRegion;
-import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
@@ -24,7 +23,6 @@ public class AirPollutionScheduler {
     private final AirPollutionService airPollutionService;
     private final AirPollutionRedisRepository airPollutionRedisRepository;
 
-    private final BigRegionRepository bigRegionRepository;
     private final SmallRegionRepository smallRegionRepository;
 
     @Scheduled(cron = "0 10 * * * ?")
@@ -42,6 +40,7 @@ public class AirPollutionScheduler {
                 log.info("cronJobSch::이미 최신데이터를 가지고 있습니다.");
             } else {
                 log.info("cronJobSch::갱신되었음을 확인했습니다. 캐시 데이터를 삭제합니다.");
+                airPollutionRedisRepository.deleteAll();
             }
 
         } catch (Exception e) {
