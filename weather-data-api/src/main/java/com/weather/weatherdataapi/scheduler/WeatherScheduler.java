@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 public class WeatherScheduler {
     private final WeatherService weatherService;
 
-    @Scheduled(cron = "0 40 * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void cronJobSch() {
             weatherService.fetchAndStoreWeatherInfoUsingOpenApi();
             log.info("fetchAndStoreWeatherInfo:: 날씨정보 캐시 초기화 완료");
