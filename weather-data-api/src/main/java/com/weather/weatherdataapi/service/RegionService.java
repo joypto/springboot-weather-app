@@ -3,8 +3,12 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.vo.csv.RegionCsvVO;
+import com.weather.weatherdataapi.model.vo.redis.BigRegionRedisVO;
+import com.weather.weatherdataapi.model.vo.redis.SmallRegionRedisVO;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
+import com.weather.weatherdataapi.repository.redis.BigRegionRedisRepository;
+import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +16,10 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +28,69 @@ public class RegionService {
 
     private final BigRegionRepository bigRegionRepository;
     private final SmallRegionRepository smallRegionRepository;
+    private final BigRegionRedisRepository bigRegionRedisRepository;
+    private final SmallRegionRedisRepository smallRegionRedisRepository;
+
+    private Dictionary<String, String> bigRegionAdmCodeDict;
+    private Dictionary<String, Dictionary<String, String>> smallRegionAdmCodeDict;
+
+    public BigRegion getBigRegionByName(String bigRegionName) {
+        String admCode = getBigRegionAdmCodeByName(bigRegionName);
+
+        BigRegionRedisVO bigRegionRedisVO = null;
+        Optional<BigRegionRedisVO> queriedBigRegionRedisVO = bigRegionRedisRepository.findById(admCode);
+
+        // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
+        if (queriedBigRegionRedisVO.isPresent() == true) {
+            bigRegionRedisVO = queriedBigRegionRedisVO.get();
+            BigRegion bigRegion = new BigRegion(bigRegionRedisVO);
+
+            return bigRegion;
+        }
+        // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
+        // 조회한 데이터는 이제부터 캐시됩니다.
+        else {
+            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(bigRegionName);
+            bigRegionRedisVO = new BigRegionRedisVO(bigRegion);
+            bigRegionRedisRepository.save(bigRegionRedisVO);
+
+            return bigRegion;
+        }
+
+    }
+
+    public SmallRegion getSmallRegionByName(String bigRegionName, String smallRegionName) {
+        String admCode = getSmallRegionAdmCodeByName(bigRegionName, smallRegionName);
+        BigRegion bigRegion = getBigRegionByName(bigRegionName);
+
+        SmallRegionRedisVO smallRegionRedisVO = null;
+        Optional<SmallRegionRedisVO> queriedSmallRegionRedisVO = smallRegionRedisRepository.findById(admCode);
+
+        // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
+        if (queriedSmallRegionRedisVO.isPresent() == true) {
+            smallRegionRedisVO = queriedSmallRegionRedisVO.get();
+            SmallRegion smallRegion = new SmallRegion(smallRegionRedisVO, bigRegion);
+
+            return smallRegion;
+        }
+        // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
+        // 조회한 데이터는 이제부터 캐시됩니다.
+        else {
+            SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, smallRegionName);
+            smallRegionRedisVO = new SmallRegionRedisVO(smallRegion);
+            smallRegionRedisRepository.save(smallRegionRedisVO);
+
+            return smallRegion;
+        }
+    }
+
+    private String getBigRegionAdmCodeByName(String bigRegionName) {
+        return bigRegionAdmCodeDict.get(bigRegionName);
+    }
+
+    private String getSmallRegionAdmCodeByName(String bigRegionName, String smallRegionName) {
+        return smallRegionAdmCodeDict.get(bigRegionName).get(smallRegionName);
+    }
 
     public void initialize() {
         try {
@@ -29,15 +99,14 @@ public class RegionService {
 
             ClassPathResource regionCsvResource = new ClassPathResource("data/region.csv");
             List<RegionCsvVO> regionList = CsvParserUtil.parseCsvToObject(RegionCsvVO.class, regionCsvResource.getInputStream(), RegionCsvVO.getSchema());
-            if (checkRegionTableInitialized(regionList) == true) {
-                log.info("initialize::모든 지역정보가 이미 DB에 존재합니다.");
-            } else {
-                initializeRegionTable(regionList);
 
-                long endTime = System.currentTimeMillis();
-                float diffTimeSec = (endTime - startTime) / 1000f;
-                log.info("initialize::초기화를 성공적으로 마쳤습니다. ({}sec)", diffTimeSec);
-            }
+            tryInitializeRegionTable(regionList);
+
+            initializeRegionAdmCodeDict();
+
+            long endTime = System.currentTimeMillis();
+            float diffTimeSec = (endTime - startTime) / 1000f;
+            log.info("initialize::초기화를 성공적으로 마쳤습니다. ({}sec)", diffTimeSec);
 
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -46,9 +115,18 @@ public class RegionService {
         }
     }
 
+    private void tryInitializeRegionTable(List<RegionCsvVO> regionList) {
+        if (checkRegionTableInitialized(regionList) == true) {
+            log.info("tryInitializeRegionTable::모든 지역정보가 이미 DB에 존재합니다.");
+            return;
+        }
+
+        initializeRegionTable(regionList);
+    }
+
     @Transactional
     public void initializeRegionTable(List<RegionCsvVO> regionList) {
-        
+
         BigRegion latestBigRegion = null;
 
         for (RegionCsvVO regionVO : regionList) {
@@ -82,6 +160,30 @@ public class RegionService {
                 SmallRegion newSmallRegion = new SmallRegion(regionVO.getSmallRegion(), regionVO.getAdmCode(), regionVO.getLongitude(), regionVO.getLatitude(), bigRegion);
                 smallRegionRepository.save(newSmallRegion);
             }
+        }
+
+        log.info("initializeRegionTable::지역 테이블 초기화를 성공적으로 마쳤습니다.");
+    }
+
+    private void initializeRegionAdmCodeDict() {
+        List<BigRegion> allBigRegionList = bigRegionRepository.findAll();
+        List<SmallRegion> allSmallRegionList = smallRegionRepository.findAll();
+
+        bigRegionAdmCodeDict = new Hashtable<>(allBigRegionList.size());
+        smallRegionAdmCodeDict = new Hashtable<>(allSmallRegionList.size());
+
+        for (BigRegion bigRegion : allBigRegionList) {
+            bigRegionAdmCodeDict.put(bigRegion.getBigRegionName(), bigRegion.getAdmCode());
+
+            smallRegionAdmCodeDict.put(bigRegion.getBigRegionName(), new Hashtable<>());
+        }
+
+        for (SmallRegion smallRegion : allSmallRegionList) {
+            String bigRegionName = smallRegion.getBigRegion().getBigRegionName();
+            String smallRegionName = smallRegion.getSmallRegionName();
+            String smallRegionAdmCode = smallRegion.getAdmCode();
+
+            smallRegionAdmCodeDict.get(bigRegionName).put(smallRegionName, smallRegionAdmCode);
         }
     }
 
