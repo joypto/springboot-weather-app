@@ -8,6 +8,7 @@ import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
@@ -24,8 +25,7 @@ import java.io.IOException;
 public class DevController {
 
     private final ReverseGeoCodingApi reverseGeoCodingApi;
-    private final BigRegionRepository bigRegionRepository;
-    private final SmallRegionRepository smallRegionRepository;
+    private final RegionService regionService;
     private final AirPollutionService airPollutionService;
     private final KakaoGeoApi kakaoGeoApi;
 
@@ -34,8 +34,7 @@ public class DevController {
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
 
-        BigRegion bigRegion = bigRegionRepository.findByBigRegionName(reverseGeocodingResponseDto.getBigRegion());
-        SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, reverseGeocodingResponseDto.getSmallRegion());
+        SmallRegion smallRegion = regionService.getSmallRegionByName(reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion());
 
         AirPollutionInfo airPollution = airPollutionService.getInfoBySmallRegion(smallRegion);
 
