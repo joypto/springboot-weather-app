@@ -17,6 +17,7 @@ import java.util.List;
 @RestController
 public class UserPreferenceController {
 
+    private final UserPreferenceService userPreferenceService;
     private final UserPreferenceRepository userPreferenceRepository;
 
     @GetMapping("/api/user/preferences")
@@ -50,18 +51,12 @@ public class UserPreferenceController {
 
     @PostMapping("/api/user/regions")
     public void saveMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
-        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
-        List<String> saveRegion = userPreference.getSaveRegion();
-        saveRegion.add(regionRequestDto.getRegion());
-        userPreferenceRepository.save(userPreference);
+        userPreferenceService.saveMyRegion(regionRequestDto, token);
     }
 
     @PutMapping("api/user/regions")
     public void updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
-        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
-        List<String> saveRegion = userPreference.getSaveRegion();
-        saveRegion.remove(regionRequestDto.getRegion());
-        userPreferenceRepository.save(userPreference);
+        userPreferenceService.updateMyRegion(regionRequestDto, token);
     }
 
 }
