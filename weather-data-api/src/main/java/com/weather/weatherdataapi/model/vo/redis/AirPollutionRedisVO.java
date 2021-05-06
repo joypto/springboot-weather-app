@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RedisHash("air_pollution")
 public class AirPollutionRedisVO {
     @Id
-    private String smallRegionName;
+    private String smallRegionAdmCode;
 
     private long id;
 
@@ -26,7 +26,7 @@ public class AirPollutionRedisVO {
     private int pm25Value;
 
     public AirPollutionRedisVO(AirPollutionInfo airPollutionInfo) {
-        this.smallRegionName = airPollutionInfo.getSmallRegion().getSmallRegionName();
+        this.smallRegionAdmCode = airPollutionInfo.getSmallRegion().getAdmCode();
 
         this.id = airPollutionInfo.getId();
         this.smallRegionId = airPollutionInfo.getSmallRegion().getId();

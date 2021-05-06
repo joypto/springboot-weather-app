@@ -13,6 +13,7 @@ import com.weather.weatherdataapi.util.openapi.weather.WeatherApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -40,8 +41,8 @@ public class WeatherService {
     // 날씨 정보 셋팅
     public void setInfoAndScore(SmallRegion wantRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) throws IOException {
         try {
-            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getSmallRegionName()).orElseThrow(() -> new NullPointerException("?"));
-            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getSmallRegionName()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
             WeatherWeekInfo weekInfo = new WeatherWeekInfo(weekInfoRedis);
             WeatherDayInfo dayInfo = new WeatherDayInfo(dayInfoRedis);
             weatherDataResponseDto.setWeekInfo(weekInfo);
@@ -64,7 +65,7 @@ public class WeatherService {
         List<String> getHumidity = new ArrayList<>();
         List<String> getTemp = new ArrayList<>();
         LocalDate time = LocalDate.now();
-        String getMonth = time.toString().substring(5,7);
+        String getMonth = time.toString().substring(5, 7);
         for (int i = 0; i < 7; i++) {
             getRainScore(weekInfo, getRainPer, i);
             getWindScore(weekInfo, getWind, i);
