@@ -38,14 +38,14 @@ public class ReverseGeoCodingApi {
         String alias = (String) area1.get("alias");
         JSONObject area2 = (JSONObject) region2.get("area2");
         String area2_name = (String) area2.get("name");
-//        JSONObject area3 = (JSONObject) region2.get("area3");
-//        String area3_name = (String) area3.get("name");
+        if (area2_name.equals("")){
+            area2_name = area1_name;
+        }
 
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = new ReverseGeocodingResponseDto();
         reverseGeocodingResponseDto.setBigRegion(area1_name);
         reverseGeocodingResponseDto.setSmallRegion(area2_name);
         reverseGeocodingResponseDto.setAlias(alias);
-
         return reverseGeocodingResponseDto;
     }
 
