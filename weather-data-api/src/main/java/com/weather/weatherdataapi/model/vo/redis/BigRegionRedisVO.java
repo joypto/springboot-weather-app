@@ -11,21 +11,21 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 public class BigRegionRedisVO {
     @Id
-    private String bigRegionName;
+    private String admCode;
 
     private long id;
 
-    private String admCode;
+    private String bigRegionName;
 
     private String longitude;
 
     private String latitude;
 
     public BigRegionRedisVO(BigRegion bigRegion) {
-        this.bigRegionName = bigRegion.getBigRegionName();
+        this.admCode = bigRegion.getAdmCode();
 
         this.id = bigRegion.getId();
-        this.admCode = bigRegion.getAdmCode();
+        this.bigRegionName = bigRegion.getBigRegionName();
         this.longitude = bigRegion.getLongitude();
         this.latitude = bigRegion.getLatitude();
     }
