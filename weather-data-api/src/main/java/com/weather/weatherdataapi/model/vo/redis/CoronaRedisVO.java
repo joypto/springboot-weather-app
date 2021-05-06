@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class CoronaRedisVO {
     @Id
-    private String bigRegionName;
+    private String bigRegionAdmCode;
 
     private long id;
 
@@ -26,7 +26,7 @@ public class CoronaRedisVO {
     private int newForeignCaseCount;
 
     public CoronaRedisVO(CoronaInfo coronaInfo) {
-        this.bigRegionName = coronaInfo.getBigRegion().getBigRegionName();
+        this.bigRegionAdmCode = coronaInfo.getBigRegion().getAdmCode();
 
         this.id = coronaInfo.getId();
         this.bigRegionId = coronaInfo.getBigRegion().getId();

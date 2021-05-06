@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.RedisHash;
 @NoArgsConstructor
 public class LivingHealthRedisVO {
     @Id
-    private String bigRegionName;
+    private String bigRegionAdmCode;
 
     private long id;
 
@@ -47,7 +47,7 @@ public class LivingHealthRedisVO {
     private String asthmaTheDayAfterTomorrow;
 
     public LivingHealthRedisVO(LivingHealthInfo livingHealthInfo) {
-        this.bigRegionName = livingHealthInfo.getBigRegion().getBigRegionName();
+        this.bigRegionAdmCode = livingHealthInfo.getBigRegion().getAdmCode();
 
         this.id = livingHealthInfo.getId();
         this.bigRegionId = livingHealthInfo.getBigRegion().getId();

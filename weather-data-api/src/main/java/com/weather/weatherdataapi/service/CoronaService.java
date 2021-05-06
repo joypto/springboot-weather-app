@@ -45,8 +45,8 @@ public class CoronaService {
         CoronaInfo coronaInfo;
 
         // 캐시 데이터가 있다면 캐시 데이터를 먼저 사용합니다.
-        if (coronaRedisRepository.existsById(bigRegion.getBigRegionName())) {
-            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getBigRegionName()).get();
+        if (coronaRedisRepository.existsById(bigRegion.getAdmCode())) {
+            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).get();
             coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
         } else {
             coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);

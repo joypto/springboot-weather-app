@@ -13,7 +13,7 @@ import java.util.List;
 @RedisHash("weather_day")
 public class WeatherDayRedisVO {
     @Id
-    private String smallRegionName;
+    private String smallRegionAdmCode;
 
     private long id;
 
@@ -32,7 +32,7 @@ public class WeatherDayRedisVO {
     private List<String> weatherIcon;
 
     public WeatherDayRedisVO(WeatherDayInfo weatherDayInfo) {
-        this.smallRegionName = weatherDayInfo.getSmallRegion().getSmallRegionName();
+        this.smallRegionAdmCode = weatherDayInfo.getSmallRegion().getAdmCode();
 
         this.id = weatherDayInfo.getId();
         this.smallRegionId = weatherDayInfo.getSmallRegion().getId();

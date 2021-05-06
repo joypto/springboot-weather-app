@@ -77,9 +77,9 @@ public class LivingHealthService {
     public LivingHealthInfo getInfoByBigRegion(BigRegion bigRegion) {
         LivingHealthInfo livingHealthInfo;
 
-        if(livingHealthRedisRepository.existsById(bigRegion.getBigRegionName())) {
+        if (livingHealthRedisRepository.existsById(bigRegion.getAdmCode())) {
             System.out.println("레디스 캐시 데이터베이스를 사용합니다.");
-            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getBigRegionName()).get();
+            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).get();
             livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
         } else {
             System.out.println("MySql 데이터베이스를 사용합니다.");
