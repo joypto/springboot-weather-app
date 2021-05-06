@@ -2,28 +2,22 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
-import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
-import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import com.weather.weatherdataapi.model.vo.redis.WeatherDayRedisVO;
 import com.weather.weatherdataapi.model.vo.redis.WeatherWeekRedisVO;
-import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
 import com.weather.weatherdataapi.repository.redis.WeatherDayRedisRepository;
 import com.weather.weatherdataapi.repository.redis.WeatherWeekRedisRepository;
 import com.weather.weatherdataapi.util.openapi.weather.WeatherApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -53,10 +47,9 @@ public class WeatherService {
             weatherDataResponseDto.setWeekInfo(weekInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
             convertInfoToScore(scoreResultResponseDto, weekInfo);
-            System.out.println("redis 캐시 사용");
+            log.info("캐시로 데이터 불러오기");
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("redis 캐시 사용 실패");
+            log.info("캐시로 데이터 불러오기 실패");
             WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
             convertInfoToScore(scoreResultResponseDto, weekInfo);
         }
@@ -70,10 +63,8 @@ public class WeatherService {
         List<String> getWind = new ArrayList<>();
         List<String> getHumidity = new ArrayList<>();
         List<String> getTemp = new ArrayList<>();
-//        System.out.println(weekInfo.getCreatedAt().toString());
-//        String getMonth = weekInfo.getCreatedAt().toString().substring(5,7);
-        String getMonth = "05";
-        System.out.println(getMonth);
+        LocalDate time = LocalDate.now();
+        String getMonth = time.toString().substring(5,7);
         for (int i = 0; i < 7; i++) {
             getRainScore(weekInfo, getRainPer, i);
             getWindScore(weekInfo, getWind, i);
