@@ -2,9 +2,9 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
+import com.weather.weatherdataapi.model.vo.redis.SmallRegionRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -67,6 +67,14 @@ public class SmallRegion {
         this.longitude = longitude;
         this.latitude = latitude;
         this.bigRegion = bigRegion;
+    }
+
+    public SmallRegion(SmallRegionRedisVO smallRegionRedisVO, BigRegion bigRegion) {
+        this.id = smallRegionRedisVO.getId();
+        this.bigRegion = bigRegion;
+        this.admCode = smallRegionRedisVO.getAdmCode();
+        this.longitude = smallRegionRedisVO.getLongitude();
+        this.latitude = smallRegionRedisVO.getLatitude();
     }
 
 }

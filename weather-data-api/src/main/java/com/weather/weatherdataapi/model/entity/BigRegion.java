@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.vo.redis.BigRegionRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -56,6 +57,14 @@ public class BigRegion {
         this.admCode = admCode;
         this.longitude = longitude;
         this.latitude = latitude;
+    }
+
+    public BigRegion(BigRegionRedisVO regionRedisVO) {
+        this.id = regionRedisVO.getId();
+        this.bigRegionName = regionRedisVO.getBigRegionName();
+        this.admCode = regionRedisVO.getAdmCode();
+        this.longitude = regionRedisVO.getLongitude();
+        this.latitude = regionRedisVO.getLatitude();
     }
 
 }
