@@ -102,7 +102,12 @@ public class RegionService {
 
             tryInitializeRegionTable(regionList);
 
-            initializeRegionAdmCodeDict();
+            List<BigRegion> allBigRegionList = bigRegionRepository.findAll();
+            List<SmallRegion> allSmallRegionList = smallRegionRepository.findAll();
+
+            initializeRegionAdmCodeDict(allBigRegionList, allSmallRegionList);
+
+            initializeRedisRepository(allBigRegionList, allSmallRegionList);
 
             long endTime = System.currentTimeMillis();
             float diffTimeSec = (endTime - startTime) / 1000f;
@@ -165,9 +170,7 @@ public class RegionService {
         log.info("initializeRegionTable::지역 테이블 초기화를 성공적으로 마쳤습니다.");
     }
 
-    private void initializeRegionAdmCodeDict() {
-        List<BigRegion> allBigRegionList = bigRegionRepository.findAll();
-        List<SmallRegion> allSmallRegionList = smallRegionRepository.findAll();
+    private void initializeRegionAdmCodeDict(List<BigRegion> allBigRegionList, List<SmallRegion> allSmallRegionList) {
 
         bigRegionAdmCodeDict = new Hashtable<>(allBigRegionList.size());
         smallRegionAdmCodeDict = new Hashtable<>(allSmallRegionList.size());
@@ -184,6 +187,18 @@ public class RegionService {
             String smallRegionAdmCode = smallRegion.getAdmCode();
 
             smallRegionAdmCodeDict.get(bigRegionName).put(smallRegionName, smallRegionAdmCode);
+        }
+    }
+
+    private void initializeRedisRepository(List<BigRegion> allBigRegionList, List<SmallRegion> allSmallRegionList) {
+        for (BigRegion bigRegion : allBigRegionList) {
+            BigRegionRedisVO bigRegionRedisVO = new BigRegionRedisVO(bigRegion);
+            bigRegionRedisRepository.save(bigRegionRedisVO);
+        }
+
+        for (SmallRegion smallRegion : allSmallRegionList) {
+            SmallRegionRedisVO smallRegionRedisVO = new SmallRegionRedisVO(smallRegion);
+            smallRegionRedisRepository.save(smallRegionRedisVO);
         }
     }
 
