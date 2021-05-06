@@ -2,6 +2,7 @@ package com.weather.weatherdataapi;
 
 import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.LivingHealthService;
+import com.weather.weatherdataapi.service.RedisService;
 import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class WeatherDataApplicationRunner implements ApplicationRunner {
 
+    private final RedisService redisService;
+
     private final CoronaService coronaService;
     private final LivingHealthService livingHealthService;
 
@@ -24,14 +27,18 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("run::OpenAPI를 사용하여 DB의 데이터를 갱신합니다.");
-        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
-        livingHealthService.fetchAndStoreInfoUsingOpenApi();
-        log.info("run::성공적으로 갱신했습니다.");
+        log.info("run::서버를 시작하기 전 초기화를 진행합니다.");
+
+        redisService.initialize();
 
         regionService.initialize();
 
+        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
+        livingHealthService.fetchAndStoreInfoUsingOpenApi();
+
         airKoreaStationUtil.InitializeRegionStationNameDict();
+
+        log.info("run::초기화를 마쳤습니다.");
     }
 
 }
