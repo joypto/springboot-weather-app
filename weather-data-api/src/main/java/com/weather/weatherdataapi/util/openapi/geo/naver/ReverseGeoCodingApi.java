@@ -41,12 +41,11 @@ public class ReverseGeoCodingApi {
         if (area2_name.equals("")){
             area2_name = area1_name;
         }
-        
+
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = new ReverseGeocodingResponseDto();
         reverseGeocodingResponseDto.setBigRegion(area1_name);
         reverseGeocodingResponseDto.setSmallRegion(area2_name);
         reverseGeocodingResponseDto.setAlias(alias);
-        System.out.println(area2_name);
         return reverseGeocodingResponseDto;
     }
 
