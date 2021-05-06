@@ -33,11 +33,21 @@ public class LivingHealthApi {
 
     public LivingHealthInfo livingHealthApi(BigRegion bigRegion, String admCode) throws IOException, ParseException {
 
+        String dateResult = "2021042706";
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
-        Date dateSet = cal.getTime();
-        sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
-        String dateResult = sdf.format(dateSet);
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+
+        if (hour >= 6) {
+            SimpleDateFormat sdf = new SimpleDateFormat("YYYYMMdd");
+            Date dateSet = cal.getTime();
+            sdf.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
+            dateResult = sdf.format(dateSet);
+        } else if (hour < 6) {
+            Date dDate = new Date();
+            dDate = new Date(dDate.getTime() + (1000 * 60 * 60 * 24 * -1));
+            SimpleDateFormat dSdf = new SimpleDateFormat("yyyyMMdd", Locale.KOREA);
+            dateResult = dSdf.format(dDate);
+        }
 
         // 해당 시/구 주소를 가진 Region의 행정동 주소 불러오기
         String admcode = admCode;

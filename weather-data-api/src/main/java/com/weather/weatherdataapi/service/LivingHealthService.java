@@ -78,11 +78,11 @@ public class LivingHealthService {
         LivingHealthInfo livingHealthInfo;
 
         if (livingHealthRedisRepository.existsById(bigRegion.getAdmCode())) {
-            System.out.println("레디스 캐시 데이터베이스를 사용합니다.");
+            log.info("생활보건기상지수 데이터를 캐시 데이터베이스에서 불러옵니다.");
             LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).get();
             livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
         } else {
-            System.out.println("MySql 데이터베이스를 사용합니다.");
+            log.info("생활보건기상지수 데이터를 MySql 데이터베이스에서 불러오고 캐시 데이터베이스에 저장합니다.");
             livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
