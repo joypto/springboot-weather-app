@@ -28,12 +28,4 @@ public class RegionController {
         return bigRegion.getSmallRegionList();
     }
 
-    @GetMapping("/api/region")
-    public RegionResponseDto getAllRegions() {
-        RegionResponseDto regionResponseDto = new RegionResponseDto();
-        regionResponseDto.setBigRegionList(bigRegionRepository.findAll());
-        regionResponseDto.setSmallRegionList(smallRegionRepository.findAll());
-        return regionResponseDto;
-    }
-
 }

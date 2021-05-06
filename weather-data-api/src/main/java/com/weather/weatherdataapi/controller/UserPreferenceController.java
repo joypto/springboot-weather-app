@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.responsedto.RegionResponseDto;
 import com.weather.weatherdataapi.model.entity.UserPreference;
 import com.weather.weatherdataapi.repository.UserPreferenceRepository;
 import com.weather.weatherdataapi.service.UserPreferenceService;
@@ -41,6 +42,12 @@ public class UserPreferenceController {
         return userPreference;
     }
 
+    @GetMapping("/api/user/regions")
+    public RegionResponseDto getAllMyRegion(@RequestHeader("token") String token) {
+        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+        return new RegionResponseDto(userPreference.getCurrentRegion(), userPreference.getSaveRegion());
+    }
+
     @PostMapping("/api/user/regions")
     public void saveMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
         UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
@@ -49,10 +56,12 @@ public class UserPreferenceController {
         userPreferenceRepository.save(userPreference);
     }
 
-//    @PutMapping("api/user/regions")
-//    public void updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
-//        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
-//
-//    }
+    @PutMapping("api/user/regions")
+    public void updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
+        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+        List<String> saveRegion = userPreference.getSaveRegion();
+        saveRegion.remove(regionRequestDto.getRegion());
+        userPreferenceRepository.save(userPreference);
+    }
 
 }

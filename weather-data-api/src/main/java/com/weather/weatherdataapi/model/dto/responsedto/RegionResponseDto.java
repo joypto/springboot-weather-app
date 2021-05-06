@@ -11,7 +11,12 @@ import java.util.List;
 @Setter
 public class RegionResponseDto {
 
-    private List<BigRegion> BigRegionList;
-    private List<SmallRegion> SmallRegionList;
+    private String currentRegion;
+    private List<String> saveRegions;
+
+    public RegionResponseDto(String currentRegion, List<String> saveRegions) {
+        this.currentRegion = currentRegion;
+        this.saveRegions = saveRegions;
+    }
 
 }
