@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.requestdto.TotalDataRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
@@ -32,14 +33,11 @@ public class TotalDataService {
     private final SmallRegionRepository smallRegionRepository;
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-    public WeatherDataResponseDto getTotalData(CoordinateDto coordinateDto, String token) throws ParseException, IOException {
-
-        // 해당 위경도로 시/구 주소 문자열 반환
-        ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+    public WeatherDataResponseDto getTotalData(TotalDataRequestDto totalDataRequestDto, String token) throws ParseException, IOException {
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
-        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(address.getBigRegion());
-        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, address.getSmallRegion());
+        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(totalDataRequestDto.getCurrentBigRegionName());
+        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, totalDataRequestDto.getCurrentSmallRegionName());
 
         // 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
@@ -61,5 +59,11 @@ public class TotalDataService {
         weatherDataResponseDto.setDayScoreList(dayScoreList);
         return weatherDataResponseDto;
 
+    }
+
+    public TotalDataRequestDto getRegionName(CoordinateDto coordinateDto) throws ParseException {
+        // 해당 위경도로 시/구 주소 문자열 반환
+        ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+        return new TotalDataRequestDto(address.getBigRegion(), address.getSmallRegion());
     }
 }

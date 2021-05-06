@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.requestdto.TotalDataRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.vo.redis.WeatherWeekRedisVO;
@@ -18,12 +19,20 @@ import java.util.Optional;
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @RestController
-public class WeatherDataController {
+public class TotalDataController {
 
     private final TotalDataService totalDataService;
 
-    @GetMapping("/api/weather/data")
-    public WeatherDataResponseDto getAllWeatherData(CoordinateDto coordinateDto, @RequestHeader("token") String token) throws ParseException, IOException {
-        return totalDataService.getTotalData(coordinateDto, token);
+    @GetMapping("/api/total/data/coordinate")
+    public WeatherDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader("token") String token) throws ParseException, IOException {
+        TotalDataRequestDto totalDataRequestDto = totalDataService.getRegionName(coordinateDto);
+        return totalDataService.getTotalData(totalDataRequestDto, token);
     }
+
+    @GetMapping("/api/total/data/regionname")
+    public WeatherDataResponseDto getTotalDataByRegionName(TotalDataRequestDto totalDataRequestDto, @RequestHeader("token") String token) throws ParseException, IOException {
+        return totalDataService.getTotalData(totalDataRequestDto, token);
+    }
+
+
 }
