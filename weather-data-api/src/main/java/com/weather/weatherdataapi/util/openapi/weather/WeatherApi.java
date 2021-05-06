@@ -11,6 +11,7 @@ import com.weather.weatherdataapi.repository.info.WeatherWeekInfoRepository;
 import com.weather.weatherdataapi.repository.redis.WeatherDayRedisRepository;
 import com.weather.weatherdataapi.repository.redis.WeatherWeekRedisRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+@Slf4j
 @RequiredArgsConstructor
 @Component
 public class WeatherApi {
@@ -60,7 +62,7 @@ public class WeatherApi {
     }
     public WeatherWeekInfo initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
         try {
-            System.out.println("주간 날씨 정보와 시간 정보를 불러오는 중");
+            log.info("날씨 정보와 시간 정보 요청");
             JSONObject jObj;
             JSONObject jObj1;
             JSONArray jObj2;
@@ -84,8 +86,6 @@ public class WeatherApi {
             List<String> windSpeed = new ArrayList<>();
             List<String> weatherIcon = new ArrayList<>();
             List<String> hour_weatherIcon = new ArrayList<>();
-            List<WeatherWeekInfo> week = wantRegion.getWeatherWeekInfoList();
-            List<WeatherDayInfo> day = wantRegion.getWeatherDayInfoList();
 
             // 주간 날씨 파씽
             JSONArray array = (JSONArray) jsonObj.get("daily");
@@ -119,9 +119,7 @@ public class WeatherApi {
 
             // 파싱한 값 저장하고 매핑하기
             weekInfo.setSmallRegion(wantRegion);
-            weekInfoRepository.save(weekInfo);
-            week.add(weekInfo);
-            wantRegion.setWeatherWeekInfoList(week);
+            weekInfoRepository.save(weekInfo);;
             weatherDataResponseDto.setWeekInfo(weekInfo);
             WeatherWeekRedisVO weekCache = new WeatherWeekRedisVO(weekInfo);
             weatherWeekRedisRepository.save(weekCache);
@@ -160,11 +158,10 @@ public class WeatherApi {
             // 파싱한 값 저장, 매핑
             dayInfo.setSmallRegion(wantRegion);
             dayInfoRepository.save(dayInfo);
-            day.add(dayInfo);
-            wantRegion.setWeatherDayInfoList(day);
             weatherDataResponseDto.setDayInfo(dayInfo);
             WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo);
             weatherDayRedisRepository.save(dayCache);
+            log.info("성공적으로 mysql에 저장");
             return weekInfo;
         }catch (Exception e){
             e.printStackTrace();
