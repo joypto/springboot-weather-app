@@ -5,6 +5,7 @@ import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import lombok.Getter;
@@ -39,9 +40,9 @@ public class CoronaInfo extends Timestamped {
     @Column
     private Integer newForeignCaseCount;
 
-    public CoronaInfo(ICoronaItem item, BigRegionRepository bigRegionRepository) throws RuntimeException {
+    public CoronaInfo(ICoronaItem item, RegionService regionService) throws RuntimeException {
         String convertedFullName = RegionUtil.convertAliasToFullName(item.getRegionName());
-        BigRegion bigRegion = bigRegionRepository.findByBigRegionName(convertedFullName);
+        BigRegion bigRegion = regionService.getBigRegionByName(convertedFullName);
         this.bigRegion = bigRegion;
 
         this.date = item.getDate();

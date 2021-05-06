@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.responsedto.RegionResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
@@ -27,7 +28,7 @@ public class CoronaService {
 
     private final CoronaInfoRepository coronaRepository;
     private final CoronaRedisRepository coronaRedisRepository;
-    private final BigRegionRepository bigRegionRepository;
+    private final RegionService regionService;
 
     private final GovCoronaApi govCoronaOpenApi;
 
@@ -73,7 +74,7 @@ public class CoronaService {
             if (item.getRegionName().equals("합계"))
                 continue;
 
-            CoronaInfo corona = new CoronaInfo(item, bigRegionRepository);
+            CoronaInfo corona = new CoronaInfo(item, regionService);
             coronaRepository.save(corona);
 
             CoronaRedisVO coronaRedisVO = new CoronaRedisVO(corona);

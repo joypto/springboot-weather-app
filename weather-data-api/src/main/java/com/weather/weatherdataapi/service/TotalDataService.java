@@ -9,8 +9,6 @@ import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.UserPreference;
-import com.weather.weatherdataapi.repository.BigRegionRepository;
-import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
@@ -29,15 +27,14 @@ public class TotalDataService {
     private final WeatherService weatherService;
     private final UserPreferenceService userPreferenceService;
     private final ScoreService scoreService;
-    private final BigRegionRepository bigRegionRepository;
-    private final SmallRegionRepository smallRegionRepository;
+    private final RegionService regionService;
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
     public WeatherDataResponseDto getTotalData(TotalDataRequestDto totalDataRequestDto, String token) throws IOException {
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
-        BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(totalDataRequestDto.getCurrentBigRegionName());
-        SmallRegion currentSmallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(currentBigRegion, totalDataRequestDto.getCurrentSmallRegionName());
+        BigRegion currentBigRegion = regionService.getBigRegionByName(totalDataRequestDto.getCurrentBigRegionName());
+        SmallRegion currentSmallRegion = regionService.getSmallRegionByName(totalDataRequestDto.getCurrentBigRegionName(), totalDataRequestDto.getCurrentSmallRegionName());
 
         // 객체 생성
         ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
