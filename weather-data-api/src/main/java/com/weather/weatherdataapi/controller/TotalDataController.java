@@ -30,9 +30,8 @@ public class TotalDataController {
     }
 
     @GetMapping("/api/total/data/regionname")
-    public WeatherDataResponseDto getTotalDataByRegionName(TotalDataRequestDto totalDataRequestDto, @RequestHeader("token") String token) throws ParseException, IOException {
+    public WeatherDataResponseDto getTotalDataByRegionName(TotalDataRequestDto totalDataRequestDto, @RequestHeader("token") String token) throws IOException {
         return totalDataService.getTotalData(totalDataRequestDto, token);
     }
-
 
 }

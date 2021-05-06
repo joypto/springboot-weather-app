@@ -2,15 +2,14 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +23,14 @@ public class UserPreference {
 
     @Column
     private String identification;
+
+    @JsonIgnore
+    @Column
+    private String currentRegion;
+
+    @JsonIgnore
+    @ElementCollection
+    private List<String> saveRegion;
 
     @Column
     private int temp;

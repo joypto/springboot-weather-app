@@ -22,4 +22,11 @@ public class UserPreferenceService {
         return userPreference;
     }
 
+    public void setUserCurrentRegion(UserPreference userPreference, String currentRegion) {
+        if (userPreference.getIdentification() != null) {
+            userPreference.setCurrentRegion(currentRegion);
+            userPreferenceRepository.save(userPreference);
+        }
+    }
+
 }

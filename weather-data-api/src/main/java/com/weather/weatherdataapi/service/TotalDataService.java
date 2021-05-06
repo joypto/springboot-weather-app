@@ -33,7 +33,7 @@ public class TotalDataService {
     private final SmallRegionRepository smallRegionRepository;
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-    public WeatherDataResponseDto getTotalData(TotalDataRequestDto totalDataRequestDto, String token) throws ParseException, IOException {
+    public WeatherDataResponseDto getTotalData(TotalDataRequestDto totalDataRequestDto, String token) throws IOException {
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
         BigRegion currentBigRegion = bigRegionRepository.findByBigRegionName(totalDataRequestDto.getCurrentBigRegionName());
@@ -51,6 +51,7 @@ public class TotalDataService {
 
         // 식별값으로 DB 에서 유저 선호도 불러오기
         UserPreference currentUserPreference = userPreferenceService.getCurrentUserPreference(token);
+        userPreferenceService.setUserCurrentRegion(currentUserPreference, totalDataRequestDto.getCurrentBigRegionName() + " " + totalDataRequestDto.getCurrentSmallRegionName());
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
         ScoreRequestDto scoreRequestDto = new ScoreRequestDto(currentUserPreference);

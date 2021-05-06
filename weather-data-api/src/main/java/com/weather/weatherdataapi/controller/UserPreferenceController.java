@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
 import com.weather.weatherdataapi.model.entity.UserPreference;
 import com.weather.weatherdataapi.repository.UserPreferenceRepository;
@@ -7,6 +8,8 @@ import com.weather.weatherdataapi.service.UserPreferenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import retrofit2.http.Header;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -37,4 +40,19 @@ public class UserPreferenceController {
         userPreferenceRepository.save(userPreference);
         return userPreference;
     }
+
+    @PostMapping("/api/user/regions")
+    public void saveMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
+        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+        List<String> saveRegion = userPreference.getSaveRegion();
+        saveRegion.add(regionRequestDto.getRegion());
+        userPreferenceRepository.save(userPreference);
+    }
+
+//    @PutMapping("api/user/regions")
+//    public void updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
+//        UserPreference userPreference = userPreferenceRepository.findByIdentification(token);
+//
+//    }
+
 }
