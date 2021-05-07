@@ -6,6 +6,7 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -25,10 +26,12 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class LivingHealthApi {
 
+    private final LivingHealthInfoRepository livingHealthInfoRepository;
     private String URL_ENCODED_SERVICE_KEY = "zhvzvF5vNC7ufu7H%2BQnPJtEQbF2QdNZ0qdvZWLeR%2BnL0UwxwnCgrkmxKB9oqCXVSJp95YTliRHwzxvGdrvjetg%3D%3D";
 
     public LivingHealthInfo livingHealthApi(BigRegion bigRegion, String admCode) throws IOException, ParseException {
@@ -87,43 +90,66 @@ public class LivingHealthApi {
             conn.disconnect();
             String data = sb.toString();
 
-            JSONParser parser = new JSONParser();
-            JSONObject jsonObject = (JSONObject) parser.parse(data);
-            JSONObject response = (JSONObject) jsonObject.get("response");
-            JSONObject body = (JSONObject) response.get("body");
-            JSONObject items = (JSONObject) body.get("items");
-            JSONArray item = (JSONArray) items.get("item");
-            JSONObject itemObject = (JSONObject) item.get(0);
+            try {
+                JSONParser parser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) parser.parse(data);
+                JSONObject response = (JSONObject) jsonObject.get("response");
+                JSONObject body = (JSONObject) response.get("body");
+                JSONObject items = (JSONObject) body.get("items");
+                JSONArray item = (JSONArray) items.get("item");
+                JSONObject itemObject = (JSONObject) item.get(0);
 
-            // 여기서부터가 사용하는 값!
-            String date = (String) itemObject.get("date");
-            String areaNo = (String) itemObject.get("areaNo");
-            String today = (String) itemObject.get("today");
-            String tomorrow = (String) itemObject.get("tomorrow");
-            String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
+                // 여기서부터가 사용하는 값!
+                String date = (String) itemObject.get("date");
+                String areaNo = (String) itemObject.get("areaNo");
+                String today = (String) itemObject.get("today");
+                String tomorrow = (String) itemObject.get("tomorrow");
+                String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
-            livingHealthInfo.setDate(date);
+                livingHealthInfo.setDate(date);
 
-            if (livingHealthInfo.getAreaNo() == null) {
-                livingHealthInfo.setAreaNo(areaNo);
-            }
+                if (livingHealthInfo.getAreaNo() == null) {
+                    livingHealthInfo.setAreaNo(areaNo);
+                }
 
-            if (method == "HealthWthrIdxService/getAsthmaIdx") {
-                livingHealthInfo.setAsthmaToday(today);
-                livingHealthInfo.setAsthmaTomorrow(tomorrow);
-                livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
-                livingHealthInfo.setOakPollenRiskToday(today);
-                livingHealthInfo.setOakPollenRiskTomorrow(tomorrow);
-                livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
-                livingHealthInfo.setFoodPoisonToday(today);
-                livingHealthInfo.setFoodPoisonTomorrow(tomorrow);
-                livingHealthInfo.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
-            } else if (method == "LivingWthrIdxService01/getUVIdx") {
-                livingHealthInfo.setUvToday(today);
-                livingHealthInfo.setUvTomorrow(tomorrow);
-                livingHealthInfo.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
+                if (method == "HealthWthrIdxService/getAsthmaIdx") {
+                    livingHealthInfo.setAsthmaToday(today);
+                    livingHealthInfo.setAsthmaTomorrow(tomorrow);
+                    livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
+                } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
+                    livingHealthInfo.setOakPollenRiskToday(today);
+                    livingHealthInfo.setOakPollenRiskTomorrow(tomorrow);
+                    livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
+                } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
+                    livingHealthInfo.setFoodPoisonToday(today);
+                    livingHealthInfo.setFoodPoisonTomorrow(tomorrow);
+                    livingHealthInfo.setFoodPoisonTheDayAfterTomorrow(theDayAfterTomorrow);
+                } else if (method == "LivingWthrIdxService01/getUVIdx") {
+                    livingHealthInfo.setUvToday(today);
+                    livingHealthInfo.setUvTomorrow(tomorrow);
+                    livingHealthInfo.setUvTheDayAfterTomorrow(theDayAfterTomorrow);
+                }
+            } catch (ParseException e) {
+                log.info("생활보건기상지수 OPEN API 정보 파싱에 실패했습니다.");
+                LivingHealthInfo yesterdayInfo = livingHealthInfoRepository.findSecondByAreaNoOrderByCreatedAtDesc(admcode);
+                if (method == "HealthWthrIdxService/getAsthmaIdx") {
+                    livingHealthInfo.setAsthmaToday(yesterdayInfo.getAsthmaToday());
+                    livingHealthInfo.setAsthmaTomorrow(yesterdayInfo.getAsthmaTomorrow());
+                    livingHealthInfo.setAsthmaTheDayAfterTomorrow(yesterdayInfo.getAsthmaTheDayAfterTomorrow());
+                } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
+                    livingHealthInfo.setOakPollenRiskToday(yesterdayInfo.getOakPollenRiskToday());
+                    livingHealthInfo.setOakPollenRiskTomorrow(yesterdayInfo.getOakPollenRiskTomorrow());
+                    livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(yesterdayInfo.getOakPollenRiskTheDayAfterTomorrow());
+                } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
+                    livingHealthInfo.setFoodPoisonToday(yesterdayInfo.getFoodPoisonToday());
+                    livingHealthInfo.setFoodPoisonTomorrow(yesterdayInfo.getFoodPoisonTomorrow());
+                    livingHealthInfo.setFoodPoisonTheDayAfterTomorrow(yesterdayInfo.getFoodPoisonTheDayAfterTomorrow());
+                } else if (method == "LivingWthrIdxService01/getUVIdx") {
+                    livingHealthInfo.setUvToday(yesterdayInfo.getUvToday());
+                    livingHealthInfo.setUvTomorrow(yesterdayInfo.getUvTomorrow());
+                    livingHealthInfo.setUvTheDayAfterTomorrow(yesterdayInfo.getUvTheDayAfterTomorrow());
+                }
+                log.info("데이터베이스에서 전 날의 데이터를 가져와 임시 업로드 완료하였습니다.");
             }
         }
 
