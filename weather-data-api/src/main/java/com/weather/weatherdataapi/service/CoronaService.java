@@ -63,7 +63,7 @@ public class CoronaService {
 
         weatherDataResponseDto.setCoronaAllNewCaseCount(getAllNewCaseCount());
 
-        convertInfoToScore(coronaInfo, scoreResultResponseDto);
+        convertInfoToScore(scoreResultResponseDto);
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -112,7 +112,7 @@ public class CoronaService {
         log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public void convertInfoToScore(CoronaInfo coronaInfo, ScoreResultResponseDto scoreResultResponseDto) {
+    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
