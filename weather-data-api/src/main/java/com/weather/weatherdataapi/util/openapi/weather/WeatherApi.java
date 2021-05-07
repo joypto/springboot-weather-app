@@ -37,9 +37,20 @@ public class WeatherApi {
     private final WeatherDayRedisRepository weatherDayRedisRepository;
 
     public WeatherWeekInfo callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
+        try {
+            String lat = wantRegion.getLatitude();
+            String lon = wantRegion.getLongitude();
+            return initData(useApi(lat, lon), wantRegion, weatherDataResponseDto);
+        }catch (Exception e){
+            String lat = "37.57037778";
+            String lon = "126.9816417";
+            log.info("지역정보 오류: 서울시 종로구로 대체");
+            return initData(useApi(lat, lon), wantRegion, weatherDataResponseDto);
+        }
+    }
+
+    public String useApi(String lat, String lon) throws IOException {
         StringBuilder result = new StringBuilder();
-        String lat = wantRegion.getLatitude();
-        String lon = wantRegion.getLongitude();
         String urlStr= "https://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&exclude=minutely,current&appid=0479c3d98eb03e0a92d9a69ce53b631f&units=metric";
         URL url = new URL(urlStr);
 
@@ -57,9 +68,9 @@ public class WeatherApi {
         }
 
         urlConnection.disconnect();
-
-        return initData(result.toString(),wantRegion,weatherDataResponseDto);
+        return result.toString();
     }
+
     public WeatherWeekInfo initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
         try {
             log.info("날씨 정보와 시간 정보 요청");
@@ -161,11 +172,14 @@ public class WeatherApi {
             weatherDataResponseDto.setDayInfo(dayInfo);
             WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo);
             weatherDayRedisRepository.save(dayCache);
-            log.info("성공적으로 mysql에 저장");
             return weekInfo;
         }catch (Exception e){
-            e.printStackTrace();
-            return null;
+            log.info("파싱에 실패했습니다. db에 있는 최신 정보로 대체합니다");
+            WeatherWeekInfo weekInfo = weekInfoRepository.findFirstBySmallRegionOrderByCreatedAtDesc(wantRegion);
+            WeatherDayInfo dayInfo = dayInfoRepository.findFirstBySmallRegionOrderByCreatedAtDesc(wantRegion);
+            weatherDataResponseDto.setWeekInfo(weekInfo);
+            weatherDataResponseDto.setDayInfo(dayInfo);
+            return weekInfo;
         }
     }
 }

@@ -18,6 +18,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -48,37 +49,51 @@ public class WeatherService {
             weatherDataResponseDto.setWeekInfo(weekInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
             convertInfoToScore(scoreResultResponseDto, weekInfo);
-            log.info("캐시로 데이터 불러오기");
+            log.info("캐시로 날씨 데이터 불러오기");
         } catch (Exception e) {
-            log.info("캐시로 데이터 불러오기 실패");
+            log.info("캐시로 날씨 데이터 불러오기 실패");
             WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
             convertInfoToScore(scoreResultResponseDto, weekInfo);
         }
     }
 
 
-    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, WeatherWeekInfo weekInfo) {
-        // 날짜별 환산점수 변환 시작
-        List<String> getRainPer = new ArrayList<>();
-        List<String> getWeather = new ArrayList<>();
-        List<String> getWind = new ArrayList<>();
-        List<String> getHumidity = new ArrayList<>();
-        List<String> getTemp = new ArrayList<>();
-        LocalDate time = LocalDate.now();
-        String getMonth = time.toString().substring(5, 7);
-        for (int i = 0; i < 7; i++) {
-            getRainScore(weekInfo, getRainPer, i);
-            getWindScore(weekInfo, getWind, i);
-            getHumidityScore(weekInfo, getHumidity, i);
-            getWeatherScore(weekInfo, getWeather, i);
-            getWeatherScore(weekInfo, getTemp, i, getMonth);
-        }
+    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, WeatherWeekInfo weekInfo) throws IOException {
+        try {
+            // 날짜별 환산점수 변환 시작
+            List<String> getRainPer = new ArrayList<>();
+            List<String> getWeather = new ArrayList<>();
+            List<String> getWind = new ArrayList<>();
+            List<String> getHumidity = new ArrayList<>();
+            List<String> getTemp = new ArrayList<>();
+            LocalDate time = LocalDate.now();
+            String getMonth = time.toString().substring(5, 7);
+            for (int i = 0; i < 7; i++) {
+                getRainScore(weekInfo, getRainPer, i);
+                getWindScore(weekInfo, getWind, i);
+                getHumidityScore(weekInfo, getHumidity, i);
+                getWeatherScore(weekInfo, getWeather, i);
+                getWeatherScore(weekInfo, getTemp, i, getMonth);
+            }
 
-        scoreResultResponseDto.setRainPerResult(getRainPer);
-        scoreResultResponseDto.setWeatherResult(getWeather);
-        scoreResultResponseDto.setHumidityResult(getHumidity);
-        scoreResultResponseDto.setWindResult(getWind);
-        scoreResultResponseDto.setTempResult(getTemp);
+            scoreResultResponseDto.setRainPerResult(getRainPer);
+            scoreResultResponseDto.setWeatherResult(getWeather);
+            scoreResultResponseDto.setHumidityResult(getHumidity);
+            scoreResultResponseDto.setWindResult(getWind);
+            scoreResultResponseDto.setTempResult(getTemp);
+        } catch (Exception e) {
+            List<String> getRainPer = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
+            List<String> getWeather = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
+            List<String> getWind = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
+            List<String> getHumidity = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
+            List<String> getTemp = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
+            scoreResultResponseDto.setRainPerResult(getRainPer);
+            scoreResultResponseDto.setWeatherResult(getWeather);
+            scoreResultResponseDto.setHumidityResult(getHumidity);
+            scoreResultResponseDto.setWindResult(getWind);
+            scoreResultResponseDto.setTempResult(getTemp);
+            log.info("날씨 점수 에러 발생 비상 비상 비상 비상 비상 비상 비상 비상");
+        }
     }
 
     // 날짜별 강수확률 변환점수
