@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
+import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
@@ -83,12 +85,15 @@ public class CoronaService {
     @Transactional
     public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
         if (checkAlreadyHasLatestData() == true)
-            return;
+            throw new AlreadyExistsLatestDataException();
+
+        ICoronaInfo info = govCoronaOpenApi.getInfo();
+
+        if (info.getItemList().isEmpty())
+            throw new FailedFetchException("가져온 아이템 리스트가 비어있습니다.");
 
         coronaRedisRepository.deleteAll();
         clearAllNewCaseCountCache();
-
-        ICoronaInfo info = govCoronaOpenApi.getInfo();
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
