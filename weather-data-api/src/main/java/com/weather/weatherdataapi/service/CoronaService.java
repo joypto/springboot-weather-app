@@ -57,7 +57,7 @@ public class CoronaService {
     }
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
-        CoronaInfo coronaInfo = getLatestInfoByBigRegion(currentBigRegion);
+        CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
 
         weatherDataResponseDto.setCoronaCurrentBigRegionNewCaseCount(coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount());
 
@@ -66,7 +66,7 @@ public class CoronaService {
         convertInfoToScore(coronaInfo, scoreResultResponseDto);
     }
 
-    public CoronaInfo getLatestInfoByBigRegion(BigRegion bigRegion) {
+    public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
         CoronaInfo coronaInfo;
 
         // 캐시 데이터가 있다면 캐시 데이터를 먼저 사용합니다.
