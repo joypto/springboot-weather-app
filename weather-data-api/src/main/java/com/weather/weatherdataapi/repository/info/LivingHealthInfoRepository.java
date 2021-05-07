@@ -8,6 +8,7 @@ public interface LivingHealthInfoRepository extends JpaRepository<LivingHealthIn
     LivingHealthInfo findByAreaNo(String areaNo);
 
     LivingHealthInfo findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
+    LivingHealthInfo findSecondByAreaNoOrderByCreatedAtDesc(String areaNo);
 
     LivingHealthInfo findFirstByOrderByCreatedAtDesc();
 }

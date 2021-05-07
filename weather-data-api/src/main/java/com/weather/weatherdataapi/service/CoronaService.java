@@ -1,12 +1,10 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.RegionResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
-import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.repository.redis.CoronaRedisRepository;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
@@ -19,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,10 +32,34 @@ public class CoronaService {
 
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
+    private Integer cachedAllNewCaseCount;
+
+    public Integer getAllNewCaseCount() {
+        // 캐시된 값이 없다면 계산한 뒤 캐싱합니다.
+        if (cachedAllNewCaseCount == null) {
+            Iterable<CoronaRedisVO> coronaInfoList = coronaRedisRepository.findAll();
+
+            AtomicInteger allNewCaseCount = new AtomicInteger();
+            coronaInfoList.forEach(coronaRedisVO -> {
+                allNewCaseCount.addAndGet(coronaRedisVO.getNewLocalCaseCount() + coronaRedisVO.getNewForeignCaseCount());
+            });
+
+            cachedAllNewCaseCount = allNewCaseCount.get();
+        }
+
+        return cachedAllNewCaseCount;
+    }
+
+    private void clearAllNewCaseCountCache() {
+        cachedAllNewCaseCount = null;
+    }
+
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
         CoronaInfo coronaInfo = getLatestInfoByBigRegion(currentBigRegion);
 
-        weatherDataResponseDto.setCorona(coronaInfo);
+        weatherDataResponseDto.setCoronaCurrentBigRegionNewCaseCount(coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount());
+
+        weatherDataResponseDto.setCoronaAllNewCaseCount(getAllNewCaseCount());
 
         convertInfoToScore(coronaInfo, scoreResultResponseDto);
     }
@@ -64,6 +86,7 @@ public class CoronaService {
             return;
 
         coronaRedisRepository.deleteAll();
+        clearAllNewCaseCountCache();
 
         ICoronaInfo info = govCoronaOpenApi.getInfo();
 
@@ -84,22 +107,12 @@ public class CoronaService {
         log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
-        return coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
-    }
-
-    public int getTotalNewCaseCount(LocalDate date) {
-        List<CoronaInfo> coronaInfoList = coronaRepository.findAllByDate(date);
-        int totalNewCaseCount = coronaInfoList.stream().mapToInt(coronaInfo -> coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount()).sum();
-        return totalNewCaseCount;
-    }
-
     public void convertInfoToScore(CoronaInfo coronaInfo, ScoreResultResponseDto scoreResultResponseDto) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
 
-        int newCaseCount = getTotalNewCaseCount(coronaInfo.getDate());
+        int newCaseCount = getAllNewCaseCount();
         int score = 0;
 
         // 코로나 단계별로 점수를 반환합니다.

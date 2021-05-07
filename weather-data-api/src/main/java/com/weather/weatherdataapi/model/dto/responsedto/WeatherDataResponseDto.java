@@ -2,7 +2,10 @@ package com.weather.weatherdataapi.model.dto.responsedto;
 
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
-import com.weather.weatherdataapi.model.entity.info.*;
+import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
+import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +31,9 @@ public class WeatherDataResponseDto {
 
     private AirPollutionInfo airPollution;
 
-    private CoronaInfo corona;
+    private Integer coronaCurrentBigRegionNewCaseCount;
+
+    private Integer coronaAllNewCaseCount;
 
     private List<Integer> dayScoreList;
 
