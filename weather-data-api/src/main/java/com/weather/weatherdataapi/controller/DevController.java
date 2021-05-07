@@ -51,4 +51,14 @@ public class DevController {
             return "error";
         }
     }
+
+    @GetMapping("/api/reversegeo")
+    public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException{
+        try {
+            return reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("서비스하지 않는 지역입니다.");
+            return new ReverseGeocodingResponseDto();
+        }
+    }
 }
