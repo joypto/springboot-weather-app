@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
@@ -66,7 +66,7 @@ public class LivingHealthService {
     /**
      * 정보 요청이 왔을 때, TotalDataService 로 생활보건기상지수 정보와 점수를 반환해주는 메서드입니다.
      */
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
         weatherDataResponseDto.setLivingHealthWeather(getInfoByBigRegion(currentBigRegion));
         convertInfoToScore(currentBigRegion, scoreResultResponseDto);
     }

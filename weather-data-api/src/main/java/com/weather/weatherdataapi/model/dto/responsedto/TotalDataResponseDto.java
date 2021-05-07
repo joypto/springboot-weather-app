@@ -17,7 +17,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WeatherDataResponseDto {
+public class TotalDataResponseDto {
 
     private BigRegion bigRegion;
 
@@ -37,12 +37,12 @@ public class WeatherDataResponseDto {
 
     private List<Integer> dayScoreList;
 
-    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion) {
+    public TotalDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion) {
         this.bigRegion = bigRegion;
         this.smallRegion = smallRegion;
     }
 
-    public WeatherDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, List<Integer> dayScoreList) {
+    public TotalDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, List<Integer> dayScoreList) {
         this.bigRegion = bigRegion;
         this.smallRegion = smallRegion;
         this.dayScoreList = dayScoreList;

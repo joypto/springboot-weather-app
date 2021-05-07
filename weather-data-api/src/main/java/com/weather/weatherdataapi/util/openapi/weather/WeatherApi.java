@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.util.openapi.weather;
 
-import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
@@ -36,7 +36,7 @@ public class WeatherApi {
     private final WeatherWeekRedisRepository weatherWeekRedisRepository;
     private final WeatherDayRedisRepository weatherDayRedisRepository;
 
-    public WeatherWeekInfo callWeather(SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto) throws IOException{
+    public WeatherWeekInfo callWeather(SmallRegion wantRegion, TotalDataResponseDto weatherDataResponseDto) throws IOException{
         try {
             String lat = wantRegion.getLatitude();
             String lon = wantRegion.getLongitude();
@@ -71,7 +71,7 @@ public class WeatherApi {
         return result.toString();
     }
 
-    public WeatherWeekInfo initData(String jsonData, SmallRegion wantRegion, WeatherDataResponseDto weatherDataResponseDto){
+    public WeatherWeekInfo initData(String jsonData, SmallRegion wantRegion, TotalDataResponseDto weatherDataResponseDto){
         try {
             log.info("날씨 정보와 시간 정보 요청");
             JSONObject jObj;

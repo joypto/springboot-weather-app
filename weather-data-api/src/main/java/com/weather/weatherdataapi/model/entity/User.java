@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserPreference {
+public class User {
 
     @JsonIgnore
     @Id
@@ -26,11 +26,11 @@ public class UserPreference {
 
     @JsonIgnore
     @Column
-    private String currentRegion;
+    private String latestRequestRegion;
 
     @JsonIgnore
     @ElementCollection
-    private List<String> saveRegion;
+    private List<String> oftenSeenRegions;
 
     @Column
     private int temp;
@@ -68,7 +68,7 @@ public class UserPreference {
     @Column
     private int foodPoison;
 
-    public UserPreference(String identification, ScoreRequestDto scoreRequestDto) {
+    public User(String identification, ScoreRequestDto scoreRequestDto) {
         this.identification = identification;
         this.temp = scoreRequestDto.getTempRange();
         this.rainPer = scoreRequestDto.getRainPerRange();
@@ -84,7 +84,7 @@ public class UserPreference {
         this.foodPoison = scoreRequestDto.getFoodPoisonRange();
     }
 
-    public UserPreference(String identification) {
+    public User(String identification) {
         this.temp = 50;
         this.rainPer = 50;
         this.weather = 0;

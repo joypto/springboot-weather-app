@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
-import com.weather.weatherdataapi.model.dto.responsedto.WeatherDataResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.vo.redis.AirPollutionRedisVO;
@@ -30,7 +30,7 @@ public class AirPollutionService {
     private final AirKoreaStationUtil airKoreaStationUtil;
     private final AirKoreaUtil airKoreaUtil;
 
-    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, WeatherDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
 
         weatherDataResponseDto.setAirPollution(airPollutionInfo);
