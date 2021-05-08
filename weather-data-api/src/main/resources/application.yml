@@ -1,0 +1,14 @@
+spring:
+  profiles:
+    active: local
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://final.cvoggurhiwh9.ap-northeast-2.rds.amazonaws.com:3306/test
+    username: admin
+    password: happybird
+  redis:
+    host: localhost
+    port: 6379
