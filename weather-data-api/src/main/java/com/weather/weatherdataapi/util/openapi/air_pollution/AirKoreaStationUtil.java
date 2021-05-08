@@ -66,7 +66,7 @@ public class AirKoreaStationUtil {
                 // 각 region에 가장 가까운 미세먼지 측정소의 이름을 저장합니다.
                 for (SmallRegion smallRegion : allSmallRegionList) {
                     KakaoGeoTranscoordResponseDocument transcoord = kakaoGeoOpenApi.convertWGS84ToWTM(smallRegion.getLongitude(), smallRegion.getLatitude());
-                    AirKoreaStationItem airKoreaStationItem = airKoreaStationOpenApi.getResponseItem(transcoord.getX(), transcoord.getY()).orElseThrow(() -> new RuntimeException());
+                    AirKoreaStationItem airKoreaStationItem = airKoreaStationOpenApi.getResponseItem(transcoord.getX(), transcoord.getY());
                     String nearestStationName = airKoreaStationItem.getStationName();
 
                     // BigRegion에 대응되는 SmallRegion을 담을 HashTable이 없다면, 인스턴스를 생성합니다.
