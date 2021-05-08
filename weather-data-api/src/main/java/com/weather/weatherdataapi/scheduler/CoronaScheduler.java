@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -24,9 +22,9 @@ public class CoronaScheduler {
 
             log.info("cronJobSch::성공적으로 갱신하였습니다.");
         } catch (Exception e) {
-            log.error("cronJobSch::갱신하는데 실패하였습니다.");
             log.error(e.getMessage());
             e.printStackTrace();
+            log.error("cronJobSch::갱신하는데 실패하였습니다.");
         }
 
     }
