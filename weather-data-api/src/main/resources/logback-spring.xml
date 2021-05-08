@@ -16,8 +16,10 @@
               value="${log.config.filename}"/>
     <property name="ERR_LOG_FILE_NAME"
               value="${log.config.err_filename}"/>
-    <property name="LOG_PATTERN"
-              value="%-5level %d{yy-MM-dd HH:mm:ss}[%thread] [%logger{0}:%line] - %msg%n"/>
+    <property name="CONSOLE_LOG_PATTERN"
+              value="%highlight(%-5level) %date [%thread] %cyan([%C{0} :: %M :: %L]) - %msg%n"/>
+    <property name="FILE_LOG_PATTERN"
+              value="%-5level %date [%thread] [%C{0} :: %M :: %L] - %msg%n"/>
 
     <!-- log level from application.yml -->
     <springProperty scope="context"
@@ -27,7 +29,7 @@
     <!-- console appender -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
@@ -39,7 +41,7 @@
 
         <!-- 출력패턴 설정 -->
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
 
         <!-- Rolling 정책 -->
@@ -71,7 +73,7 @@
 
         <file>${LOG_PATH}/${ERR_LOG_FILE_NAME}.log</file>
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
-            <pattern>${LOG_PATTERN}</pattern>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
         </encoder>
 
         <!-- Rolling 정책 -->
