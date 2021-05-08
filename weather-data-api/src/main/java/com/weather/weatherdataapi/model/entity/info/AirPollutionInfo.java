@@ -45,13 +45,13 @@ public class AirPollutionInfo extends Timestamped {
         try {
             this.pm10Value = Integer.parseInt(item.getPm10Value());
         } catch (Exception e) {
-            this.pm10Value = -1;
+            this.pm10Value = null;
         }
 
         try {
             this.pm25Value = Integer.parseInt(item.getPm25Value());
         } catch (Exception e) {
-            this.pm25Value = -1;
+            this.pm25Value = null;
         }
 
     }

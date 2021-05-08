@@ -94,25 +94,34 @@ public class AirPollutionService {
         final int PM25_NORMAL = 35;
         final int PM25_BAD = 75;
 
-        int pm10Score;
-        if (airPollution.getPm10Value() <= PM10_GOOD)
-            pm10Score = 100;
-        else if (airPollution.getPm10Value() <= PM10_NORMAL)
-            pm10Score = 70;
-        else if (airPollution.getPm10Value() <= PM10_BAD)
-            pm10Score = 40;
-        else
-            pm10Score = 10;
+        int pm10Score = 0;
+        int pm25Score = 0;
 
-        int pm25Score;
-        if (airPollution.getPm25Value() <= PM25_GOOD)
-            pm25Score = 100;
-        else if (airPollution.getPm25Value() <= PM25_NORMAL)
-            pm25Score = 70;
-        else if (airPollution.getPm25Value() <= PM25_BAD)
-            pm25Score = 40;
-        else
-            pm25Score = 10;
+        Integer pm10Value = airPollution.getPm10Value();
+
+        if (pm10Value != null) {
+            if (pm10Value <= PM10_GOOD)
+                pm10Score = 100;
+            else if (pm10Value <= PM10_NORMAL)
+                pm10Score = 70;
+            else if (pm10Value <= PM10_BAD)
+                pm10Score = 40;
+            else
+                pm10Score = 10;
+        }
+
+        Integer pm20Value = airPollution.getPm25Value();
+
+        if (pm20Value != null) {
+            if (airPollution.getPm25Value() <= PM25_GOOD)
+                pm25Score = 100;
+            else if (airPollution.getPm25Value() <= PM25_NORMAL)
+                pm25Score = 70;
+            else if (airPollution.getPm25Value() <= PM25_BAD)
+                pm25Score = 40;
+            else
+                pm25Score = 10;
+        }
 
         scoreResultResponseDto.setPm10Result(pm10Score);
         scoreResultResponseDto.setPm25Result(pm25Score);
