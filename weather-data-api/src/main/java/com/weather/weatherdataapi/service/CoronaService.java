@@ -81,8 +81,22 @@ public class CoronaService {
         return coronaInfo;
     }
 
+    public void tryFetchAndStoreInfoUsingOpenApi() {
+        try {
+            fetchAndStoreInfoUsingOpenApi();
+        } catch (AlreadyExistsLatestDataException e) {
+            log.warn(e.getMessage());
+            log.warn("run::원격 서버에서 제공하는 코로나 정보가 DB에 이미 저장되어 있습니다.");
+        } catch (FailedFetchException e) {
+            log.error(e.getMessage());
+            e.printStackTrace();
+            log.error("run::원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
+        }
+
+    }
+
     @Transactional
-    public void fetchAndStoreCoronaInfoUsingOpenApi() throws Exception {
+    public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
         if (checkAlreadyHasLatestData() == true)
             return;
 
