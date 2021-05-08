@@ -12,11 +12,8 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -46,7 +43,8 @@ public class AirPollutionService {
             AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode()).orElseThrow(() -> new RuntimeException());
             airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
         }
-        // 그렇지 않다면 DB에서 값을 가져옵니다.
+        // 그렇지 않다면 원격 서버에서 최신 정보를 가져옵니다.
+        // 가져온 최신 정보가 DB에 저장되어 있지 않다면, 이를 DB에 저장합니다.
         else {
             AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
             AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
