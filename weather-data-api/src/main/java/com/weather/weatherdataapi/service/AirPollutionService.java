@@ -76,15 +76,6 @@ public class AirPollutionService {
         return response;
     }
 
-    public String getStationNameUsingCoords(String tmX, String tmY) {
-        Optional<AirKoreaStationItem> fetchedRespense = airKoreaStationOpenApi.getResponseItem(tmX, tmY);
-
-        if (fetchedRespense.isPresent() == false)
-            return null;
-
-        return fetchedRespense.get().getStationName();
-    }
-
     public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultDto scoreResultDto) {
         final int PM10_GOOD = 30;
         final int PM10_NORMAL = 80;
