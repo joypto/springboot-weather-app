@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.model.dto.requestdto;
 
-import com.weather.weatherdataapi.model.entity.UserPreference;
+import com.weather.weatherdataapi.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +26,7 @@ public class ScoreRequestDto {
     private int asthmaRange;
     private int foodPoisonRange;
 
-    public ScoreRequestDto(UserPreference userPreference) {
+    public ScoreRequestDto(User userPreference) {
         this.coronaRange = userPreference.getCorona();
         this.pm10Range = userPreference.getPm10();
         this.pm25Range = userPreference.getPm25();

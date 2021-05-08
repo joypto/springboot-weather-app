@@ -1,12 +1,9 @@
 package com.weather.weatherdataapi.controller;
 
-import com.weather.weatherdataapi.model.dto.responsedto.RegionResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.BigRegionRepository;
-import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.service.RegionService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,12 +17,11 @@ import java.util.List;
 @RestController
 public class RegionController {
 
-    private final RegionService regionService;
+    private final BigRegionRepository bigRegionRepository;
 
-    @GetMapping("/api/region/smallregions")
-    public List<SmallRegion> getSmallRegionNamesByBigRegionName(@RequestParam("currentBigRegionName") String bigRegionName) {
-        BigRegion bigRegion = regionService.getBigRegionByName(bigRegionName);
-        return bigRegion.getSmallRegionList();
+    @GetMapping("/api/regions")
+    public List<BigRegion> getAllRegionName() {
+        return bigRegionRepository.findAll();
     }
 
 }
