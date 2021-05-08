@@ -28,7 +28,7 @@ public class AirKoreaStationUtil {
 
     private Dictionary<String, Dictionary<String, String>> regionNameStationNameDict;
 
-    public void InitializeRegionStationNameDict() {
+    public void initializeRegionStationNameDict() {
         log.info("각 지역에 대응되는 미세먼지 측정소 매핑을 시작합니다.");
         long startTime = System.currentTimeMillis();
 
