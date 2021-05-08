@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.vo.redis.BigRegionRedisVO;
@@ -23,7 +24,6 @@ public class BigRegion {
     @Column(name = "big_region_id")
     private Long id;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "bigRegion")
     private List<SmallRegion> smallRegionList;
 
@@ -37,6 +37,7 @@ public class BigRegion {
     @OrderBy("createdAt DESC")
     private List<LivingHealthInfo> livingHealthInfoList;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @Column(name = "big_region_name")
     private String bigRegionName;
 

@@ -44,7 +44,7 @@ public class UserService {
             userRegionResponseDto.setLatestRequestRegion(regionDto);
 
             userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
-            
+
             return userRegionResponseDto;
         } catch (NullPointerException e) {
             return userRegionResponseDto;

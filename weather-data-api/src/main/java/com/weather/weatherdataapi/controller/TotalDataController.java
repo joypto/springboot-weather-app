@@ -24,8 +24,8 @@ public class TotalDataController {
     }
 
     @GetMapping("/api/total/data/regionname")
-    public TotalDataResponseDto getTotalDataByRegionName(RegionDto totalDataRequestDto, @RequestHeader("token") String token) throws IOException {
-        return totalDataService.getTotalData(totalDataRequestDto, token);
+    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader("token") String token) throws IOException {
+        return totalDataService.getTotalData(regionDto, token);
     }
 
 }
