@@ -1,6 +1,5 @@
 package com.weather.weatherdataapi.scheduler;
 
-import com.weather.weatherdataapi.service.LivingHealthService;
 import com.weather.weatherdataapi.service.WeatherService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +16,6 @@ public class WeatherScheduler {
     @Scheduled(cron = "0 0 0 * * ?")
     public void cronJobSch() {
             weatherService.fetchAndStoreWeatherInfoUsingOpenApi();
-            log.info("fetchAndStoreWeatherInfo:: 날씨정보 캐시 초기화 완료");
+            log.info("날씨정보 캐시 초기화 완료");
     }
 }

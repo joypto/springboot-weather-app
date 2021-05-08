@@ -52,7 +52,7 @@ public class LivingHealthService {
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
         }
-        log.info("fetchAndStoreLivingHealth::생활기상지수 데이터를 성공적으로 갱신하였습니다.");
+        log.info("생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
 
     private boolean checkAlreadyHasLatestInfo() {

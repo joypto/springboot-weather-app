@@ -29,7 +29,7 @@ public class AirKoreaStationUtil {
     private Dictionary<String, Dictionary<String, String>> regionNameStationNameDict;
 
     public void InitializeRegionStationNameDict() {
-        log.info("InitializeRegionStationNameDict::각 지역에 대응되는 미세먼지 측정소 매핑을 시작합니다.");
+        log.info("각 지역에 대응되는 미세먼지 측정소 매핑을 시작합니다.");
         long startTime = System.currentTimeMillis();
 
         try {
@@ -39,7 +39,7 @@ public class AirKoreaStationUtil {
 
             // 이미 DB에 측정소 정보가 저장되어 있다면, DB에 저장되어 있는 정보를 그대로 가져다 사용하면 됩니다.
             if (allSmallRegionList.size() == airPollutionStationRepository.count()) {
-                log.info("InitializeRegionStationNameDict::모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
+                log.info("모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
 
                 for (SmallRegion smallRegion : allSmallRegionList) {
                     AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion).orElseThrow(() -> new RuntimeException("해당 지역에 매핑된 측정소 정보가 없습니다."));
@@ -59,7 +59,7 @@ public class AirKoreaStationUtil {
 
                 // 일부분이 이미 저장되어 있던 상태라면, 테이블을 초기화한 뒤 매핑을 시작합니다.
                 if (allSmallRegionList.size() != 0) {
-                    log.info("InitializeRegionStationNameDict::DB에 존재하는 매핑된 미세먼지 측정소 정보의 수가 모든 지역의 수와 다릅니다. 테이블을 초기화하고 다시 매핑합니다.");
+                    log.info("DB에 존재하는 매핑된 미세먼지 측정소 정보의 수가 모든 지역의 수와 다릅니다. 테이블을 초기화하고 다시 매핑합니다.");
                     airPollutionStationRepository.deleteAll();
                 }
 
@@ -84,11 +84,11 @@ public class AirKoreaStationUtil {
 
             long endTime = System.currentTimeMillis();
             float diffTimeSec = (endTime - startTime) / 1000f;
-            log.info("InitializeRegionStationNameDict::성공적으로 매핑했습니다. ({}sec)", diffTimeSec);
+            log.info("성공적으로 매핑했습니다. ({}sec)", diffTimeSec);
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
-            log.info("InitializeRegionStationNameDict::매핑에 실패하였습니다.");
+            log.info("매핑에 실패하였습니다.");
         }
     }
 

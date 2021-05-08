@@ -33,11 +33,11 @@ public class RedisService {
             weatherDayRedisRepository.deleteAll();
             weatherWeekRedisRepository.deleteAll();
 
-            log.info("initialize::Redis DB를 성공적으로 초기화하였습니다.");
+            log.info("Redis DB를 성공적으로 초기화하였습니다.");
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
-            log.error("initialize::Redis DB를 초기화하는 중 문제가 발생하였습니다.");
+            log.error("Redis DB를 초기화하는 중 문제가 발생하였습니다.");
             throw e;
         }
 

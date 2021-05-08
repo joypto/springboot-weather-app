@@ -123,7 +123,7 @@ public class CoronaService {
             coronaRedisRepository.save(coronaRedisVO);
         }
 
-        log.info("fetchAndStoreCorona::코로나 데이터를 성공적으로 갱신하였습니다.");
+        log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
     public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto) {
