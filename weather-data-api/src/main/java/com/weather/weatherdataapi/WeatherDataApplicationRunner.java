@@ -27,7 +27,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        log.info("run::서버를 시작하기 전 초기화를 진행합니다.");
+        log.info("서버를 시작하기 전 초기화를 진행합니다.");
 
         redisService.initialize();
 
@@ -39,7 +39,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
         airKoreaStationUtil.InitializeRegionStationNameDict();
 
-        log.info("run::초기화를 마쳤습니다.");
+        log.info("초기화를 마쳤습니다.");
     }
 
 }

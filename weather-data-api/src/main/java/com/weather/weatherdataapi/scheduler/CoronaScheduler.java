@@ -16,15 +16,15 @@ public class CoronaScheduler {
     @Scheduled(cron = "0 0 10 * * ?")
     public void cronJobSch() {
         try {
-            log.info("cronJobSch::전일 코로나 확진자 정보를 갱신합니다.");
+            log.info("전일 코로나 확진자 정보를 갱신합니다.");
 
             coronaService.tryFetchAndStoreInfoUsingOpenApi();
 
-            log.info("cronJobSch::성공적으로 갱신하였습니다.");
+            log.info("성공적으로 갱신하였습니다.");
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
-            log.error("cronJobSch::갱신하는데 실패하였습니다.");
+            log.error("갱신하는데 실패하였습니다.");
         }
 
     }

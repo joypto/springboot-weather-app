@@ -28,7 +28,7 @@ public class AirPollutionScheduler {
     @Scheduled(cron = "0 10 * * * ?")
     public void cronJobSch() {
         try {
-            log.info("cronJobSch::OpenApi 서버의 대기오염 정보가 갱신되었는지 확인합니다.");
+            log.info("OpenApi 서버의 대기오염 정보가 갱신되었는지 확인합니다.");
 
             SmallRegion criteriaRegion = smallRegionRepository.findByAdmCode(CRITERIA_REGION_ADM_CODE);
 
@@ -37,16 +37,16 @@ public class AirPollutionScheduler {
             }
 
             if (airPollutionService.checkLatestDataAlreadyExistsByRegion(criteriaRegion)) {
-                log.info("cronJobSch::이미 최신데이터를 가지고 있습니다.");
+                log.info("이미 최신데이터를 가지고 있습니다.");
             } else {
-                log.info("cronJobSch::갱신되었음을 확인했습니다. 캐시 데이터를 삭제합니다.");
+                log.info("갱신되었음을 확인했습니다. 캐시 데이터를 삭제합니다.");
                 airPollutionRedisRepository.deleteAll();
             }
 
         } catch (Exception e) {
             log.error(e.getMessage());
             e.printStackTrace();
-            log.error("cronJobSch::갱신하는데 실패하였습니다.");
+            log.error("갱신하는데 실패하였습니다.");
         }
 
     }

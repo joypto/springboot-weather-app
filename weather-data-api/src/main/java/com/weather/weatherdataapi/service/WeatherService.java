@@ -35,7 +35,7 @@ public class WeatherService {
     public void fetchAndStoreWeatherInfoUsingOpenApi() {
         weatherDayRedisRepository.deleteAll();
         weatherWeekRedisRepository.deleteAll();
-        log.info("fetchAndStoreWeatherInfo:: 날씨정보 캐시를 비웠습니다.");
+        log.info("날씨정보 캐시를 비웠습니다.");
 
     }
 
