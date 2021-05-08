@@ -2,15 +2,12 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.vo.redis.BigRegionRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -23,19 +20,6 @@ public class BigRegion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "big_region_id")
     private Long id;
-
-    @OneToMany(mappedBy = "bigRegion")
-    private List<SmallRegion> smallRegionList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "bigRegion")
-    @OrderBy("date DESC")
-    private List<CoronaInfo> coronaInfoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "bigRegion")
-    @OrderBy("createdAt DESC")
-    private List<LivingHealthInfo> livingHealthInfoList;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Column(name = "big_region_name")

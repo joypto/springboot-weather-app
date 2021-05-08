@@ -1,16 +1,12 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
-import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import com.weather.weatherdataapi.model.vo.redis.SmallRegionRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Setter
@@ -28,25 +24,6 @@ public class SmallRegion {
     @ManyToOne
     @JoinColumn(name = "big_region_id")
     private BigRegion bigRegion;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "smallRegion")
-    @OrderBy("dateTime DESC")
-    private List<AirPollutionInfo> airPollutionInfoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "smallRegion")
-    private List<AirPollutionStation> airpollutionstationInfoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "smallRegion")
-    @OrderBy("createdAt DESC")
-    private List<WeatherDayInfo> weatherDayInfoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "smallRegion")
-    @OrderBy("createdAt DESC")
-    private List<WeatherWeekInfo> weatherWeekInfoList;
 
     @Column(name = "small_region_name")
     private String smallRegionName;
