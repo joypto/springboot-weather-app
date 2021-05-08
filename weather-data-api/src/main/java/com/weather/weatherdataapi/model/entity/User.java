@@ -70,18 +70,18 @@ public class User {
 
     public User(String identification, ScoreWeightDto scoreWeightDto) {
         this.identification = identification;
-        this.temp = scoreWeightDto.getTempRange();
-        this.rainPer = scoreWeightDto.getRainPerRange();
-        this.weather = scoreWeightDto.getWeatherRange();
-        this.humidity = scoreWeightDto.getHumidityRange();
-        this.wind = scoreWeightDto.getWindRange();
-        this.pm10 = scoreWeightDto.getPm10Range();
-        this.pm25 = scoreWeightDto.getPm25Range();
-        this.corona = scoreWeightDto.getCoronaRange();
-        this.uv = scoreWeightDto.getUvRange();
-        this.pollenRisk = scoreWeightDto.getPollenRiskRange();
-        this.asthma = scoreWeightDto.getAsthmaRange();
-        this.foodPoison = scoreWeightDto.getFoodPoisonRange();
+        this.temp = scoreWeightDto.getTempWeight();
+        this.rainPer = scoreWeightDto.getRainPerWeight();
+        this.weather = scoreWeightDto.getWeatherWeight();
+        this.humidity = scoreWeightDto.getHumidityWeight();
+        this.wind = scoreWeightDto.getWindWeight();
+        this.pm10 = scoreWeightDto.getPm10Weight();
+        this.pm25 = scoreWeightDto.getPm25Weight();
+        this.corona = scoreWeightDto.getCoronaWeight();
+        this.uv = scoreWeightDto.getUvWeight();
+        this.pollenRisk = scoreWeightDto.getPollenRiskWeight();
+        this.asthma = scoreWeightDto.getAsthmaWeight();
+        this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
     }
 
     public User(String identification) {
@@ -100,18 +100,18 @@ public class User {
     }
 
     public void updateUserPreference(ScoreWeightDto scoreWeightDto) {
-        this.temp = scoreWeightDto.getTempRange();
-        this.rainPer = scoreWeightDto.getRainPerRange();
-        this.weather = scoreWeightDto.getWeatherRange();
-        this.humidity = scoreWeightDto.getHumidityRange();
-        this.wind = scoreWeightDto.getWindRange();
-        this.pm10 = scoreWeightDto.getPm10Range();
-        this.pm25 = scoreWeightDto.getPm25Range();
-        this.corona = scoreWeightDto.getCoronaRange();
-        this.uv = scoreWeightDto.getUvRange();
-        this.pollenRisk = scoreWeightDto.getPollenRiskRange();
-        this.asthma = scoreWeightDto.getAsthmaRange();
-        this.foodPoison = scoreWeightDto.getFoodPoisonRange();
+        this.temp = scoreWeightDto.getTempWeight();
+        this.rainPer = scoreWeightDto.getRainPerWeight();
+        this.weather = scoreWeightDto.getWeatherWeight();
+        this.humidity = scoreWeightDto.getHumidityWeight();
+        this.wind = scoreWeightDto.getWindWeight();
+        this.pm10 = scoreWeightDto.getPm10Weight();
+        this.pm25 = scoreWeightDto.getPm25Weight();
+        this.corona = scoreWeightDto.getCoronaWeight();
+        this.uv = scoreWeightDto.getUvWeight();
+        this.pollenRisk = scoreWeightDto.getPollenRiskWeight();
+        this.asthma = scoreWeightDto.getAsthmaWeight();
+        this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
     }
 
 }

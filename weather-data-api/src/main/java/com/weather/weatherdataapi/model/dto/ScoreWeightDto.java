@@ -13,47 +13,47 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ScoreWeightDto {
 
-    private int coronaRange;
-    private int pm10Range;
-    private int pm25Range;
-    private int tempRange;
-    private int rainPerRange;
-    private int weatherRange;
-    private int humidityRange;
-    private int windRange;
-    private int uvRange;
-    private int pollenRiskRange;
-    private int asthmaRange;
-    private int foodPoisonRange;
+    private int coronaWeight;
+    private int pm10Weight;
+    private int pm25Weight;
+    private int tempWeight;
+    private int rainPerWeight;
+    private int weatherWeight;
+    private int humidityWeight;
+    private int windWeight;
+    private int uvWeight;
+    private int pollenRiskWeight;
+    private int asthmaWeight;
+    private int foodPoisonWeight;
 
     public ScoreWeightDto(User userPreference) {
-        this.coronaRange = userPreference.getCorona();
-        this.pm10Range = userPreference.getPm10();
-        this.pm25Range = userPreference.getPm25();
-        this.tempRange = userPreference.getTemp();
-        this.rainPerRange = userPreference.getRainPer();
-        this.weatherRange = userPreference.getWeather();
-        this.humidityRange = userPreference.getHumidity();
-        this.windRange = userPreference.getWind();
-        this.uvRange = userPreference.getUv();
-        this.pollenRiskRange = userPreference.getPollenRisk();
-        this.asthmaRange = userPreference.getAsthma();
-        this.foodPoisonRange = userPreference.getFoodPoison();
+        this.coronaWeight = userPreference.getCorona();
+        this.pm10Weight = userPreference.getPm10();
+        this.pm25Weight = userPreference.getPm25();
+        this.tempWeight = userPreference.getTemp();
+        this.rainPerWeight = userPreference.getRainPer();
+        this.weatherWeight = userPreference.getWeather();
+        this.humidityWeight = userPreference.getHumidity();
+        this.windWeight = userPreference.getWind();
+        this.uvWeight = userPreference.getUv();
+        this.pollenRiskWeight = userPreference.getPollenRisk();
+        this.asthmaWeight = userPreference.getAsthma();
+        this.foodPoisonWeight = userPreference.getFoodPoison();
     }
 
-    public int getSumOfAllRange() {
-        return this.coronaRange
-                + this.pm10Range
-                + this.pm25Range
-                + this.tempRange
-                + this.rainPerRange
-                + this.weatherRange
-                + this.humidityRange
-                + this.windRange
-                + this.uvRange
-                + this.pollenRiskRange
-                + this.asthmaRange
-                + this.foodPoisonRange;
+    public int getSumOfAllWeight() {
+        return this.coronaWeight
+                + this.pm10Weight
+                + this.pm25Weight
+                + this.tempWeight
+                + this.rainPerWeight
+                + this.weatherWeight
+                + this.humidityWeight
+                + this.windWeight
+                + this.uvWeight
+                + this.pollenRiskWeight
+                + this.asthmaWeight
+                + this.foodPoisonWeight;
     }
 
 }
