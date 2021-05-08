@@ -33,7 +33,8 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
         regionService.initialize();
 
-        coronaService.fetchAndStoreCoronaInfoUsingOpenApi();
+        coronaService.tryFetchAndStoreInfoUsingOpenApi();
+
         livingHealthService.fetchAndStoreInfoUsingOpenApi();
 
         airKoreaStationUtil.InitializeRegionStationNameDict();
