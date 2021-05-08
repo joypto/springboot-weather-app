@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
@@ -66,9 +66,9 @@ public class LivingHealthService {
     /**
      * 정보 요청이 왔을 때, TotalDataService 로 생활보건기상지수 정보와 점수를 반환해주는 메서드입니다.
      */
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         weatherDataResponseDto.setLivingHealthWeather(getInfoByBigRegion(currentBigRegion));
-        convertInfoToScore(currentBigRegion, scoreResultResponseDto);
+        convertInfoToScore(currentBigRegion, scoreResultDto);
     }
 
     /**
@@ -94,7 +94,7 @@ public class LivingHealthService {
     /**
      * 여기서부터는 생활보건기상지수의 점수 변환 관련 메서드입니다.
      */
-    public ScoreResultResponseDto convertInfoToScore(BigRegion bigRegion, ScoreResultResponseDto scoreResultResponseDto) {
+    public ScoreResultDto convertInfoToScore(BigRegion bigRegion, ScoreResultDto scoreResultDto) {
 
         LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
 
@@ -106,7 +106,7 @@ public class LivingHealthService {
             asthmaInfoList.add(convertHealthInfoToScore(livingHealthInfo.getAsthmaTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setAsthmaResult(asthmaInfoList);
+        scoreResultDto.setAsthmaResult(asthmaInfoList);
 
         // 꽃가루지수 점수변환
         List<Integer> pollenRiskInfoList = new ArrayList<>();
@@ -116,7 +116,7 @@ public class LivingHealthService {
             pollenRiskInfoList.add(convertHealthInfoToScore(livingHealthInfo.getOakPollenRiskTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setPollenRiskResult(pollenRiskInfoList);
+        scoreResultDto.setPollenRiskResult(pollenRiskInfoList);
 
         // 식중독지수 점수변환
         List<Integer> foodPoisonInfoList = new ArrayList<>();
@@ -126,7 +126,7 @@ public class LivingHealthService {
             foodPoisonInfoList.add(convertFoodPoisonInfoToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setFoodPoisonResult(foodPoisonInfoList);
+        scoreResultDto.setFoodPoisonResult(foodPoisonInfoList);
 
         // 자외선지수 점수변환
         List<Integer> uvInfoList = new ArrayList<>();
@@ -136,9 +136,9 @@ public class LivingHealthService {
             uvInfoList.add(convertUvInfoToScore(livingHealthInfo.getUvTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setUvResult(uvInfoList);
+        scoreResultDto.setUvResult(uvInfoList);
 
-        return scoreResultResponseDto;
+        return scoreResultDto;
     }
 
     // 보건기상지수 중 식중독 지수 제외한 그 외 지수의 점수 변환

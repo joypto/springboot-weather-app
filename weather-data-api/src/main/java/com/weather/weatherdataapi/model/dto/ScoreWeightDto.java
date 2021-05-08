@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.model.dto.requestdto;
+package com.weather.weatherdataapi.model.dto;
 
 import com.weather.weatherdataapi.model.entity.User;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @Builder
 @AllArgsConstructor
-public class ScoreRequestDto {
+public class ScoreWeightDto {
 
     private int coronaRange;
     private int pm10Range;
@@ -26,7 +26,7 @@ public class ScoreRequestDto {
     private int asthmaRange;
     private int foodPoisonRange;
 
-    public ScoreRequestDto(User userPreference) {
+    public ScoreWeightDto(User userPreference) {
         this.coronaRange = userPreference.getCorona();
         this.pm10Range = userPreference.getPm10();
         this.pm25Range = userPreference.getPm25();

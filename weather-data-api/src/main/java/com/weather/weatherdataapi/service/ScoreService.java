@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,27 +12,27 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScoreService {
 
-    public List<Integer> getCalculatedScore(ScoreRequestDto scoreRequestDto, ScoreResultResponseDto scoreResultResponseDto) {
+    public List<Integer> getCalculatedScore(ScoreWeightDto scoreWeightDto, ScoreResultDto scoreResultDto) {
 
         List<Integer> dayScoreList = new ArrayList<>();
 
         for (int i = 0; i < 7; i++) {
             double temporaryValue = 0;
 
-            temporaryValue += Double.parseDouble(scoreResultResponseDto.getTempResult().get(i)) * scoreRequestDto.getTempRange();
-            temporaryValue += Double.parseDouble(scoreResultResponseDto.getRainPerResult().get(i)) * scoreRequestDto.getRainPerRange();
-            temporaryValue += Double.parseDouble(scoreResultResponseDto.getWeatherResult().get(i)) * scoreRequestDto.getWeatherRange();
-            temporaryValue += Double.parseDouble(scoreResultResponseDto.getHumidityResult().get(i)) * scoreRequestDto.getHumidityRange();
-            temporaryValue += Double.parseDouble(scoreResultResponseDto.getWindResult().get(i)) * scoreRequestDto.getWindRange();
-            temporaryValue += scoreResultResponseDto.getPm10Result() * scoreRequestDto.getPm10Range();
-            temporaryValue += scoreResultResponseDto.getPm25Result() * scoreRequestDto.getPm25Range();
-            temporaryValue += scoreResultResponseDto.getCoronaResult() * scoreRequestDto.getCoronaRange();
-            temporaryValue += scoreResultResponseDto.getUvResult().get(i) * scoreRequestDto.getUvRange();
-            temporaryValue += scoreResultResponseDto.getPollenRiskResult().get(i) * scoreRequestDto.getPollenRiskRange();
-            temporaryValue += scoreResultResponseDto.getAsthmaResult().get(i) * scoreRequestDto.getAsthmaRange();
-            temporaryValue += scoreResultResponseDto.getFoodPoisonResult().get(i) * scoreRequestDto.getFoodPoisonRange();
+            temporaryValue += Double.parseDouble(scoreResultDto.getTempResult().get(i)) * scoreWeightDto.getTempRange();
+            temporaryValue += Double.parseDouble(scoreResultDto.getRainPerResult().get(i)) * scoreWeightDto.getRainPerRange();
+            temporaryValue += Double.parseDouble(scoreResultDto.getWeatherResult().get(i)) * scoreWeightDto.getWeatherRange();
+            temporaryValue += Double.parseDouble(scoreResultDto.getHumidityResult().get(i)) * scoreWeightDto.getHumidityRange();
+            temporaryValue += Double.parseDouble(scoreResultDto.getWindResult().get(i)) * scoreWeightDto.getWindRange();
+            temporaryValue += scoreResultDto.getPm10Result() * scoreWeightDto.getPm10Range();
+            temporaryValue += scoreResultDto.getPm25Result() * scoreWeightDto.getPm25Range();
+            temporaryValue += scoreResultDto.getCoronaResult() * scoreWeightDto.getCoronaRange();
+            temporaryValue += scoreResultDto.getUvResult().get(i) * scoreWeightDto.getUvRange();
+            temporaryValue += scoreResultDto.getPollenRiskResult().get(i) * scoreWeightDto.getPollenRiskRange();
+            temporaryValue += scoreResultDto.getAsthmaResult().get(i) * scoreWeightDto.getAsthmaRange();
+            temporaryValue += scoreResultDto.getFoodPoisonResult().get(i) * scoreWeightDto.getFoodPoisonRange();
 
-            int dayScore = (int) Math.round(temporaryValue / scoreRequestDto.getSumOfAllRange());
+            int dayScore = (int) Math.round(temporaryValue / scoreWeightDto.getSumOfAllRange());
             dayScoreList.add(dayScore);
         }
 

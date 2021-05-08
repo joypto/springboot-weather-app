@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
@@ -30,12 +30,12 @@ public class AirPollutionService {
     private final AirKoreaStationUtil airKoreaStationUtil;
     private final AirKoreaUtil airKoreaUtil;
 
-    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
 
         weatherDataResponseDto.setAirPollution(airPollutionInfo);
 
-        convertInfoToScore(airPollutionInfo, scoreResultResponseDto);
+        convertInfoToScore(airPollutionInfo, scoreResultDto);
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
@@ -85,7 +85,7 @@ public class AirPollutionService {
         return fetchedRespense.get().getStationName();
     }
 
-    public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultResponseDto scoreResultResponseDto) {
+    public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultDto scoreResultDto) {
         final int PM10_GOOD = 30;
         final int PM10_NORMAL = 80;
         final int PM10_BAD = 150;
@@ -123,8 +123,8 @@ public class AirPollutionService {
                 pm25Score = 10;
         }
 
-        scoreResultResponseDto.setPm10Result(pm10Score);
-        scoreResultResponseDto.setPm25Result(pm25Score);
+        scoreResultDto.setPm10Result(pm10Score);
+        scoreResultDto.setPm25Result(pm25Score);
     }
 
     public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
