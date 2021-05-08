@@ -1,14 +1,13 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class UserService {
 
     public User getCurrentUserPreference(String token) {
         User userPreference = new User();
-        if (token != "") {
+        if (StringUtils.hasText(token) == true) {
             userPreference = userRepository.findByIdentification(token);
         } else {
             userPreference = new User("default");
@@ -53,7 +52,7 @@ public class UserService {
 
     public void saveMyRegion(RegionRequestDto regionRequestDto, String token) {
         User user;
-        if (userRepository.findByIdentification(token) == null)  {
+        if (userRepository.findByIdentification(token) == null) {
             user = new User("default");
             user.setIdentification(token);
             List<String> oftenSeenRegions = new ArrayList<>();
