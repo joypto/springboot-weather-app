@@ -51,7 +51,7 @@ public class LivingHealthService {
             String admCode = bigRegionList.get(i).getAdmCode();
             LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
 
-            LivingHealthInfo latestLivingHealthInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc().get();
+            LivingHealthInfo latestLivingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).get();
             if (livingHealthInfo.getDate().equals(latestLivingHealthInfo.getDate())) {
                 log.info("00시 - 06시 사이의 요청입니다. 불러온 값을 DB에 저장하지 않습니다.");
                 return;
