@@ -32,11 +32,9 @@ public class UserService {
     }
 
     public void setUserCurrentRegion(User user, String currentRegion) {
-        try {
+        if (user.getIdentification() != null) {
             user.setLatestRequestRegion(currentRegion);
             userRepository.save(user);
-        } catch (NullPointerException e) {
-            log.info("유효하지 않은 토큰입니다.");
         }
     }
 
