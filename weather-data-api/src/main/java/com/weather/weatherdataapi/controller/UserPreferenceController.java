@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.exception.repository.InvalidUserException;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
@@ -16,7 +17,7 @@ public class UserPreferenceController {
     @GetMapping("/api/user/preferences")
     public User getDefaultUserPreference(@RequestHeader("token") String token) {
         if (token != "") {
-             return userRepository.findByIdentification(token);
+            return userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
         }
         return new User("default");
     }
@@ -30,7 +31,7 @@ public class UserPreferenceController {
 
     @PutMapping("/api/user/preferences")
     public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader("token") String token) {
-        User userPreference = userRepository.findByIdentification(token);
+        User userPreference = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
         userPreference.updateUserPreference(scoreWeightDto);
         userRepository.save(userPreference);
         return userPreference;

@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.repository.info.InvalidAirPollutionInfoException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
@@ -46,7 +47,7 @@ public class AirPollutionService {
         // 그렇지 않다면 원격 서버에서 최신 정보를 가져옵니다.
         // 가져온 최신 정보가 DB에 저장되어 있지 않다면, 이를 DB에 저장합니다.
         else {
-            AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+            AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
             AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
 
             // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
@@ -117,7 +118,7 @@ public class AirPollutionService {
     }
 
     public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
-        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
         AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);

@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution;
 
+import com.weather.weatherdataapi.exception.repository.InvalidAirPollutionStationException;
 import com.weather.weatherdataapi.model.entity.AirPollutionStation;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.AirPollutionStationRepository;
@@ -42,7 +43,9 @@ public class AirKoreaStationUtil {
                 log.info("모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
 
                 for (SmallRegion smallRegion : allSmallRegionList) {
-                    AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion).orElseThrow(() -> new RuntimeException("해당 지역에 매핑된 측정소 정보가 없습니다."));
+                    AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion)
+                            .orElseThrow(() -> new InvalidAirPollutionStationException("해당 지역에 매핑된 측정소 정보가 없습니다."));
+
                     String nearestStationName = station.getStationName();
 
                     // BigRegion에 대응되는 SmallRegion을 담을 HashTable이 없다면, 인스턴스를 생성합니다.

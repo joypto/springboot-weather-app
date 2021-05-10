@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.repository.InvalidUserException;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
@@ -21,7 +22,7 @@ public class UserService {
     public User getCurrentUserPreference(String token) {
         User userPreference = new User();
         if (StringUtils.hasText(token) == true) {
-            userPreference = userRepository.findByIdentification(token);
+            userPreference = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
         } else {
             userPreference = new User("default");
         }
@@ -37,7 +38,7 @@ public class UserService {
 
     public UserRegionResponseDto getMyRegion(UserRegionResponseDto userRegionResponseDto, String token) {
         try {
-            User user = userRepository.findByIdentification(token);
+            User user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
             String[] regions = user.getLatestRequestRegion().split(" ");
             RegionDto regionDto = new RegionDto(regions[0], regions[1]);
             userRegionResponseDto.setLatestRequestRegion(regionDto);
@@ -52,14 +53,14 @@ public class UserService {
 
     public void saveMyRegion(RegionRequestDto regionRequestDto, String token) {
         User user;
-        if (userRepository.findByIdentification(token) == null) {
+        if (userRepository.findByIdentification(token).isPresent()) {
             user = new User("default");
             user.setIdentification(token);
             List<String> oftenSeenRegions = new ArrayList<>();
             oftenSeenRegions.add(regionRequestDto.getRegion());
             user.setOftenSeenRegions(oftenSeenRegions);
         } else {
-            user = userRepository.findByIdentification(token);
+            user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
             try {
                 List<String> oftenSeenRegions = user.getOftenSeenRegions();
                 oftenSeenRegions.add(regionRequestDto.getRegion());
@@ -73,7 +74,7 @@ public class UserService {
     }
 
     public void updateMyRegion(RegionRequestDto regionRequestDto, String token) {
-        User userPreference = userRepository.findByIdentification(token);
+        User userPreference = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
         List<String> saveRegion = userPreference.getOftenSeenRegions();
         saveRegion.remove(regionRequestDto.getRegion());
         userRepository.save(userPreference);

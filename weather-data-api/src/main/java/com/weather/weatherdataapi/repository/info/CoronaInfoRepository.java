@@ -6,12 +6,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface CoronaInfoRepository extends JpaRepository<CoronaInfo, Long> {
 
-    CoronaInfo findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
+    Optional<CoronaInfo> findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
-    CoronaInfo findFirstByOrderByCreatedAtDesc();
+    Optional<CoronaInfo> findFirstByOrderByCreatedAtDesc();
 
     List<CoronaInfo> findAllByDate(LocalDate date);
 }
