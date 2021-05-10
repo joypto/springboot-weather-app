@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.repository.info.InvalidAirPollutionInfoException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
@@ -14,6 +15,8 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAi
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,13 +39,13 @@ public class AirPollutionService {
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
+        AirPollutionInfo airPollutionInfo;
+        Optional<AirPollutionRedisVO> queriedAirPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode());
 
         // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
-        if (airPollutionRedisRepository.existsById(smallRegion.getAdmCode())) {
-            AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode()).orElseThrow(() -> new RuntimeException());
-            AirPollutionInfo cachedInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
-
-            return cachedInfo;
+        if (queriedAirPollutionRedisVO.isPresent()) {
+            AirPollutionRedisVO airPollutionRedisVO = queriedAirPollutionRedisVO.get();
+            airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
         }
         // 그렇지 않다면 최신 정보를 가져옵니다.
         // 또한 최신 정보는 캐싱합니다.
@@ -50,6 +53,7 @@ public class AirPollutionService {
             AirPollutionInfo latestInfo = getSyncedLatestInfo(smallRegion);
 
             AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(latestInfo);
+          
             airPollutionRedisRepository.save(airPollutionRedisVO);
 
             return latestInfo;
@@ -129,7 +133,7 @@ public class AirPollutionService {
     }
 
     public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
-        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+        AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
         AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);

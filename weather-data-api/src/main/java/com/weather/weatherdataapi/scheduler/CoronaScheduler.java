@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.scheduler;
 
 import com.weather.weatherdataapi.service.CoronaService;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,7 +24,7 @@ public class CoronaScheduler {
             log.info("성공적으로 갱신하였습니다.");
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("갱신하는데 실패하였습니다.");
         }
 

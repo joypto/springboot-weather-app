@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.repository.redis.*;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class RedisService {
             log.info("Redis DB를 성공적으로 초기화하였습니다.");
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("Redis DB를 초기화하는 중 문제가 발생하였습니다.");
             throw e;
         }

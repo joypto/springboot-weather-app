@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface WeatherWeekInfoRepository extends JpaRepository<WeatherWeekInfo, Long> {
 
-    WeatherWeekInfo findFirstBySmallRegionOrderByCreatedAtDesc(SmallRegion smallRegion);
+    Optional<WeatherWeekInfo> findFirstBySmallRegionOrderByCreatedAtDesc(SmallRegion smallRegion);
 }

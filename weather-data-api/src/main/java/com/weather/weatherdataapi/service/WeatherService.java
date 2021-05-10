@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherDayRedisVOException;
+import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherWeekRedisVOException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
@@ -42,8 +44,8 @@ public class WeatherService {
     // 날씨 정보 셋팅
     public void setInfoAndScore(SmallRegion wantRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) throws IOException {
         try {
-            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
-            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new InvalidWeatherWeekRedisVOException());
+            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new InvalidWeatherDayRedisVOException());
             WeatherWeekInfo weekInfo = new WeatherWeekInfo(weekInfoRedis);
             WeatherDayInfo dayInfo = new WeatherDayInfo(dayInfoRedis);
             weatherDataResponseDto.setWeekInfo(weekInfo);

@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
+import com.weather.weatherdataapi.exception.repository.info.InvalidCoronaInfoException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
@@ -9,6 +10,7 @@ import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.repository.redis.CoronaRedisRepository;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
@@ -74,7 +76,7 @@ public class CoronaService {
             CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).get();
             coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
         } else {
-            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
+            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidCoronaInfoException());
             CoronaRedisVO coronaRedisVO = new CoronaRedisVO(coronaInfo);
             coronaRedisRepository.save(coronaRedisVO);
         }
@@ -90,7 +92,7 @@ public class CoronaService {
             log.warn("run::원격 서버에서 제공하는 코로나 정보가 DB에 이미 저장되어 있습니다.");
         } catch (FailedFetchException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("run::원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
         }
 
@@ -148,7 +150,7 @@ public class CoronaService {
     }
 
     private boolean checkAlreadyHasLatestData() {
-        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc();
+        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidCoronaInfoException());
         LocalDate current = LocalDate.now();
 
         if (latestData == null)

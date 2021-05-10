@@ -1,9 +1,11 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution;
 
+import com.weather.weatherdataapi.exception.repository.InvalidAirPollutionStationException;
 import com.weather.weatherdataapi.model.entity.AirPollutionStation;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.AirPollutionStationRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
@@ -42,7 +44,9 @@ public class AirKoreaStationUtil {
                 log.info("모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
 
                 for (SmallRegion smallRegion : allSmallRegionList) {
-                    AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion).orElseThrow(() -> new RuntimeException("해당 지역에 매핑된 측정소 정보가 없습니다."));
+                    AirPollutionStation station = airPollutionStationRepository.findBySmallRegion(smallRegion)
+                            .orElseThrow(() -> new InvalidAirPollutionStationException("해당 지역에 매핑된 측정소 정보가 없습니다."));
+
                     String nearestStationName = station.getStationName();
 
                     // BigRegion에 대응되는 SmallRegion을 담을 HashTable이 없다면, 인스턴스를 생성합니다.
@@ -87,7 +91,7 @@ public class AirKoreaStationUtil {
             log.info("성공적으로 매핑했습니다. ({}sec)", diffTimeSec);
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.info("매핑에 실패하였습니다.");
         }
     }

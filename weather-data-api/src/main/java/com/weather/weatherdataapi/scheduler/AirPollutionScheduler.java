@@ -1,9 +1,11 @@
 package com.weather.weatherdataapi.scheduler;
 
+import com.weather.weatherdataapi.exception.repository.InvalidSmallRegionException;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,7 +32,7 @@ public class AirPollutionScheduler {
         try {
             log.info("OpenApi 서버의 대기오염 정보가 갱신되었는지 확인합니다.");
 
-            SmallRegion criteriaRegion = smallRegionRepository.findByAdmCode(CRITERIA_REGION_ADM_CODE);
+            SmallRegion criteriaRegion = smallRegionRepository.findByAdmCode(CRITERIA_REGION_ADM_CODE).orElseThrow(() -> new InvalidSmallRegionException());
 
             if (criteriaRegion == null) {
                 throw new RuntimeException("cronJobSch::DB에 기준 지역 정보가 존재하지 않습니다.");
@@ -45,7 +47,7 @@ public class AirPollutionScheduler {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("갱신하는데 실패하였습니다.");
         }
 
