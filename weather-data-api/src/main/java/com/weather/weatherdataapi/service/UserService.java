@@ -1,17 +1,20 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.InvalidTokenException;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -19,19 +22,21 @@ public class UserService {
     private final UserRepository userRepository;
 
     public User getCurrentUserPreference(String token) {
-        User userPreference = new User();
-        if (StringUtils.hasText(token) == true) {
-            userPreference = userRepository.findByIdentification(token);
+        User user = new User();
+        if (userRepository.findByIdentification(token) != null) {
+            user = userRepository.findByIdentification(token);
         } else {
-            userPreference = new User("default");
+            user = new User("default");
         }
-        return userPreference;
+        return user;
     }
 
-    public void setUserCurrentRegion(User userPreference, String currentRegion) {
-        if (userPreference.getIdentification() != null) {
-            userPreference.setLatestRequestRegion(currentRegion);
-            userRepository.save(userPreference);
+    public void setUserCurrentRegion(User user, String currentRegion) {
+        try {
+            user.setLatestRequestRegion(currentRegion);
+            userRepository.save(user);
+        } catch (NullPointerException e) {
+            log.info("유효하지 않은 토큰입니다.");
         }
     }
 
