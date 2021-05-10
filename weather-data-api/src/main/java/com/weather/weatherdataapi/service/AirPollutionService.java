@@ -69,12 +69,13 @@ public class AirPollutionService {
      * @return 원격 서버에서 제공하는 최신 정보와 완전히 일치하는 정보입니다.
      */
     private AirPollutionInfo getSyncedLatestInfo(SmallRegion smallRegion) {
-        AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
+        Optional<AirPollutionInfo> queriedExistedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
         AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
 
         // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
         // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
-        if (existedInfo == null || airKoreaUtil.checkLatestInfoAlreadyExists(existedInfo, fetchedItem) == false) {
+        if (queriedExistedInfo.isPresent() == false
+                || airKoreaUtil.checkLatestInfoAlreadyExists(queriedExistedInfo.get(), fetchedItem) == false) {
             AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
             airPollutionRepository.save(newInfo);
 
@@ -82,7 +83,7 @@ public class AirPollutionService {
         }
 
         // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
-        return existedInfo;
+        return queriedExistedInfo.get();
     }
 
     private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
