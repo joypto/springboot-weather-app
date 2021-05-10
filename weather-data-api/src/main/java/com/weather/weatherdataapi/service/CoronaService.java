@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.service;
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.exception.repository.info.InvalidCoronaInfoException;
+import com.weather.weatherdataapi.exception.repository.redis.InvalidCoronaRedisVOException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -38,26 +41,11 @@ public class CoronaService {
 
     private Integer cachedAllNewCaseCount;
 
-    // TODO: 의도대로 동작하지 않습니다.
-    //  redisRepository에 현재 날짜의 모든 corona Info들이 저장되어 있어야 정상적으로 작동할 것입니다.
     public Integer getAllNewCaseCount() {
-        // 캐시된 값이 없다면 계산한 뒤 캐싱합니다.
-        if (cachedAllNewCaseCount == null) {
-            Iterable<CoronaRedisVO> coronaInfoList = coronaRedisRepository.findAll();
-
-            AtomicInteger allNewCaseCount = new AtomicInteger();
-            coronaInfoList.forEach(coronaRedisVO -> {
-                allNewCaseCount.addAndGet(coronaRedisVO.getNewLocalCaseCount() + coronaRedisVO.getNewForeignCaseCount());
-            });
-
-            cachedAllNewCaseCount = allNewCaseCount.get();
-        }
+        if (cachedAllNewCaseCount == null)
+            refreshCache();
 
         return cachedAllNewCaseCount;
-    }
-
-    private void clearAllNewCaseCountCache() {
-        cachedAllNewCaseCount = null;
     }
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
@@ -73,15 +61,13 @@ public class CoronaService {
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
         CoronaInfo coronaInfo;
 
-        // 캐시 데이터가 있다면 캐시 데이터를 먼저 사용합니다.
-        if (coronaRedisRepository.existsById(bigRegion.getAdmCode())) {
-            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).get();
-            coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
-        } else {
-            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidCoronaInfoException());
-            CoronaRedisVO coronaRedisVO = new CoronaRedisVO(coronaInfo);
-            coronaRedisRepository.save(coronaRedisVO);
+        // 캐시 데이터가 없다면 캐시를 갱신합니다.
+        if (coronaRedisRepository.existsById(bigRegion.getAdmCode()) == false) {
+            refreshCache();
         }
+
+        CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidCoronaRedisVOException());
+        coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
 
         return coronaInfo;
     }
@@ -110,9 +96,6 @@ public class CoronaService {
         if (info.getItemList().isEmpty())
             throw new FailedFetchException("가져온 아이템 리스트가 비어있습니다.");
 
-        coronaRedisRepository.deleteAll();
-        clearAllNewCaseCountCache();
-
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
 
@@ -122,10 +105,9 @@ public class CoronaService {
 
             CoronaInfo corona = new CoronaInfo(item, regionService);
             coronaRepository.save(corona);
-
-            CoronaRedisVO coronaRedisVO = new CoronaRedisVO(corona);
-            coronaRedisRepository.save(coronaRedisVO);
         }
+
+        refreshCache();
 
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
@@ -149,6 +131,36 @@ public class CoronaService {
             score = 10;
 
         scoreResultDto.setCoronaResult(score);
+    }
+
+    private void refreshCache() {
+        Optional<CoronaInfo> queriedLatestOneInfo = coronaRepository.findFirstByOrderByCreatedAtDesc();
+
+        if (queriedLatestOneInfo.isPresent()) {
+
+            /* 모든 지역의 코로나 정보를 캐싱합니다. */
+            List<CoronaInfo> latestInfoList = coronaRepository.findAllByDate(queriedLatestOneInfo.get().getDate());
+
+            coronaRedisRepository.deleteAll();
+
+            for (CoronaInfo info : latestInfoList) {
+                CoronaRedisVO redisVO = new CoronaRedisVO(info);
+
+                coronaRedisRepository.save(redisVO);
+            }
+
+            /* 모든 지역의 확진자수 총합을 계산하고, 캐싱합니다. */
+            cachedAllNewCaseCount = null;
+
+            AtomicInteger allNewCaseCount = new AtomicInteger();
+            latestInfoList.forEach(coronaRedisVO -> {
+                allNewCaseCount.addAndGet(coronaRedisVO.getNewLocalCaseCount() + coronaRedisVO.getNewForeignCaseCount());
+            });
+
+            cachedAllNewCaseCount = allNewCaseCount.get();
+
+        }
+
     }
 
     private boolean checkAlreadyHasLatestData() {
