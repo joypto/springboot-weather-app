@@ -39,35 +39,47 @@ public class AirPollutionService {
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
-        AirPollutionInfo airPollutionInfo;
 
         // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
         if (airPollutionRedisRepository.existsById(smallRegion.getAdmCode())) {
             AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode()).orElseThrow(() -> new RuntimeException());
-            airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
+            AirPollutionInfo cachedInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
+
+            return cachedInfo;
         }
-        // 그렇지 않다면 DB에서 값을 가져옵니다.
+        // 그렇지 않다면 최신 정보를 가져옵니다.
         else {
-            AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
-            AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
+            AirPollutionInfo latestInfo = getSyncedLatestInfo(smallRegion);
 
-            // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
-            // 또는 최신 데이터가 아닐 경우
-            // OpenApi로 가져온 정보를 DB에 저장한 후 사용합니다.
-            if (existedInfo == null || airKoreaUtil.checkLatestInfoAlreadyExists(existedInfo, fetchedItem) == false) {
-                airPollutionInfo = new AirPollutionInfo(fetchedItem, smallRegion);
-                airPollutionRepository.save(airPollutionInfo);
-            }
-            // 그렇지 않은 경우 DB에 있는 데이터를 바로 사용합니다.
-            else {
-                airPollutionInfo = existedInfo;
-            }
-
-            AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(airPollutionInfo);
+            AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(latestInfo);
             airPollutionRedisRepository.save(airPollutionRedisVO);
+
+            return latestInfo;
         }
 
-        return airPollutionInfo;
+    }
+
+    /**
+     * 원격 서버에서 제공하는 최신 정보와 일치하는 정보 객체를 반환합니다.
+     * DB에 최신 정보가 저장되어 있지 않다면 최신 정보를 DB에도 저장합니다.
+     *
+     * @return 원격 서버에서 제공하는 최신 정보와 완전히 일치하는 정보입니다.
+     */
+    private AirPollutionInfo getSyncedLatestInfo(SmallRegion smallRegion) {
+        AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+        AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
+
+        // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
+        // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
+        if (existedInfo == null || airKoreaUtil.checkLatestInfoAlreadyExists(existedInfo, fetchedItem) == false) {
+            AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
+            airPollutionRepository.save(newInfo);
+
+            return newInfo;
+        }
+
+        // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
+        return existedInfo;
     }
 
     private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
