@@ -64,11 +64,16 @@ public class LivingHealthService {
     }
 
     private boolean checkAlreadyHasLatestInfo() {
+        if (livingHealthInfoRepository.count() == 0)
+            return false;
+
         LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidLivingHealthInfoException());
         LocalDate current = LocalDate.now();
+
         if (latestData == null)
             return false;
-        return latestData.getCreatedAt().isEqual(current);
+
+        return latestData.getCreatedAt().toLocalDate().isEqual(current);
     }
 
     /**
