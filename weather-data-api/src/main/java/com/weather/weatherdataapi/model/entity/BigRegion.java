@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,6 +21,9 @@ public class BigRegion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "big_region_id")
     private Long id;
+
+    @OneToMany(mappedBy = "bigRegion")
+    private List<SmallRegion> smallRegionList;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @Column(name = "big_region_name")
