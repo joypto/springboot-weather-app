@@ -47,11 +47,11 @@ public class TotalDataService {
         airPollutionService.setInfoAndScore(currentSmallRegion, scoreResultDto, weatherDataResponseDto);
 
         // 식별값으로 DB 에서 유저 선호도 불러오기
-        User currentUserPreference = userService.getCurrentUserPreference(token);
-        userService.setUserCurrentRegion(currentUserPreference, totalDataRequestDto.getBigRegionName() + " " + totalDataRequestDto.getSmallRegionName());
+        User user = userService.getCurrentUserPreference(token);
+        userService.setUserCurrentRegion(user, totalDataRequestDto.getBigRegionName() + " " + totalDataRequestDto.getSmallRegionName());
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
-        ScoreWeightDto scoreWeightDto = new ScoreWeightDto(currentUserPreference);
+        ScoreWeightDto scoreWeightDto = new ScoreWeightDto(user);
 
         List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreWeightDto, scoreResultDto);
         weatherDataResponseDto.setDayScoreList(dayScoreList);
