@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -77,10 +78,11 @@ public class LivingHealthService {
      */
     public LivingHealthInfo getInfoByBigRegion(BigRegion bigRegion) {
         LivingHealthInfo livingHealthInfo;
+        Optional<LivingHealthRedisVO> queriedLivingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode());
 
-        if (livingHealthRedisRepository.existsById(bigRegion.getAdmCode())) {
+        if (queriedLivingHealthRedisVO.isPresent()) {
             log.info("생활보건기상지수 데이터를 캐시 데이터베이스에서 불러옵니다.");
-            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).get();
+            LivingHealthRedisVO livingHealthRedisVO = queriedLivingHealthRedisVO.get();
             livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
         } else {
             log.info("생활보건기상지수 데이터를 MySql 데이터베이스에서 불러오고 캐시 데이터베이스에 저장합니다.");

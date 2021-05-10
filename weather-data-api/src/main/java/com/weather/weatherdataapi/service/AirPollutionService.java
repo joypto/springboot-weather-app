@@ -16,6 +16,8 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.Ai
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class AirPollutionService {
@@ -38,10 +40,11 @@ public class AirPollutionService {
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
         AirPollutionInfo airPollutionInfo;
+        Optional<AirPollutionRedisVO> queriedAirPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode());
 
         // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
-        if (airPollutionRedisRepository.existsById(smallRegion.getAdmCode())) {
-            AirPollutionRedisVO airPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode()).orElseThrow(() -> new RuntimeException());
+        if (queriedAirPollutionRedisVO.isPresent()) {
+            AirPollutionRedisVO airPollutionRedisVO = queriedAirPollutionRedisVO.get();
             airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
         }
         // 그렇지 않다면 원격 서버에서 최신 정보를 가져옵니다.
