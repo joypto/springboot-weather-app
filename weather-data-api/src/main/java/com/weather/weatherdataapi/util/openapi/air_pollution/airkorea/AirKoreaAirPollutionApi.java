@@ -4,6 +4,7 @@ import com.weather.weatherdataapi.exception.FailedFetchException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
@@ -14,9 +15,8 @@ import java.io.IOException;
 @Component
 public class AirKoreaAirPollutionApi {
 
-    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
-
     private final AirKoreaAirPollutionService service;
+    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     public AirKoreaAirPollutionApi() {
         Retrofit retrofit = new Retrofit.Builder()
@@ -31,7 +31,8 @@ public class AirKoreaAirPollutionApi {
     public AirKoreaAirPollutionItem getResponseByStationName(String stationName) throws FailedFetchException {
         try {
             Call<AirKoreaAirPollutionResponse> call = service.getResponseByStationName(SERVICE_KEY, stationName);
-            AirKoreaAirPollutionResponse response = call.execute().body();
+            Response<AirKoreaAirPollutionResponse> execute = call.execute();
+            AirKoreaAirPollutionResponse response = execute.body();
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
