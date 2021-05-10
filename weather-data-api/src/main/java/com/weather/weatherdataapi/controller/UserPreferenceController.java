@@ -5,6 +5,7 @@ import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -16,7 +17,7 @@ public class UserPreferenceController {
 
     @GetMapping("/api/user/preferences")
     public User getDefaultUserPreference(@RequestHeader("token") String token) {
-        if (token != "") {
+        if (StringUtils.hasText(token)) {
             return userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
         }
         return new User("default");

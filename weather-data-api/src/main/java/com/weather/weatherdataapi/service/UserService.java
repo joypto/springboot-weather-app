@@ -49,14 +49,14 @@ public class UserService {
             userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
 
             return userRegionResponseDto;
-        } catch (NullPointerException e) {
+        } catch (NullPointerException | InvalidUserException e) {
             return userRegionResponseDto;
         }
     }
 
     public void saveMyRegion(RegionRequestDto regionRequestDto, String token) {
         User user;
-        if (userRepository.findByIdentification(token).isPresent()) {
+        if (StringUtils.hasText(token)) {
             user = new User("default");
             user.setIdentification(token);
             user.setOftenSeenRegions(regionRequestDto.getRegion());
@@ -65,7 +65,7 @@ public class UserService {
             try {
                 List<String> oftenSeenRegions = user.getOftenSeenRegions();
                 oftenSeenRegions.addAll(regionRequestDto.getRegion());
-            } catch (NullPointerException e) {
+            } catch (NullPointerException | InvalidUserException e) {
                 List<String> oftenSeenRegions = new ArrayList<>();
                 oftenSeenRegions.addAll(regionRequestDto.getRegion());
             }
