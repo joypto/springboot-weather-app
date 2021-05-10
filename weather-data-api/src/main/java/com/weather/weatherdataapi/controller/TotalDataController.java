@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 
-@CrossOrigin(origins = "*")
+
 @RequiredArgsConstructor
 @RestController
 public class TotalDataController {

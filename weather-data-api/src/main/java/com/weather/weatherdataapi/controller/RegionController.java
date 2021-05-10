@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
+
 @RequiredArgsConstructor
 @RestController
 public class RegionController {

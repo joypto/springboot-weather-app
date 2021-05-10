@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*")
+
 @RequiredArgsConstructor
 @RestController
 public class UserRegionController {

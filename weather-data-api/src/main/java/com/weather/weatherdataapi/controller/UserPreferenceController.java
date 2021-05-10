@@ -6,7 +6,7 @@ import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*")
+
 @RequiredArgsConstructor
 @RestController
 public class UserPreferenceController {
