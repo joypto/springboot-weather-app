@@ -33,7 +33,7 @@ public class UserService {
     }
 
     public void setUserCurrentRegion(User user, String currentRegion) {
-        if (user.getIdentification() != null) {
+        if (StringUtils.hasText(user.getIdentification())) {
             user.setLatestRequestRegion(currentRegion);
             userRepository.save(user);
         }
