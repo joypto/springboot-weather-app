@@ -115,7 +115,12 @@ public class LivingHealthApi {
                     livingHealthInfo.setAsthmaTomorrow(tomorrow);
                     livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
                 } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
-                    livingHealthInfo.setOakPollenRiskToday(today);
+                    if (today != "") {
+                        livingHealthInfo.setOakPollenRiskToday(today);
+                    } else {
+                        LivingHealthInfo livingHealthInfoForPollenRisk = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).get();
+                        livingHealthInfo.setOakPollenRiskToday(livingHealthInfoForPollenRisk.getOakPollenRiskTomorrow());
+                    }
                     livingHealthInfo.setOakPollenRiskTomorrow(tomorrow);
                     livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
                 } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
