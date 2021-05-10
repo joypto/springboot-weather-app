@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea;
 
 import com.weather.weatherdataapi.exception.FailedFetchException;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
@@ -44,14 +45,14 @@ public class AirKoreaAirPollutionApi {
         // 값을 정상적으로 조회하지 못했을 때 실행됩니다.
         catch (FailedFetchException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
 
             throw e;
         }
         // retrofit에서 exception이 발생할 때 실행됩니다.
         catch (IOException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
 
             throw new FailedFetchException();
         }

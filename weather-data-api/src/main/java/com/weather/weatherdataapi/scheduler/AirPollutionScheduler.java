@@ -5,6 +5,7 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -46,7 +47,7 @@ public class AirPollutionScheduler {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("갱신하는데 실패하였습니다.");
         }
 

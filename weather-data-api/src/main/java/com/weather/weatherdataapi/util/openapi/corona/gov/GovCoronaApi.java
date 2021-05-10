@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.corona.gov;
 
 import com.weather.weatherdataapi.exception.FailedFetchException;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaOpenApi;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +46,7 @@ public class GovCoronaApi implements ICoronaOpenApi {
         // retrofit을 사용한 요청이 실패하였을 때의 예외 처리입니다.
         catch (IOException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
 
             throw new FailedFetchException("http 요청을 정상적으로 수행하지 못했습니다.");
         }

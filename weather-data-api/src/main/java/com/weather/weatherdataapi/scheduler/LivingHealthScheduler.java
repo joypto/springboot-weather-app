@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.scheduler;
 
 import com.weather.weatherdataapi.service.LivingHealthService;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +25,7 @@ public class LivingHealthScheduler {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("생활보건기상지수 정보를 갱신하는데 실패하였습니다.");
         }
     }

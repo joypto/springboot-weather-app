@@ -12,6 +12,7 @@ import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.BigRegionRedisRepository;
 import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -117,7 +118,7 @@ public class RegionService {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("초기화하는 도중 문제가 발생하였습니다.");
         }
     }

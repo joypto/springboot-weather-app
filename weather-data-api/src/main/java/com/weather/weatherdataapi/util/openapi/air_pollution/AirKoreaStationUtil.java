@@ -5,6 +5,7 @@ import com.weather.weatherdataapi.model.entity.AirPollutionStation;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.AirPollutionStationRepository;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
@@ -90,7 +91,7 @@ public class AirKoreaStationUtil {
             log.info("성공적으로 매핑했습니다. ({}sec)", diffTimeSec);
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.info("매핑에 실패하였습니다.");
         }
     }
