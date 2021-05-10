@@ -7,7 +7,7 @@ spring:
       ddl-auto: update
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://final.cvoggurhiwh9.ap-northeast-2.rds.amazonaws.com:3306/test?characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://final.cvoggurhiwh9.ap-northeast-2.rds.amazonaws.com:3306/test?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
     username: admin
     password: happybird
   redis:

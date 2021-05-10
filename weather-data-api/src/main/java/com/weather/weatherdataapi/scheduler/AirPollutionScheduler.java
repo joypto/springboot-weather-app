@@ -5,6 +5,7 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.AirPollutionRedisRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.util.DateTimeUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +28,7 @@ public class AirPollutionScheduler {
 
     private final SmallRegionRepository smallRegionRepository;
 
-    @Scheduled(cron = "0 10 * * * ?")
+    @Scheduled(cron = "0 10 * * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("OpenApi 서버의 대기오염 정보가 갱신되었는지 확인합니다.");
