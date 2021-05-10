@@ -45,12 +45,18 @@ public class LivingHealthService {
 
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
 
+
         for (int i = 0; i < 19; i++) {
             BigRegion bigRegion = bigRegionList.get(i);
             String admCode = bigRegionList.get(i).getAdmCode();
             LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
-            livingHealthInfoRepository.save(livingHealthInfo);
 
+            LivingHealthInfo latestLivingHealthInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc().get();
+            if (livingHealthInfo.getDate().equals(latestLivingHealthInfo.getDate())) {
+                log.info("00시 - 06시 사이의 요청입니다. 불러온 값을 DB에 저장하지 않습니다.");
+                return;
+            }
+            livingHealthInfoRepository.save(livingHealthInfo);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
         }
