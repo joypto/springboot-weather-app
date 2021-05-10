@@ -2,7 +2,7 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
@@ -56,14 +56,14 @@ public class CoronaService {
         cachedAllNewCaseCount = null;
     }
 
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
 
         weatherDataResponseDto.setCoronaCurrentBigRegionNewCaseCount(coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount());
 
         weatherDataResponseDto.setCoronaAllNewCaseCount(getAllNewCaseCount());
 
-        convertInfoToScore(scoreResultResponseDto);
+        convertInfoToScore(scoreResultDto);
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -126,7 +126,7 @@ public class CoronaService {
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto) {
+    public void convertInfoToScore(ScoreResultDto scoreResultDto) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
@@ -144,7 +144,7 @@ public class CoronaService {
         else
             score = 10;
 
-        scoreResultResponseDto.setCoronaResult(score);
+        scoreResultDto.setCoronaResult(score);
     }
 
     private boolean checkAlreadyHasLatestData() {

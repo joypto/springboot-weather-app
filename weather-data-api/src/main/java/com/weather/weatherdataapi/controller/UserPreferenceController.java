@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.controller;
 
-import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,16 +22,16 @@ public class UserPreferenceController {
     }
 
     @PostMapping("/api/user/preferences")
-    public User saveUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
-        User userPreference = new User(token, scoreRequestDto);
+    public User saveUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader("token") String token) {
+        User userPreference = new User(token, scoreWeightDto);
         userRepository.save(userPreference);
         return userPreference;
     }
 
     @PutMapping("/api/user/preferences")
-    public User updateUserPreference(@RequestBody ScoreRequestDto scoreRequestDto, @RequestHeader("token") String token) {
+    public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader("token") String token) {
         User userPreference = userRepository.findByIdentification(token);
-        userPreference.updateUserPreference(scoreRequestDto);
+        userPreference.updateUserPreference(scoreWeightDto);
         userRepository.save(userPreference);
         return userPreference;
     }

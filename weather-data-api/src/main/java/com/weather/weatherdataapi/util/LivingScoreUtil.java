@@ -8,10 +8,10 @@ public class LivingScoreUtil {
     private static Dictionary<String, Integer> livingScoreDict;
 
     static {
-        InitializeHealthScoreDict();
+        initializeHealthScoreDict();
     }
 
-    private static void InitializeHealthScoreDict() {
+    private static void initializeHealthScoreDict() {
         livingScoreDict = new Hashtable<>();
 
         // 보건 기상지수의 값을 백점 만점의 점수로 변환해주는 해시테이블입니다.

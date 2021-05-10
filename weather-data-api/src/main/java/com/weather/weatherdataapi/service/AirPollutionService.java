@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
@@ -12,11 +12,8 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationItem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -30,12 +27,12 @@ public class AirPollutionService {
     private final AirKoreaStationUtil airKoreaStationUtil;
     private final AirKoreaUtil airKoreaUtil;
 
-    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(SmallRegion smallRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
 
         weatherDataResponseDto.setAirPollution(airPollutionInfo);
 
-        convertInfoToScore(airPollutionInfo, scoreResultResponseDto);
+        convertInfoToScore(airPollutionInfo, scoreResultDto);
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
@@ -48,6 +45,7 @@ public class AirPollutionService {
             return cachedInfo;
         }
         // 그렇지 않다면 최신 정보를 가져옵니다.
+        // 또한 최신 정보는 캐싱합니다.
         else {
             AirPollutionInfo latestInfo = getSyncedLatestInfo(smallRegion);
 
@@ -88,16 +86,7 @@ public class AirPollutionService {
         return response;
     }
 
-    public String getStationNameUsingCoords(String tmX, String tmY) {
-        Optional<AirKoreaStationItem> fetchedRespense = airKoreaStationOpenApi.getResponseItem(tmX, tmY);
-
-        if (fetchedRespense.isPresent() == false)
-            return null;
-
-        return fetchedRespense.get().getStationName();
-    }
-
-    public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultResponseDto scoreResultResponseDto) {
+    public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultDto scoreResultDto) {
         final int PM10_GOOD = 30;
         final int PM10_NORMAL = 80;
         final int PM10_BAD = 150;
@@ -106,28 +95,37 @@ public class AirPollutionService {
         final int PM25_NORMAL = 35;
         final int PM25_BAD = 75;
 
-        int pm10Score;
-        if (airPollution.getPm10Value() <= PM10_GOOD)
-            pm10Score = 100;
-        else if (airPollution.getPm10Value() <= PM10_NORMAL)
-            pm10Score = 70;
-        else if (airPollution.getPm10Value() <= PM10_BAD)
-            pm10Score = 40;
-        else
-            pm10Score = 10;
+        int pm10Score = 0;
+        int pm25Score = 0;
 
-        int pm25Score;
-        if (airPollution.getPm25Value() <= PM25_GOOD)
-            pm25Score = 100;
-        else if (airPollution.getPm25Value() <= PM25_NORMAL)
-            pm25Score = 70;
-        else if (airPollution.getPm25Value() <= PM25_BAD)
-            pm25Score = 40;
-        else
-            pm25Score = 10;
+        Integer pm10Value = airPollution.getPm10Value();
 
-        scoreResultResponseDto.setPm10Result(pm10Score);
-        scoreResultResponseDto.setPm25Result(pm25Score);
+        if (pm10Value != null) {
+            if (pm10Value <= PM10_GOOD)
+                pm10Score = 100;
+            else if (pm10Value <= PM10_NORMAL)
+                pm10Score = 70;
+            else if (pm10Value <= PM10_BAD)
+                pm10Score = 40;
+            else
+                pm10Score = 10;
+        }
+
+        Integer pm20Value = airPollution.getPm25Value();
+
+        if (pm20Value != null) {
+            if (airPollution.getPm25Value() <= PM25_GOOD)
+                pm25Score = 100;
+            else if (airPollution.getPm25Value() <= PM25_NORMAL)
+                pm25Score = 70;
+            else if (airPollution.getPm25Value() <= PM25_BAD)
+                pm25Score = 40;
+            else
+                pm25Score = 10;
+        }
+
+        scoreResultDto.setPm10Result(pm10Score);
+        scoreResultDto.setPm25Result(pm25Score);
     }
 
     public boolean checkLatestDataAlreadyExistsByRegion(SmallRegion smallRegion) {
