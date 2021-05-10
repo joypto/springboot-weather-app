@@ -55,18 +55,15 @@ public class UserService {
         if (userRepository.findByIdentification(token) == null) {
             user = new User("default");
             user.setIdentification(token);
-            List<String> oftenSeenRegions = new ArrayList<>();
-            oftenSeenRegions.add(regionRequestDto.getRegion());
-            user.setOftenSeenRegions(oftenSeenRegions);
+            user.setOftenSeenRegions(regionRequestDto.getRegion());
         } else {
             user = userRepository.findByIdentification(token);
             try {
                 List<String> oftenSeenRegions = user.getOftenSeenRegions();
-                oftenSeenRegions.add(regionRequestDto.getRegion());
+                oftenSeenRegions.addAll(regionRequestDto.getRegion());
             } catch (NullPointerException e) {
                 List<String> oftenSeenRegions = new ArrayList<>();
-                oftenSeenRegions.add(regionRequestDto.getRegion());
-                user.setOftenSeenRegions(oftenSeenRegions);
+                oftenSeenRegions.addAll(regionRequestDto.getRegion());
             }
         }
         userRepository.save(user);
@@ -75,7 +72,10 @@ public class UserService {
     public void updateMyRegion(RegionRequestDto regionRequestDto, String token) {
         User userPreference = userRepository.findByIdentification(token);
         List<String> saveRegion = userPreference.getOftenSeenRegions();
-        saveRegion.remove(regionRequestDto.getRegion());
+        for (int i = 0; i <regionRequestDto.getRegion().size(); i++) {
+            String region = regionRequestDto.getRegion().get(i);
+            saveRegion.remove(region);
+        }
         userRepository.save(userPreference);
     }
 
