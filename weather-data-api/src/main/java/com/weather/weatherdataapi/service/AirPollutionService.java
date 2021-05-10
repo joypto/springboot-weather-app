@@ -39,13 +39,14 @@ public class AirPollutionService {
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
-        AirPollutionInfo airPollutionInfo;
         Optional<AirPollutionRedisVO> queriedAirPollutionRedisVO = airPollutionRedisRepository.findById(smallRegion.getAdmCode());
 
         // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
         if (queriedAirPollutionRedisVO.isPresent()) {
             AirPollutionRedisVO airPollutionRedisVO = queriedAirPollutionRedisVO.get();
-            airPollutionInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
+            AirPollutionInfo cachedInfo = new AirPollutionInfo(airPollutionRedisVO, smallRegion);
+
+            return cachedInfo;
         }
         // 그렇지 않다면 최신 정보를 가져옵니다.
         // 또한 최신 정보는 캐싱합니다.
@@ -53,7 +54,7 @@ public class AirPollutionService {
             AirPollutionInfo latestInfo = getSyncedLatestInfo(smallRegion);
 
             AirPollutionRedisVO airPollutionRedisVO = new AirPollutionRedisVO(latestInfo);
-          
+
             airPollutionRedisRepository.save(airPollutionRedisVO);
 
             return latestInfo;
@@ -68,7 +69,7 @@ public class AirPollutionService {
      * @return 원격 서버에서 제공하는 최신 정보와 완전히 일치하는 정보입니다.
      */
     private AirPollutionInfo getSyncedLatestInfo(SmallRegion smallRegion) {
-        AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+        AirPollutionInfo existedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
         AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
 
         // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
