@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.scheduler;
 
 import com.weather.weatherdataapi.service.LivingHealthService;
+import com.weather.weatherdataapi.util.DateTimeUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ public class LivingHealthScheduler {
 
     private final LivingHealthService livingHealthService;
 
-    @Scheduled(cron = "0 5 6 * * ?")
+    @Scheduled(cron = "0 5 6 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("전일 생활보건기상지수 정보를 갱신합니다.");

@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.scheduler;
 
 import com.weather.weatherdataapi.service.CoronaService;
+import com.weather.weatherdataapi.util.DateTimeUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ public class CoronaScheduler {
 
     private final CoronaService coronaService;
 
-    @Scheduled(cron = "0 0 10 * * ?")
+    @Scheduled(cron = "0 0 10 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("전일 코로나 확진자 정보를 갱신합니다.");
