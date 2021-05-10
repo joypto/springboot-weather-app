@@ -38,6 +38,8 @@ public class CoronaService {
 
     private Integer cachedAllNewCaseCount;
 
+    // TODO: 의도대로 동작하지 않습니다.
+    //  redisRepository에 현재 날짜의 모든 corona Info들이 저장되어 있어야 정상적으로 작동할 것입니다.
     public Integer getAllNewCaseCount() {
         // 캐시된 값이 없다면 계산한 뒤 캐싱합니다.
         if (cachedAllNewCaseCount == null) {
@@ -150,6 +152,9 @@ public class CoronaService {
     }
 
     private boolean checkAlreadyHasLatestData() {
+        if (coronaRepository.count() == 0)
+            return false;
+
         CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidCoronaInfoException());
         LocalDate current = LocalDate.now();
 
