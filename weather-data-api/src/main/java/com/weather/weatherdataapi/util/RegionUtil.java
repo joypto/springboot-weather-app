@@ -8,10 +8,10 @@ public class RegionUtil {
     private static Dictionary<String, String> aliasAndFullNameDict;
 
     static {
-        InitializeAliasAndFullNameDict();
+        initializeAliasAndFullNameDict();
     }
 
-    private static void InitializeAliasAndFullNameDict() {
+    private static void initializeAliasAndFullNameDict() {
         aliasAndFullNameDict = new Hashtable<>();
 
         aliasAndFullNameDict.put("강원", "강원도");

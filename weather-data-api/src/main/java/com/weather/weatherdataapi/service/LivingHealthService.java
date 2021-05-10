@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.exception.repository.info.InvalidLivingHealthInfoException;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
@@ -19,6 +20,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -43,12 +45,18 @@ public class LivingHealthService {
 
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
 
+
         for (int i = 0; i < 19; i++) {
             BigRegion bigRegion = bigRegionList.get(i);
             String admCode = bigRegionList.get(i).getAdmCode();
             LivingHealthInfo livingHealthInfo = livingHealthApi.livingHealthApi(bigRegion, admCode);
-            livingHealthInfoRepository.save(livingHealthInfo);
 
+            LivingHealthInfo latestLivingHealthInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc().get();
+            if (livingHealthInfo.getDate().equals(latestLivingHealthInfo.getDate())) {
+                log.info("00시 - 06시 사이의 요청입니다. 불러온 값을 DB에 저장하지 않습니다.");
+                return;
+            }
+            livingHealthInfoRepository.save(livingHealthInfo);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
         }
@@ -56,7 +64,7 @@ public class LivingHealthService {
     }
 
     private boolean checkAlreadyHasLatestInfo() {
-        LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
+        LivingHealthInfo latestData = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidLivingHealthInfoException());
         LocalDate current = LocalDate.now();
         if (latestData == null)
             return false;
@@ -66,9 +74,9 @@ public class LivingHealthService {
     /**
      * 정보 요청이 왔을 때, TotalDataService 로 생활보건기상지수 정보와 점수를 반환해주는 메서드입니다.
      */
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         weatherDataResponseDto.setLivingHealthWeather(getInfoByBigRegion(currentBigRegion));
-        convertInfoToScore(currentBigRegion, scoreResultResponseDto);
+        convertInfoToScore(currentBigRegion, scoreResultDto);
     }
 
     /**
@@ -76,14 +84,15 @@ public class LivingHealthService {
      */
     public LivingHealthInfo getInfoByBigRegion(BigRegion bigRegion) {
         LivingHealthInfo livingHealthInfo;
+        Optional<LivingHealthRedisVO> queriedLivingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode());
 
-        if (livingHealthRedisRepository.existsById(bigRegion.getAdmCode())) {
+        if (queriedLivingHealthRedisVO.isPresent()) {
             log.info("생활보건기상지수 데이터를 캐시 데이터베이스에서 불러옵니다.");
-            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).get();
+            LivingHealthRedisVO livingHealthRedisVO = queriedLivingHealthRedisVO.get();
             livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
         } else {
             log.info("생활보건기상지수 데이터를 MySql 데이터베이스에서 불러오고 캐시 데이터베이스에 저장합니다.");
-            livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
+            livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
         }
@@ -94,9 +103,9 @@ public class LivingHealthService {
     /**
      * 여기서부터는 생활보건기상지수의 점수 변환 관련 메서드입니다.
      */
-    public ScoreResultResponseDto convertInfoToScore(BigRegion bigRegion, ScoreResultResponseDto scoreResultResponseDto) {
+    public ScoreResultDto convertInfoToScore(BigRegion bigRegion, ScoreResultDto scoreResultDto) {
 
-        LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
+        LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
 
         // 천식폐질환지수 점수변환
         List<Integer> asthmaInfoList = new ArrayList<>();
@@ -106,7 +115,7 @@ public class LivingHealthService {
             asthmaInfoList.add(convertHealthInfoToScore(livingHealthInfo.getAsthmaTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setAsthmaResult(asthmaInfoList);
+        scoreResultDto.setAsthmaResult(asthmaInfoList);
 
         // 꽃가루지수 점수변환
         List<Integer> pollenRiskInfoList = new ArrayList<>();
@@ -116,7 +125,7 @@ public class LivingHealthService {
             pollenRiskInfoList.add(convertHealthInfoToScore(livingHealthInfo.getOakPollenRiskTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setPollenRiskResult(pollenRiskInfoList);
+        scoreResultDto.setPollenRiskResult(pollenRiskInfoList);
 
         // 식중독지수 점수변환
         List<Integer> foodPoisonInfoList = new ArrayList<>();
@@ -126,7 +135,7 @@ public class LivingHealthService {
             foodPoisonInfoList.add(convertFoodPoisonInfoToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setFoodPoisonResult(foodPoisonInfoList);
+        scoreResultDto.setFoodPoisonResult(foodPoisonInfoList);
 
         // 자외선지수 점수변환
         List<Integer> uvInfoList = new ArrayList<>();
@@ -136,9 +145,9 @@ public class LivingHealthService {
             uvInfoList.add(convertUvInfoToScore(livingHealthInfo.getUvTheDayAfterTomorrow()));
         }
 
-        scoreResultResponseDto.setUvResult(uvInfoList);
+        scoreResultDto.setUvResult(uvInfoList);
 
-        return scoreResultResponseDto;
+        return scoreResultDto;
     }
 
     // 보건기상지수 중 식중독 지수 제외한 그 외 지수의 점수 변환

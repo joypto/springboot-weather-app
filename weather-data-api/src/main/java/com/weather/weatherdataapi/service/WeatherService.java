@@ -1,6 +1,8 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherDayRedisVOException;
+import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherWeekRedisVOException;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
@@ -40,25 +42,25 @@ public class WeatherService {
     }
 
     // 날씨 정보 셋팅
-    public void setInfoAndScore(SmallRegion wantRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) throws IOException {
+    public void setInfoAndScore(SmallRegion wantRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) throws IOException {
         try {
-            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
-            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new NullPointerException("?"));
+            WeatherWeekRedisVO weekInfoRedis = weatherWeekRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new InvalidWeatherWeekRedisVOException());
+            WeatherDayRedisVO dayInfoRedis = weatherDayRedisRepository.findById(wantRegion.getAdmCode()).orElseThrow(() -> new InvalidWeatherDayRedisVOException());
             WeatherWeekInfo weekInfo = new WeatherWeekInfo(weekInfoRedis);
             WeatherDayInfo dayInfo = new WeatherDayInfo(dayInfoRedis);
             weatherDataResponseDto.setWeekInfo(weekInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
-            convertInfoToScore(scoreResultResponseDto, weekInfo);
+            convertInfoToScore(scoreResultDto, weekInfo);
             log.info("캐시로 날씨 데이터 불러오기");
         } catch (Exception e) {
             log.info("캐시로 날씨 데이터 불러오기 실패");
             WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
-            convertInfoToScore(scoreResultResponseDto, weekInfo);
+            convertInfoToScore(scoreResultDto, weekInfo);
         }
     }
 
 
-    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto, WeatherWeekInfo weekInfo) throws IOException {
+    public void convertInfoToScore(ScoreResultDto scoreResultDto, WeatherWeekInfo weekInfo) throws IOException {
         try {
             // 날짜별 환산점수 변환 시작
             List<String> getRainPer = new ArrayList<>();
@@ -76,22 +78,22 @@ public class WeatherService {
                 getWeatherScore(weekInfo, getTemp, i, getMonth);
             }
 
-            scoreResultResponseDto.setRainPerResult(getRainPer);
-            scoreResultResponseDto.setWeatherResult(getWeather);
-            scoreResultResponseDto.setHumidityResult(getHumidity);
-            scoreResultResponseDto.setWindResult(getWind);
-            scoreResultResponseDto.setTempResult(getTemp);
+            scoreResultDto.setRainPerResult(getRainPer);
+            scoreResultDto.setWeatherResult(getWeather);
+            scoreResultDto.setHumidityResult(getHumidity);
+            scoreResultDto.setWindResult(getWind);
+            scoreResultDto.setTempResult(getTemp);
         } catch (Exception e) {
             List<String> getRainPer = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getWeather = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getWind = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getHumidity = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getTemp = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
-            scoreResultResponseDto.setRainPerResult(getRainPer);
-            scoreResultResponseDto.setWeatherResult(getWeather);
-            scoreResultResponseDto.setHumidityResult(getHumidity);
-            scoreResultResponseDto.setWindResult(getWind);
-            scoreResultResponseDto.setTempResult(getTemp);
+            scoreResultDto.setRainPerResult(getRainPer);
+            scoreResultDto.setWeatherResult(getWeather);
+            scoreResultDto.setHumidityResult(getHumidity);
+            scoreResultDto.setWindResult(getWind);
+            scoreResultDto.setTempResult(getTemp);
             log.info("날씨 점수 에러 발생 비상 비상 비상 비상 비상 비상 비상 비상");
         }
     }

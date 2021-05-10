@@ -21,9 +21,9 @@ public class AirPollutionRedisVO {
 
     private LocalDateTime dateTime;
 
-    private int pm10Value;
+    private Integer pm10Value;
 
-    private int pm25Value;
+    private Integer pm25Value;
 
     public AirPollutionRedisVO(AirPollutionInfo airPollutionInfo) {
         this.smallRegionAdmCode = airPollutionInfo.getSmallRegion().getAdmCode();

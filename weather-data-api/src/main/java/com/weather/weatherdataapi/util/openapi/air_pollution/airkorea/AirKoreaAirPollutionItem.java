@@ -11,113 +11,113 @@ public class AirKoreaAirPollutionItem {
     /**
      * 측정일시
      */
-    @Element
+    @Element(required = false)
     private String dataTime;
 
     /**
      * 미세먼지(PM10) 농도 (단위 : ㎍/㎥)
      */
-    @Element
+    @Element(required = false)
     private String pm10Value;
 
     /**
      * 미세먼지(PM10) 24시간 등급자료
      */
-    @Element
+    @Element(required = false)
     private String pm10Grade;
 
     /**
      * 미세먼지(PM2.5) 농도 (단위 : ㎍/㎥)
      */
-    @Element
+    @Element(required = false)
     private String pm25Value;
 
     /**
      * 미세먼지(PM2.5) 24시간 등급자료
      */
-    @Element
+    @Element(required = false)
     private String pm25Grade;
 
 
     /**
      * 일산화탄소 농도(단위 : ppm)
      */
-    @Element
+    @Element(required = false)
     private String coValue;
 
     /**
      * 일산화탄소 지수
      */
-    @Element
+    @Element(required = false)
     private String coGrade;
 
     /**
      * 이산화질소 농도(단위 : ppm)
      */
-    @Element
+    @Element(required = false)
     private String no2Value;
 
     /**
      * 이산화질소 지수
      */
-    @Element
+    @Element(required = false)
     private String no2Grade;
 
     /**
      * 오존 농도(단위 : ppm)
      */
-    @Element
+    @Element(required = false)
     private String o3Value;
 
     /**
      * 오존 지수
      */
-    @Element
+    @Element(required = false)
     private String o3Grade;
 
     /**
      * 아황산가스 지수
      */
-    @Element
+    @Element(required = false)
     private String so2Value;
 
     /**
      * 아황산가스 농도
      */
-    @Element
+    @Element(required = false)
     private String so2Grade;
 
     /**
      * 통합대기환경수치
      */
-    @Element
+    @Element(required = false)
     private String khaiValue;
 
     /**
      * 통합대기환경지수
      */
-    @Element
+    @Element(required = false)
     private String khaiGrade;
 
 //    /**
 //     * 측정자료 상태정보(점검및교정,장비점검,자료이상,통신장애)
 //     */
-//    @Element
+//    @Element(required = false)
 //    private String coFlag;
 //
-//    @Element
+//    @Element(required = false)
 //    private String pm25Flag;
 //
-//    @Element
+//    @Element(required = false)
 //    private String pm10Flag;
 //
-//    @Element
+//    @Element(required = false)
 //    private String no2Flag;
 //
-//    @Element
+//    @Element(required = false)
 //    private String o3Flag;
 //
-//    @Element
+//    @Element(required = false)
 //    private String so2Flag;
 
 }

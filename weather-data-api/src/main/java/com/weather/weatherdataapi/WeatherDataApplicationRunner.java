@@ -37,7 +37,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
         livingHealthService.fetchAndStoreInfoUsingOpenApi();
 
-        airKoreaStationUtil.InitializeRegionStationNameDict();
+        airKoreaStationUtil.initializeRegionStationNameDict();
 
         log.info("초기화를 마쳤습니다.");
     }

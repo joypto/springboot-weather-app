@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.repository.InvalidBigRegionException;
+import com.weather.weatherdataapi.exception.repository.InvalidSmallRegionException;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.vo.csv.RegionCsvVO;
@@ -10,6 +12,7 @@ import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.repository.redis.BigRegionRedisRepository;
 import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -50,7 +53,7 @@ public class RegionService {
         // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
         // 조회한 데이터는 이제부터 캐시됩니다.
         else {
-            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(bigRegionName);
+            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(bigRegionName).orElseThrow(() -> new InvalidBigRegionException());
             bigRegionRedisVO = new BigRegionRedisVO(bigRegion);
             bigRegionRedisRepository.save(bigRegionRedisVO);
 
@@ -76,7 +79,7 @@ public class RegionService {
         // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
         // 조회한 데이터는 이제부터 캐시됩니다.
         else {
-            SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, smallRegionName);
+            SmallRegion smallRegion = smallRegionRepository.findByBigRegionAndSmallRegionName(bigRegion, smallRegionName).orElseThrow(() -> new InvalidSmallRegionException());
             smallRegionRedisVO = new SmallRegionRedisVO(smallRegion);
             smallRegionRedisRepository.save(smallRegionRedisVO);
 
@@ -115,7 +118,7 @@ public class RegionService {
 
         } catch (Exception e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("초기화하는 도중 문제가 발생하였습니다.");
         }
     }
@@ -140,7 +143,7 @@ public class RegionService {
             if (regionVO.isBigRegionInfo() == true) {
 
                 // 이미 존재한다면 추가하지 않습니다.
-                if (bigRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null) {
+                if (bigRegionRepository.findByAdmCode(regionVO.getAdmCode()).isPresent() == true) {
                     continue;
                 }
 
@@ -153,13 +156,13 @@ public class RegionService {
             else {
 
                 // 이미 존재한다면 추가하지 않습니다.
-                if (smallRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null) {
+                if (smallRegionRepository.findByAdmCode(regionVO.getAdmCode()).isPresent()) {
                     continue;
                 }
 
                 // 가장 최근에 저장되었거나 접근된 bigRegion이 현재 저장하려는 smallRegion을 포함하는 행정 구역이라면
                 // DB에 접근하지 않고 캐시된 BigRegion객체를 사용합니다.
-                BigRegion bigRegion = regionVO.getBigRegion().equals(latestBigRegion.getBigRegionName()) ? latestBigRegion : bigRegionRepository.findByBigRegionName(latestBigRegion.getBigRegionName());
+                BigRegion bigRegion = regionVO.getBigRegion().equals(latestBigRegion.getBigRegionName()) ? latestBigRegion : bigRegionRepository.findByBigRegionName(latestBigRegion.getBigRegionName()).orElseThrow(() -> new InvalidBigRegionException());
                 latestBigRegion = bigRegion;
 
                 SmallRegion newSmallRegion = new SmallRegion(regionVO.getSmallRegion(), regionVO.getAdmCode(), regionVO.getLongitude(), regionVO.getLatitude(), bigRegion);
@@ -213,8 +216,8 @@ public class RegionService {
 
             // DB에 존재하는지 확인합니다.
             boolean isAlreadyExist = regionVO.isBigRegionInfo() ?
-                    bigRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null :
-                    smallRegionRepository.findByAdmCode(regionVO.getAdmCode()) != null;
+                    bigRegionRepository.findByAdmCode(regionVO.getAdmCode()).isPresent() :
+                    smallRegionRepository.findByAdmCode(regionVO.getAdmCode()).isPresent();
 
             if (isAlreadyExist == false) {
                 return false;

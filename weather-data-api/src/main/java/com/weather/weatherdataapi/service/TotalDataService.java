@@ -1,10 +1,10 @@
 package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
-import com.weather.weatherdataapi.model.dto.requestdto.ScoreRequestDto;
+import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
@@ -37,23 +37,23 @@ public class TotalDataService {
         SmallRegion currentSmallRegion = regionService.getSmallRegionByName(totalDataRequestDto.getBigRegionName(), totalDataRequestDto.getSmallRegionName());
 
         // 객체 생성
-        ScoreResultResponseDto scoreResultResponseDto = new ScoreResultResponseDto();
+        ScoreResultDto scoreResultDto = new ScoreResultDto();
         TotalDataResponseDto weatherDataResponseDto = new TotalDataResponseDto(currentBigRegion, currentSmallRegion);
 
         // 여기서부터 setInfoAndScore 로직 시작
-        coronaService.setInfoAndScore(currentBigRegion, scoreResultResponseDto, weatherDataResponseDto);
-        livingHealthService.setInfoAndScore(currentBigRegion, scoreResultResponseDto, weatherDataResponseDto);
-        weatherService.setInfoAndScore(currentSmallRegion, scoreResultResponseDto, weatherDataResponseDto);
-        airPollutionService.setInfoAndScore(currentSmallRegion, scoreResultResponseDto, weatherDataResponseDto);
+        coronaService.setInfoAndScore(currentBigRegion, scoreResultDto, weatherDataResponseDto);
+        livingHealthService.setInfoAndScore(currentBigRegion, scoreResultDto, weatherDataResponseDto);
+        weatherService.setInfoAndScore(currentSmallRegion, scoreResultDto, weatherDataResponseDto);
+        airPollutionService.setInfoAndScore(currentSmallRegion, scoreResultDto, weatherDataResponseDto);
 
         // 식별값으로 DB 에서 유저 선호도 불러오기
         User user = userService.getCurrentUserPreference(token);
         userService.setUserCurrentRegion(user, totalDataRequestDto.getBigRegionName() + " " + totalDataRequestDto.getSmallRegionName());
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
-        ScoreRequestDto scoreRequestDto = new ScoreRequestDto(user);
+        ScoreWeightDto scoreWeightDto = new ScoreWeightDto(user);
 
-        List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreRequestDto, scoreResultResponseDto);
+        List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreWeightDto, scoreResultDto);
         weatherDataResponseDto.setDayScoreList(dayScoreList);
         return weatherDataResponseDto;
 

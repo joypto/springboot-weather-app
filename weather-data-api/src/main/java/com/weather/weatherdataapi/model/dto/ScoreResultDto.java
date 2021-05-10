@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.model.dto.responsedto;
+package com.weather.weatherdataapi.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,11 +7,11 @@ import java.util.List;
 
 @Getter
 @Setter
-public class ScoreResultResponseDto {
+public class ScoreResultDto {
 
-    private int coronaResult;
-    private int pm10Result;
-    private int pm25Result;
+    private Integer coronaResult;
+    private Integer pm10Result;
+    private Integer pm25Result;
 
     private List<String> tempResult;
     private List<String> rainPerResult;

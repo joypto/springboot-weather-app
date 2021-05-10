@@ -1,8 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.living_health;
 
-import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.exception.repository.info.InvalidLivingHealthInfoException;
 import com.weather.weatherdataapi.model.entity.BigRegion;
-import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Component;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -117,7 +115,12 @@ public class LivingHealthApi {
                     livingHealthInfo.setAsthmaTomorrow(tomorrow);
                     livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
                 } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
-                    livingHealthInfo.setOakPollenRiskToday(today);
+                    if (today != "") {
+                        livingHealthInfo.setOakPollenRiskToday(today);
+                    } else {
+                        LivingHealthInfo livingHealthInfoForPollenRisk = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).get();
+                        livingHealthInfo.setOakPollenRiskToday(livingHealthInfoForPollenRisk.getOakPollenRiskTomorrow());
+                    }
                     livingHealthInfo.setOakPollenRiskTomorrow(tomorrow);
                     livingHealthInfo.setOakPollenRiskTheDayAfterTomorrow(theDayAfterTomorrow);
                 } else if (method == "HealthWthrIdxService/getFoodPoisoningIdx") {
@@ -131,7 +134,7 @@ public class LivingHealthApi {
                 }
             } catch (ParseException e) {
                 log.info("생활보건기상지수 OPEN API 정보 파싱에 실패했습니다.");
-                LivingHealthInfo yesterdayInfo = livingHealthInfoRepository.findSecondByAreaNoOrderByCreatedAtDesc(admcode);
+                LivingHealthInfo yesterdayInfo = livingHealthInfoRepository.findSecondByAreaNoOrderByCreatedAtDesc(admcode).orElseThrow(() -> new InvalidLivingHealthInfoException());
                 if (method == "HealthWthrIdxService/getAsthmaIdx") {
                     livingHealthInfo.setAsthmaToday(yesterdayInfo.getAsthmaToday());
                     livingHealthInfo.setAsthmaTomorrow(yesterdayInfo.getAsthmaTomorrow());

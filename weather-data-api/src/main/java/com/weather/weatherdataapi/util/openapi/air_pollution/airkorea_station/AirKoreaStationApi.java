@@ -1,5 +1,7 @@
 package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station;
 
+import com.weather.weatherdataapi.exception.FailedFetchException;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
@@ -7,7 +9,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import java.util.Optional;
+import java.io.IOException;
 
 @Slf4j
 @Component
@@ -26,21 +28,29 @@ public class AirKoreaStationApi {
         service = retrofit.create(AirKoreaStationService.class);
     }
 
-    public Optional<AirKoreaStationItem> getResponseItem(String tmX, String tmY) {
+    public AirKoreaStationItem getResponseItem(String tmX, String tmY) throws FailedFetchException {
         try {
             Call<AirKoreaStationResponse> call = service.getResponseCall(SERVICE_KEY, tmX, tmY);
             AirKoreaStationResponse response = call.execute().body();
 
-            if (response.getHeader().getResultCode().equals("00") == false) {
-                throw new Exception("값을 정상적으로 조회하지 못했습니다.");
-            }
+            if (response.getHeader().getResultCode().equals("00") == false)
+                throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
 
-            return Optional.of(response.getBody().getItemList().get(0));
-        } catch (Exception e) {
+            return response.getBody().getItemList().get(0);
+        }
+        // 값을 정상적으로 조회하지 못했을 때 실행됩니다.
+        catch (FailedFetchException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
 
-            return Optional.empty();
+            throw e;
+        }
+        // retrofit에서 exception이 발생할 때 실행됩니다.
+        catch (IOException e) {
+            log.error(e.getMessage());
+            log.error(ExceptionUtil.getStackTraceString(e));
+
+            throw new FailedFetchException();
         }
 
     }

@@ -2,13 +2,15 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
-import com.weather.weatherdataapi.model.dto.responsedto.ScoreResultResponseDto;
+import com.weather.weatherdataapi.exception.repository.info.InvalidCoronaInfoException;
+import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.repository.redis.CoronaRedisRepository;
+import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
@@ -56,14 +58,14 @@ public class CoronaService {
         cachedAllNewCaseCount = null;
     }
 
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultResponseDto scoreResultResponseDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
 
         weatherDataResponseDto.setCoronaCurrentBigRegionNewCaseCount(coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount());
 
         weatherDataResponseDto.setCoronaAllNewCaseCount(getAllNewCaseCount());
 
-        convertInfoToScore(scoreResultResponseDto);
+        convertInfoToScore(scoreResultDto);
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -74,7 +76,7 @@ public class CoronaService {
             CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).get();
             coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
         } else {
-            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
+            coronaInfo = coronaRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidCoronaInfoException());
             CoronaRedisVO coronaRedisVO = new CoronaRedisVO(coronaInfo);
             coronaRedisRepository.save(coronaRedisVO);
         }
@@ -90,7 +92,7 @@ public class CoronaService {
             log.warn("run::원격 서버에서 제공하는 코로나 정보가 DB에 이미 저장되어 있습니다.");
         } catch (FailedFetchException e) {
             log.error(e.getMessage());
-            e.printStackTrace();
+            log.error(ExceptionUtil.getStackTraceString(e));
             log.error("run::원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
         }
 
@@ -126,7 +128,7 @@ public class CoronaService {
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public void convertInfoToScore(ScoreResultResponseDto scoreResultResponseDto) {
+    public void convertInfoToScore(ScoreResultDto scoreResultDto) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
@@ -144,11 +146,11 @@ public class CoronaService {
         else
             score = 10;
 
-        scoreResultResponseDto.setCoronaResult(score);
+        scoreResultDto.setCoronaResult(score);
     }
 
     private boolean checkAlreadyHasLatestData() {
-        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc();
+        CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidCoronaInfoException());
         LocalDate current = LocalDate.now();
 
         if (latestData == null)
