@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.UUID;
@@ -75,15 +76,18 @@ public class UserService {
     }
 
     // TODO: 같은 의미를 가리키는 것이지만 용어가 다르다. preference와 scoreWeight. 둘 중에 하나로 통일하는 것이 직관적이지 않을까?
+    @Transactional
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
         user.updateUserPreference(scoreWeightDto);
     }
 
+    @Transactional
     public void updateCurrentRegion(User user, String currentRegion) {
         user.setLatestRequestRegion(currentRegion);
         userRepository.save(user);
     }
 
+    @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
         user.setOftenSeenRegions(regionRequestDto.getRegionList());
 
