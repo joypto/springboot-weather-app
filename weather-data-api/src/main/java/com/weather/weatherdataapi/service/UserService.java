@@ -69,6 +69,7 @@ public class UserService {
         RegionDto regionDto = new RegionDto(regions[0], regions[1]);
 
         UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto();
+        userRegionResponseDto.setIdentification(user.getIdentification());
         userRegionResponseDto.setLatestRequestRegion(regionDto);
         userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
 
