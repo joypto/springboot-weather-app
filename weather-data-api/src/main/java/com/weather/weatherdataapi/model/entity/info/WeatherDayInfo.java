@@ -67,4 +67,19 @@ public class WeatherDayInfo extends Timestamped {
         this.dailyTime = weatherDayRedisVO.getDailyTime();
         this.weatherIcon = weatherDayRedisVO.getWeatherIcon();
     }
+
+    @Override
+    public String toString() {
+        return "WeatherDayInfo{" +
+                "id=" + id +
+                ", smallRegion=" + smallRegion +
+                ", tmp=" + tmp +
+                ", weather=" + weather +
+                ", weatherDes=" + weatherDes +
+                ", rainPer=" + rainPer +
+                ", dailyTime=" + dailyTime +
+                ", weatherIcon=" + weatherIcon +
+                '}';
+    }
+
 }

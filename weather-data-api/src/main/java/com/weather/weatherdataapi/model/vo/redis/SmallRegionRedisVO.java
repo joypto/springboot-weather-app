@@ -32,4 +32,17 @@ public class SmallRegionRedisVO {
         this.longitude = smallRegion.getLongitude();
         this.latitude = smallRegion.getLatitude();
     }
+
+    @Override
+    public String toString() {
+        return "SmallRegionRedisVO{" +
+                "admCode='" + admCode + '\'' +
+                ", id=" + id +
+                ", big_region_id=" + big_region_id +
+                ", smallRegionName='" + smallRegionName + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
+
 }

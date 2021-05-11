@@ -22,4 +22,8 @@ public class RegionDto {
         this.smallRegionName = smallRegionName;
     }
 
+    @Override
+    public String toString() {
+        return "RegionDto{" + "bigRegionName='" + bigRegionName + "', smallRegionName='" + smallRegionName + "'}";
+    }
 }

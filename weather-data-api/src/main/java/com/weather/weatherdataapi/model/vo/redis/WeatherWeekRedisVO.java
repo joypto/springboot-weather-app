@@ -58,4 +58,24 @@ public class WeatherWeekRedisVO {
         this.weatherIcon = weatherWeekInfo.getWeatherIcon();
         this.rain = weatherWeekInfo.getRain();
     }
+
+    @Override
+    public String toString() {
+        return "WeatherWeekRedisVO{" +
+                "smallRegionAdmCode='" + smallRegionAdmCode + '\'' +
+                ", id=" + id +
+                ", smallRegionId=" + smallRegionId +
+                ", maxTmp=" + maxTmp +
+                ", minTmp=" + minTmp +
+                ", tmp=" + tmp +
+                ", humidity=" + humidity +
+                ", weather=" + weather +
+                ", weatherDes=" + weatherDes +
+                ", rainPer=" + rainPer +
+                ", windSpeed=" + windSpeed +
+                ", weatherIcon=" + weatherIcon +
+                ", rain=" + rain +
+                '}';
+    }
+
 }

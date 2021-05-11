@@ -34,4 +34,17 @@ public class CoronaRedisVO {
         this.newLocalCaseCount = coronaInfo.getNewLocalCaseCount();
         this.newForeignCaseCount = coronaInfo.getNewForeignCaseCount();
     }
+
+    @Override
+    public String toString() {
+        return "CoronaRedisVO{" +
+                "bigRegionAdmCode='" + bigRegionAdmCode + '\'' +
+                ", id=" + id +
+                ", bigRegionId=" + bigRegionId +
+                ", date=" + date +
+                ", newLocalCaseCount=" + newLocalCaseCount +
+                ", newForeignCaseCount=" + newForeignCaseCount +
+                '}';
+    }
+
 }

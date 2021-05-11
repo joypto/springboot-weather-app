@@ -2,9 +2,7 @@ package com.weather.weatherdataapi.model.entity.info;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
-import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
-import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -91,4 +89,25 @@ public class LivingHealthInfo extends Timestamped {
         this.asthmaTheDayAfterTomorrow = livingHealthRedisVO.getAsthmaTheDayAfterTomorrow();
     }
 
+    @Override
+    public String toString() {
+        return "LivingHealthInfo{" +
+                "id=" + id +
+                ", bigRegion=" + bigRegion +
+                ", date='" + date + '\'' +
+                ", areaNo='" + areaNo + '\'' +
+                ", uvToday='" + uvToday + '\'' +
+                ", uvTomorrow='" + uvTomorrow + '\'' +
+                ", uvTheDayAfterTomorrow='" + uvTheDayAfterTomorrow + '\'' +
+                ", oakPollenRiskToday='" + oakPollenRiskToday + '\'' +
+                ", oakPollenRiskTomorrow='" + oakPollenRiskTomorrow + '\'' +
+                ", oakPollenRiskTheDayAfterTomorrow='" + oakPollenRiskTheDayAfterTomorrow + '\'' +
+                ", foodPoisonToday='" + foodPoisonToday + '\'' +
+                ", foodPoisonTomorrow='" + foodPoisonTomorrow + '\'' +
+                ", foodPoisonTheDayAfterTomorrow='" + foodPoisonTheDayAfterTomorrow + '\'' +
+                ", asthmaToday='" + asthmaToday + '\'' +
+                ", asthmaTomorrow='" + asthmaTomorrow + '\'' +
+                ", asthmaTheDayAfterTomorrow='" + asthmaTheDayAfterTomorrow + '\'' +
+                '}';
+    }
 }

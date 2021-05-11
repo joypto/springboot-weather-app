@@ -11,4 +11,10 @@ public class RegionRequestDto {
 
     private List<String> region;
 
+    @Override
+    public String toString() {
+        return "RegionRequestDto{" +
+                "region=" + region +
+                '}';
+    }
 }

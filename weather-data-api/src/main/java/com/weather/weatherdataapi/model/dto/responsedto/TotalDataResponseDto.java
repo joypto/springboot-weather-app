@@ -48,4 +48,19 @@ public class TotalDataResponseDto {
         this.dayScoreList = dayScoreList;
     }
 
+    @Override
+    public String toString() {
+        return "TotalDataResponseDto{" +
+                "bigRegion=" + bigRegion +
+                ", smallRegion=" + smallRegion +
+                ", livingHealthWeather=" + livingHealthWeather +
+                ", weekInfo=" + weekInfo +
+                ", dayInfo=" + dayInfo +
+                ", airPollution=" + airPollution +
+                ", coronaCurrentBigRegionNewCaseCount=" + coronaCurrentBigRegionNewCaseCount +
+                ", coronaAllNewCaseCount=" + coronaAllNewCaseCount +
+                ", dayScoreList=" + dayScoreList +
+                '}';
+    }
+
 }

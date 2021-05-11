@@ -56,4 +56,22 @@ public class ScoreWeightDto {
                 + this.foodPoisonWeight;
     }
 
+    @Override
+    public String toString() {
+        return "ScoreWeightDto{" +
+                "coronaWeight=" + coronaWeight +
+                ", pm10Weight=" + pm10Weight +
+                ", pm25Weight=" + pm25Weight +
+                ", tempWeight=" + tempWeight +
+                ", rainPerWeight=" + rainPerWeight +
+                ", weatherWeight=" + weatherWeight +
+                ", humidityWeight=" + humidityWeight +
+                ", windWeight=" + windWeight +
+                ", uvWeight=" + uvWeight +
+                ", pollenRiskWeight=" + pollenRiskWeight +
+                ", asthmaWeight=" + asthmaWeight +
+                ", foodPoisonWeight=" + foodPoisonWeight +
+                '}';
+    }
+
 }

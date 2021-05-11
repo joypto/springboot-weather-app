@@ -1,7 +1,6 @@
 package com.weather.weatherdataapi.model.vo.redis;
 
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -66,4 +65,28 @@ public class LivingHealthRedisVO {
         this.asthmaTomorrow = livingHealthInfo.getAsthmaTomorrow();
         this.asthmaTheDayAfterTomorrow = livingHealthInfo.getAsthmaTheDayAfterTomorrow();
     }
+
+    @Override
+    public String toString() {
+        return "LivingHealthRedisVO{" +
+                "bigRegionAdmCode='" + bigRegionAdmCode + '\'' +
+                ", id=" + id +
+                ", bigRegionId=" + bigRegionId +
+                ", date='" + date + '\'' +
+                ", areaNo='" + areaNo + '\'' +
+                ", uvToday='" + uvToday + '\'' +
+                ", uvTomorrow='" + uvTomorrow + '\'' +
+                ", uvTheDayAfterTomorrow='" + uvTheDayAfterTomorrow + '\'' +
+                ", oakPollenRiskToday='" + oakPollenRiskToday + '\'' +
+                ", oakPollenRiskTomorrow='" + oakPollenRiskTomorrow + '\'' +
+                ", oakPollenRiskTheDayAfterTomorrow='" + oakPollenRiskTheDayAfterTomorrow + '\'' +
+                ", foodPoisonToday='" + foodPoisonToday + '\'' +
+                ", foodPoisonTomorrow='" + foodPoisonTomorrow + '\'' +
+                ", foodPoisonTheDayAfterTomorrow='" + foodPoisonTheDayAfterTomorrow + '\'' +
+                ", asthmaToday='" + asthmaToday + '\'' +
+                ", asthmaTomorrow='" + asthmaTomorrow + '\'' +
+                ", asthmaTheDayAfterTomorrow='" + asthmaTheDayAfterTomorrow + '\'' +
+                '}';
+    }
+
 }

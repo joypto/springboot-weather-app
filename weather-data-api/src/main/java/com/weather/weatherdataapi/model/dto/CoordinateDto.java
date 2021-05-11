@@ -21,4 +21,11 @@ public class CoordinateDto {
      */
     private String latitude;
 
+    @Override
+    public String toString() {
+        return "CoordinateDto{" +
+                "longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
 }

@@ -56,4 +56,16 @@ public class BigRegion {
         this.latitude = regionRedisVO.getLatitude();
     }
 
+    @Override
+    public String toString() {
+        return "BigRegion{" +
+                "id=" + id +
+                ", smallRegionList=" + smallRegionList +
+                ", bigRegionName='" + bigRegionName + '\'' +
+                ", admCode='" + admCode + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
+
 }

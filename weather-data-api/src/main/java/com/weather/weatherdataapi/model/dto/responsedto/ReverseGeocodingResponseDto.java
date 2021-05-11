@@ -19,4 +19,12 @@ public class ReverseGeocodingResponseDto {
         this.alias = "서울";
     }
 
+    @Override
+    public String toString() {
+        return "ReverseGeocodingResponseDto{" +
+                "bigRegion='" + bigRegion + '\'' +
+                ", smallRegion='" + smallRegion + '\'' +
+                ", alias='" + alias + '\'' +
+                '}';
+    }
 }
