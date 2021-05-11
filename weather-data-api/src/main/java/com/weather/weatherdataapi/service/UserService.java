@@ -11,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -63,33 +60,12 @@ public class UserService {
         }
     }
 
-    public void saveMyRegion(RegionRequestDto regionRequestDto, String token) {
-        User user;
-        if (StringUtils.hasText(token)) {
-            user = new User("default");
-            user.setIdentification(token);
-            user.setOftenSeenRegions(regionRequestDto.getRegion());
-        } else {
-            user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-            try {
-                List<String> oftenSeenRegions = user.getOftenSeenRegions();
-                oftenSeenRegions.addAll(regionRequestDto.getRegion());
-            } catch (NullPointerException | InvalidUserException e) {
-                List<String> oftenSeenRegions = new ArrayList<>();
-                oftenSeenRegions.addAll(regionRequestDto.getRegion());
-            }
-        }
-        userRepository.save(user);
-    }
-
     public void updateMyRegion(RegionRequestDto regionRequestDto, String token) {
-        User userPreference = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-        List<String> saveRegion = userPreference.getOftenSeenRegions();
-        for (int i = 0; i <regionRequestDto.getRegion().size(); i++) {
-            String region = regionRequestDto.getRegion().get(i);
-            saveRegion.remove(region);
-        }
-        userRepository.save(userPreference);
+        User user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+
+        user.setOftenSeenRegions(regionRequestDto.getRegionList());
+
+        userRepository.save(user);
     }
 
 }

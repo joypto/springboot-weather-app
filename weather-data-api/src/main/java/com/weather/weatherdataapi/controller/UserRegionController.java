@@ -28,14 +28,7 @@ public class UserRegionController {
         return userService.getMyRegion(userRegionResponseDto, token);
     }
 
-    @PostMapping("/api/user/regions")
-    public void saveMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
-        log.info("token='{}' \t region={}", token, regionRequestDto.toString());
-
-        userService.saveMyRegion(regionRequestDto, token);
-    }
-
-    @PutMapping("api/user/regions")
+    @PutMapping("/api/user/regions")
     public void updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader("token") String token) {
         log.info("token='{}' \t region={}", token, regionRequestDto.toString());
 
