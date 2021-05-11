@@ -162,7 +162,16 @@ public class AirPollutionService {
         AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+
+        AirKoreaAirPollutionItem latestFetchedData = null;
+        try {
+            latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error("원격 서버에서 최신 정보를 가져올 수 없습니다. 이미 최신 상태로 동기화되어 있다고 간주합니다.");
+
+            return true;
+        }
 
         return airKoreaUtil.checkLatestInfoAlreadyExists(latestData, latestFetchedData);
     }
