@@ -47,26 +47,26 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/api/user/preferences")
-    public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
+    public String updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
         log.info("token='{}' \t scoreWeight={}", token, scoreWeightDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(token);
 
         userService.updatePreference(user, scoreWeightDto);
 
-        return user;
+        return user.getIdentification();
     }
 
     @ResponseBody
     @PostMapping("/api/user/regions")
-    public User updateUserRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "token", required = false) String token) {
+    public String updateUserRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "token", required = false) String token) {
         log.info("token='{}' \t region={}", token, regionRequestDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(token);
 
         userService.updateOftenSeenRegions(user, regionRequestDto);
 
-        return user;
+        return user.getIdentification();
     }
 
 }
