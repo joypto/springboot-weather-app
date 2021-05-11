@@ -22,18 +22,18 @@ public class TotalDataController {
     private final TotalDataService totalDataService;
 
     @GetMapping("/api/total/data/coordinate")
-    public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader("token") String token) throws ParseException, IOException {
-        log.info("token='{}' \t coordinate={}", token, coordinateDto.toString());
+    public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader("identification") String identification) throws ParseException, IOException {
+        log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
         RegionDto totalDataRequestDto = totalDataService.getRegionName(coordinateDto);
-        return totalDataService.getTotalData(totalDataRequestDto, token);
+        return totalDataService.getTotalData(totalDataRequestDto, identification);
     }
 
     @GetMapping("/api/total/data/regionname")
-    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader("token") String token) throws IOException {
-        log.info("token='{}' \t coordinate={}", token, regionDto.toString());
+    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader("identification") String identification) throws IOException {
+        log.info("identification='{}' \t coordinate={}", identification, regionDto.toString());
 
-        return totalDataService.getTotalData(regionDto, token);
+        return totalDataService.getTotalData(regionDto, identification);
     }
 
 }
