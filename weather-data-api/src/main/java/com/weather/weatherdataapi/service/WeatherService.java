@@ -86,7 +86,6 @@ public class WeatherService {
             scoreResultDto.setHumidityResult(getHumidity);
             scoreResultDto.setWindResult(getWind);
             scoreResultDto.setTempResult(getTemp);
-            log.info("날씨 점수 에러 발생 비상 비상 비상 비상 비상 비상 비상 비상");
         }
     }
 
