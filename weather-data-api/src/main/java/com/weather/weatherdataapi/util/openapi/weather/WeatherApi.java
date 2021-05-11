@@ -135,7 +135,7 @@ public class WeatherApi {
             weekInfoRepository.save(weekInfo);
             ;
             weatherDataResponseDto.setWeekInfo(weekInfo);
-            WeatherWeekRedisVO weekCache = new WeatherWeekRedisVO(weekInfo);
+            WeatherWeekRedisVO weekCache = new WeatherWeekRedisVO(weekInfo,18000);
             weatherWeekRedisRepository.save(weekCache);
 
             // 하루 시간별 날씨 파싱
@@ -173,7 +173,7 @@ public class WeatherApi {
             dayInfo.setSmallRegion(wantRegion);
             dayInfoRepository.save(dayInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
-            WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo);
+            WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo,18000);
             weatherDayRedisRepository.save(dayCache);
             return weekInfo;
         } catch (Exception e) {
