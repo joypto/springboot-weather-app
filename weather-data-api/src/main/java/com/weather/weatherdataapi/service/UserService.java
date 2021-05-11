@@ -26,8 +26,12 @@ public class UserService {
      */
     public User getCurrentUserPreference(String token) {
         User user = new User();
-        if (StringUtils.hasText(token) == true) {
-            user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+        if (StringUtils.hasText(token)) {
+            try {
+                user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+            } catch (InvalidUserException e) {
+                user = new User("default");
+            }
         } else {
             user = new User("default");
         }
