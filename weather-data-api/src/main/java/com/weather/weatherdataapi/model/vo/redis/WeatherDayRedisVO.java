@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.TimeToLive;
 
 import java.util.List;
 
@@ -14,6 +15,8 @@ import java.util.List;
 public class WeatherDayRedisVO {
     @Id
     private String smallRegionAdmCode;
+    @TimeToLive
+    private long timeout;
 
     private long id;
 
@@ -31,9 +34,9 @@ public class WeatherDayRedisVO {
 
     private List<String> weatherIcon;
 
-    public WeatherDayRedisVO(WeatherDayInfo weatherDayInfo) {
+    public WeatherDayRedisVO(WeatherDayInfo weatherDayInfo, long timeout) {
         this.smallRegionAdmCode = weatherDayInfo.getSmallRegion().getAdmCode();
-
+        this.timeout = timeout;
         this.id = weatherDayInfo.getId();
         this.smallRegionId = weatherDayInfo.getSmallRegion().getId();
         this.tmp = weatherDayInfo.getTmp();
