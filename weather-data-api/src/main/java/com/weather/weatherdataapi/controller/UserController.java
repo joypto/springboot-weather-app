@@ -26,7 +26,7 @@ public class UserController {
     @GetMapping("/api/user/preferences")
     public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}'", identification);
-      
+
         User user = userService.getOrCreateUserByIdentification(identification);
         UserPreferenceResponseDto responseDto = new UserPreferenceResponseDto(user);
 
@@ -49,7 +49,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/api/user/preferences")
-    public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "identification", required = false) String identification) {
+    public String updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t scoreWeight={}", identification, scoreWeightDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
@@ -61,7 +61,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/api/user/regions")
-    public User updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
+    public String updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
