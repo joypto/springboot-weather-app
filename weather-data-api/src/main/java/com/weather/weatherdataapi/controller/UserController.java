@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
@@ -9,16 +10,30 @@ import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.bind.annotation.*;
-
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 @Slf4j
 @RequiredArgsConstructor
-@RestController
-public class UserRegionController {
+@Controller
+public class UserController {
 
     private final UserService userService;
     private final TotalDataService totalDataService;
+
+    @PostMapping("/api/user/preferences")
+    public User saveUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
+        log.info("token='{}' \t scoreWeight={}", token, scoreWeightDto.toString());
+
+        User user = userService.getOrCreateUserByIdentification(token);
+
+        userService.updatePreference(user, scoreWeightDto);
+
+        return user;
+    }
 
     @GetMapping("/api/user/regions")
     public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
