@@ -11,18 +11,16 @@ import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class UserController {
 
     private final UserService userService;
     private final TotalDataService totalDataService;
 
-    @ResponseBody
     @GetMapping("/api/user/preferences")
     public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}'", identification);
@@ -33,7 +31,6 @@ public class UserController {
         return responseDto;
     }
 
-    @ResponseBody
     @GetMapping("/api/user/regions")
     public UserRegionResponseDto getUserRegion(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
@@ -47,7 +44,6 @@ public class UserController {
         return userRegionResponseDto;
     }
 
-    @ResponseBody
     @PostMapping("/api/user/preferences")
     public String updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t scoreWeight={}", identification, scoreWeightDto.toString());
@@ -58,8 +54,7 @@ public class UserController {
 
         return user.getIdentification();
     }
-
-    @ResponseBody
+    
     @PostMapping("/api/user/regions")
     public String updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());
