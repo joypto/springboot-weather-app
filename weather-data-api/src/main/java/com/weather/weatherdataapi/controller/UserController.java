@@ -24,17 +24,6 @@ public class UserController {
     private final UserService userService;
     private final TotalDataService totalDataService;
 
-    @PostMapping("/api/user/preferences")
-    public User saveUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
-        log.info("token='{}' \t scoreWeight={}", token, scoreWeightDto.toString());
-
-        User user = userService.getOrCreateUserByIdentification(token);
-
-        userService.updatePreference(user, scoreWeightDto);
-
-        return user;
-    }
-
     @GetMapping("/api/user/regions")
     public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
         log.info("token='{}' \t coordinate={}", token, coordinateDto.toString());
@@ -46,6 +35,17 @@ public class UserController {
         userRegionResponseDto.setCurrentRegion(totalDataService.getRegionName(coordinateDto));
 
         return userRegionResponseDto;
+    }
+
+    @PostMapping("/api/user/preferences")
+    public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
+        log.info("token='{}' \t scoreWeight={}", token, scoreWeightDto.toString());
+
+        User user = userService.getOrCreateUserByIdentification(token);
+
+        userService.updatePreference(user, scoreWeightDto);
+
+        return user;
     }
 
     @PostMapping("/api/user/regions")
