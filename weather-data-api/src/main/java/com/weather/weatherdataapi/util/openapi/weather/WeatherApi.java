@@ -46,7 +46,7 @@ public class WeatherApi {
         } catch (Exception e) {
             String lat = "37.57037778";
             String lon = "126.9816417";
-            log.info("지역정보 오류: 서울시 종로구로 대체");
+            log.info("지역정보 오류: 서울시 종로구로 대체 비상비상비상비상!!!!!!!");
             return initData(useApi(lat, lon), wantRegion, weatherDataResponseDto);
         }
     }
