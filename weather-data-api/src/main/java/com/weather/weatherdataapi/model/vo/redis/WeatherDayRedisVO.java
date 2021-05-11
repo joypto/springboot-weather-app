@@ -43,4 +43,20 @@ public class WeatherDayRedisVO {
         this.dailyTime = weatherDayInfo.getDailyTime();
         this.weatherIcon = weatherDayInfo.getWeatherIcon();
     }
+
+    @Override
+    public String toString() {
+        return "WeatherDayRedisVO{" +
+                "smallRegionAdmCode='" + smallRegionAdmCode + '\'' +
+                ", id=" + id +
+                ", smallRegionId=" + smallRegionId +
+                ", tmp=" + tmp +
+                ", weather=" + weather +
+                ", weatherDes=" + weatherDes +
+                ", rainPer=" + rainPer +
+                ", dailyTime=" + dailyTime +
+                ", weatherIcon=" + weatherIcon +
+                '}';
+    }
+
 }

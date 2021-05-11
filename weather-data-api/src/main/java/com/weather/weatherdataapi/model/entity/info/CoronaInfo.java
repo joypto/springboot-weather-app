@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
-import com.weather.weatherdataapi.repository.BigRegionRepository;
 import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
@@ -58,4 +57,14 @@ public class CoronaInfo extends Timestamped {
         this.newForeignCaseCount = coronaRedisVO.getNewForeignCaseCount();
     }
 
+    @Override
+    public String toString() {
+        return "CoronaInfo{" +
+                "id=" + id +
+                ", bigRegion=" + bigRegion +
+                ", date=" + date +
+                ", newLocalCaseCount=" + newLocalCaseCount +
+                ", newForeignCaseCount=" + newForeignCaseCount +
+                '}';
+    }
 }

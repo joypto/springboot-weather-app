@@ -38,4 +38,15 @@ public class RegionCsvVO {
         return smallRegion.trim().length() == 0;
     }
 
+    @Override
+    public String toString() {
+        return "RegionCsvVO{" +
+                "admCode='" + admCode + '\'' +
+                ", bigRegion='" + bigRegion + '\'' +
+                ", smallRegion='" + smallRegion + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
+
 }

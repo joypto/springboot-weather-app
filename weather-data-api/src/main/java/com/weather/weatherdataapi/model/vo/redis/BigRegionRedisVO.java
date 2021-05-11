@@ -29,4 +29,16 @@ public class BigRegionRedisVO {
         this.longitude = bigRegion.getLongitude();
         this.latitude = bigRegion.getLatitude();
     }
+
+    @Override
+    public String toString() {
+        return "BigRegionRedisVO{" +
+                "admCode='" + admCode + '\'' +
+                ", id=" + id +
+                ", bigRegionName='" + bigRegionName + '\'' +
+                ", longitude='" + longitude + '\'' +
+                ", latitude='" + latitude + '\'' +
+                '}';
+    }
+
 }

@@ -34,4 +34,17 @@ public class AirPollutionRedisVO {
         this.pm10Value = airPollutionInfo.getPm10Value();
         this.pm25Value = airPollutionInfo.getPm25Value();
     }
+
+    @Override
+    public String toString() {
+        return "AirPollutionRedisVO{" +
+                "smallRegionAdmCode='" + smallRegionAdmCode + '\'' +
+                ", id=" + id +
+                ", smallRegionId=" + smallRegionId +
+                ", dateTime=" + dateTime +
+                ", pm10Value=" + pm10Value +
+                ", pm25Value=" + pm25Value +
+                '}';
+    }
+
 }

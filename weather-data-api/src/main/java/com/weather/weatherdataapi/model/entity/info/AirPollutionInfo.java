@@ -63,4 +63,16 @@ public class AirPollutionInfo extends Timestamped {
         this.pm10Value = airPollutionRedisVO.getPm10Value();
         this.pm25Value = airPollutionRedisVO.getPm25Value();
     }
+
+    @Override
+    public String toString() {
+        return "AirPollutionInfo{" +
+                "id=" + id +
+                ", smallRegion=" + smallRegion +
+                ", dateTime=" + dateTime +
+                ", pm10Value=" + pm10Value +
+                ", pm25Value=" + pm25Value +
+                '}';
+    }
+
 }

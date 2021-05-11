@@ -91,4 +91,23 @@ public class WeatherWeekInfo extends Timestamped {
         this.windSpeed = weatherWeekRedisVO.getWindSpeed();
         this.weatherIcon = weatherWeekRedisVO.getWeatherIcon();
     }
+
+    @Override
+    public String toString() {
+        return "WeatherWeekInfo{" +
+                "id=" + id +
+                ", smallRegion=" + smallRegion +
+                ", maxTmp=" + maxTmp +
+                ", minTmp=" + minTmp +
+                ", tmp=" + tmp +
+                ", humidity=" + humidity +
+                ", weather=" + weather +
+                ", weatherDes=" + weatherDes +
+                ", rainPer=" + rainPer +
+                ", windSpeed=" + windSpeed +
+                ", weatherIcon=" + weatherIcon +
+                ", rain=" + rain +
+                '}';
+    }
+
 }

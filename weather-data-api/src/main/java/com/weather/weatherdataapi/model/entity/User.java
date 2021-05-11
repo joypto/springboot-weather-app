@@ -114,4 +114,26 @@ public class User {
         this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
     }
 
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", identification='" + identification + '\'' +
+                ", latestRequestRegion='" + latestRequestRegion + '\'' +
+                ", oftenSeenRegions=" + oftenSeenRegions +
+                ", temp=" + temp +
+                ", rainPer=" + rainPer +
+                ", weather=" + weather +
+                ", humidity=" + humidity +
+                ", wind=" + wind +
+                ", pm10=" + pm10 +
+                ", pm25=" + pm25 +
+                ", corona=" + corona +
+                ", uv=" + uv +
+                ", pollenRisk=" + pollenRisk +
+                ", asthma=" + asthma +
+                ", foodPoison=" + foodPoison +
+                '}';
+    }
+
 }

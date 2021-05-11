@@ -28,4 +28,14 @@ public class AirPollutionStation extends Timestamped {
         this.smallRegion = smallRegion;
         this.stationName = stationName;
     }
+
+    @Override
+    public String toString() {
+        return "AirPollutionStation{" +
+                "id=" + id +
+                ", smallRegion=" + smallRegion +
+                ", stationName='" + stationName + '\'' +
+                '}';
+    }
+
 }
