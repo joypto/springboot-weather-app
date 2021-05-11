@@ -18,7 +18,12 @@ public class UserPreferenceController {
     @GetMapping("/api/user/preferences")
     public User getDefaultUserPreference(@RequestHeader("token") String token) {
         if (StringUtils.hasText(token)) {
-            return userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+            System.out.println("token 값: " + token);
+            try {
+                return userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+            } catch (InvalidUserException e) {
+                return new User("default");
+            }
         }
         return new User("default");
     }
