@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class UserRegionResponseDto {
 
+    private String identification;
     private RegionDto currentRegion;
     private RegionDto latestRequestRegion;
     private List<String> oftenSeenRegions;

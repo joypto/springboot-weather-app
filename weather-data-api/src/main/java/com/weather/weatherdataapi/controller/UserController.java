@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
+import com.weather.weatherdataapi.model.dto.responsedto.UserPreferenceResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.service.TotalDataService;
@@ -22,16 +23,19 @@ public class UserController {
     private final TotalDataService totalDataService;
 
     @ResponseBody
-    @GetMapping("/api/user")
-    public User getUser(@RequestHeader(value = "identification", required = false) String identification) {
+    @GetMapping("/api/user/preferences")
+    public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
+        log.info("identification='{}'", identification);
+      
         User user = userService.getOrCreateUserByIdentification(identification);
+        UserPreferenceResponseDto responseDto = new UserPreferenceResponseDto(user);
 
-        return user;
+        return responseDto;
     }
 
     @ResponseBody
     @GetMapping("/api/user/regions")
-    public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException {
+    public UserRegionResponseDto getUserRegion(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
@@ -52,7 +56,7 @@ public class UserController {
 
         userService.updatePreference(user, scoreWeightDto);
 
-        return user;
+        return user.getIdentification();
     }
 
     @ResponseBody
@@ -64,7 +68,7 @@ public class UserController {
 
         userService.updateOftenSeenRegions(user, regionRequestDto);
 
-        return user;
+        return user.getIdentification();
     }
 
 }
