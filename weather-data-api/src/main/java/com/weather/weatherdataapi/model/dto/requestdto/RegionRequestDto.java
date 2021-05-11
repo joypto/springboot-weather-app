@@ -16,12 +16,12 @@ public class RegionRequestDto {
         defaultDto = new RegionRequestDto();
     }
 
-    private List<String> regionList;
+    private List<String> oftenSeenRegions;
 
     @Override
     public String toString() {
         return "RegionRequestDto{" +
-                "region=" + regionList +
+                "oftenSeenRegions=" + oftenSeenRegions +
                 '}';
     }
 }

@@ -44,7 +44,7 @@ public class UserService {
         String newIdentification = "wl" + ZonedDateTime.now().toString() + UUID.randomUUID();
 
         User newUser = new User(newIdentification, scoreWeightDto);
-        newUser.setOftenSeenRegions(regionRequestDto.getRegionList());
+        newUser.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         userRepository.save(newUser);
 
@@ -89,7 +89,7 @@ public class UserService {
 
     @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
-        user.setOftenSeenRegions(regionRequestDto.getRegionList());
+        user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         userRepository.save(user);
     }
