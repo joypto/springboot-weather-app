@@ -17,7 +17,7 @@ public class ScoreWeightDto {
     private final static ScoreWeightDto defaultDto;
 
     static {
-        defaultDto = new ScoreWeightDto(50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50);
+        defaultDto = new ScoreWeightDto(50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0);
     }
 
     private int coronaWeight;
