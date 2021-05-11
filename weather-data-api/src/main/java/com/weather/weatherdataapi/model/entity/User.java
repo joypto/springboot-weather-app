@@ -1,6 +1,8 @@
 package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.sun.istack.NotNull;
+import com.sun.istack.Nullable;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import lombok.*;
 
@@ -21,6 +23,7 @@ public class User {
     @Column(name = "user_preference_id")
     private Long id;
 
+    @NotNull
     @Column
     private String identification;
 
