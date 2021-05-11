@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
+import com.weather.weatherdataapi.model.dto.responsedto.UserPreferenceResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.service.TotalDataService;
@@ -22,11 +23,12 @@ public class UserController {
     private final TotalDataService totalDataService;
 
     @ResponseBody
-    @GetMapping("/api/user")
-    public User getUser(@RequestHeader(value = "token", required = false) String token) {
+    @GetMapping("/api/user/preferences")
+    public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "token", required = false) String token) {
         User user = userService.getOrCreateUserByIdentification(token);
+        UserPreferenceResponseDto responseDto = new UserPreferenceResponseDto(user);
 
-        return user;
+        return responseDto;
     }
 
     @ResponseBody
