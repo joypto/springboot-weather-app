@@ -9,6 +9,13 @@ import java.util.List;
 @Setter
 public class RegionRequestDto {
 
+    @Getter
+    private final static RegionRequestDto defaultDto;
+
+    static {
+        defaultDto = new RegionRequestDto();
+    }
+
     private List<String> regionList;
 
     @Override
