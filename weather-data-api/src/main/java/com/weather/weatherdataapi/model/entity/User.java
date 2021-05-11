@@ -23,7 +23,6 @@ public class User {
     @Column(name = "user_preference_id")
     private Long id;
 
-    @NotNull
     @Column
     private String identification;
 
