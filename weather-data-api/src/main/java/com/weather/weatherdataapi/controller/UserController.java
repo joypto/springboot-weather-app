@@ -33,7 +33,7 @@ public class UserController {
 
     @ResponseBody
     @GetMapping("/api/user/regions")
-    public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
+    public UserRegionResponseDto getUserRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
         log.info("token='{}' \t coordinate={}", token, coordinateDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(token);
@@ -59,7 +59,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/api/user/regions")
-    public User updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "token", required = false) String token) {
+    public User updateUserRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "token", required = false) String token) {
         log.info("token='{}' \t region={}", token, regionRequestDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(token);
