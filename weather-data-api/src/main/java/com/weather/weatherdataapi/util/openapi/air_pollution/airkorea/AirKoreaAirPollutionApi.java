@@ -55,7 +55,7 @@ public class AirKoreaAirPollutionApi {
             log.error(e.getMessage());
             log.error(ExceptionUtil.getStackTraceString(e));
 
-            throw new FailedFetchException();
+            throw new FailedFetchException("원격 서버에서 응답받은 xml데이터가 AirPollutionResponse객체에 매핑될 수 없습니다.");
         }
 
     }

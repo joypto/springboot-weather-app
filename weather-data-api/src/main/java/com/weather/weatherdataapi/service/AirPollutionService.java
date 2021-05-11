@@ -14,10 +14,12 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAi
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AirPollutionService {
@@ -65,25 +67,47 @@ public class AirPollutionService {
     /**
      * 원격 서버에서 제공하는 최신 정보와 일치하는 정보 객체를 반환합니다.
      * DB에 최신 정보가 저장되어 있지 않다면 최신 정보를 DB에도 저장합니다.
+     * 만약 원격 서버에서 제공받을 수 없다면 차선택으로 DB에 이미 저장되어 있는 데이터 중 가장 최신의 정보를 반환합니다.
      *
-     * @return 원격 서버에서 제공하는 최신 정보와 완전히 일치하는 정보입니다.
+     * @return 일반적으로 원격 서버에서 제공되는 최신 정보를 반환합니다.
+     * 만약 원격 서버에서 제공받을 수 없다면 차선택으로 DB에 이미 저장되어 있는 데이터 중 가장 최신의 정보를 반환합니다.
      */
     private AirPollutionInfo getSyncedLatestInfo(SmallRegion smallRegion) {
         Optional<AirPollutionInfo> queriedExistedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
-        AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
 
-        // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
-        // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
-        if (queriedExistedInfo.isPresent() == false
-                || airKoreaUtil.checkLatestInfoAlreadyExists(queriedExistedInfo.get(), fetchedItem) == false) {
-            AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
-            airPollutionRepository.save(newInfo);
+        AirKoreaAirPollutionItem fetchedItem;
+        try {
+            fetchedItem = fetchUsingOpenApi(smallRegion);
+        } catch (Exception e) {
+            log.error(e.getMessage());
 
-            return newInfo;
+            fetchedItem = null;
         }
 
-        // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
-        return queriedExistedInfo.get();
+        // 원격 서버에서 가져온 데이터가 없을 경우, 기존에 DB에 있는 데이터 중 가장 최신의 정보를 가져옵니다.
+        if (fetchedItem == null) {
+            if (queriedExistedInfo.isPresent() == false)
+                throw new RuntimeException("대기오염 정보를 가져올 수 없습니다. 원격 서버에서도 가져올 수 없었으며 DB에 이미 저장되어 있는 기존의 대기오염 정보가 전혀 없습니다.");
+
+            return queriedExistedInfo.get();
+        }
+        // 원격 서버에서 가져온 데이터가 있는 경우, DB에
+        else {
+
+            // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
+            // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
+            if (queriedExistedInfo.isPresent() == false
+                    || airKoreaUtil.checkLatestInfoAlreadyExists(queriedExistedInfo.get(), fetchedItem) == false) {
+                AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
+                airPollutionRepository.save(newInfo);
+
+                return newInfo;
+            }
+
+            // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
+            return queriedExistedInfo.get();
+        }
+
     }
 
     private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
@@ -138,7 +162,16 @@ public class AirPollutionService {
         AirPollutionInfo latestData = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion).orElseThrow(() -> new InvalidAirPollutionInfoException());
 
         String nearestStationName = airKoreaStationUtil.getNearestStationNameByRegion(smallRegion);
-        AirKoreaAirPollutionItem latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+
+        AirKoreaAirPollutionItem latestFetchedData = null;
+        try {
+            latestFetchedData = airKoreaAirPollutionOpenApi.getResponseByStationName(nearestStationName);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error("원격 서버에서 최신 정보를 가져올 수 없습니다. 이미 최신 상태로 동기화되어 있다고 간주합니다.");
+
+            return true;
+        }
 
         return airKoreaUtil.checkLatestInfoAlreadyExists(latestData, latestFetchedData);
     }
