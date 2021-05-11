@@ -24,6 +24,13 @@ public class UserController {
     private final UserService userService;
     private final TotalDataService totalDataService;
 
+    @GetMapping("/api/user")
+    public User getUser(@RequestHeader(value = "token", required = false) String token) {
+        User user = userService.getOrCreateUserByIdentification(token);
+
+        return user;
+    }
+
     @GetMapping("/api/user/regions")
     public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
         log.info("token='{}' \t coordinate={}", token, coordinateDto.toString());
