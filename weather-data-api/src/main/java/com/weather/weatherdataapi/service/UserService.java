@@ -21,14 +21,20 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Total Data를 조회할 때 필요한 값 세팅입니다.
+     */
     public User getCurrentUserPreference(String token) {
         User user = new User();
-        if (StringUtils.hasText(token) == true) {
-            user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+        if (StringUtils.hasText(token)) {
+            try {
+                user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
+            } catch (InvalidUserException e) {
+                user = new User("default");
+            }
         } else {
             user = new User("default");
         }
-      
         return user;
     }
 
@@ -39,6 +45,9 @@ public class UserService {
         }
     }
 
+    /**
+     * 유저가 설정한 지역 관련 메서드들입니다.
+     */
     public UserRegionResponseDto getMyRegion(UserRegionResponseDto userRegionResponseDto, String token) {
         try {
             User user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());

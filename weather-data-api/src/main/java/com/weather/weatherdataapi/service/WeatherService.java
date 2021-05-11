@@ -32,15 +32,6 @@ public class WeatherService {
     private final WeatherDayRedisRepository weatherDayRedisRepository;
 
 
-    // 하루 지난 캐쉬 삭제
-    @Transactional
-    public void fetchAndStoreWeatherInfoUsingOpenApi() {
-        weatherDayRedisRepository.deleteAll();
-        weatherWeekRedisRepository.deleteAll();
-        log.info("날씨정보 캐시를 비웠습니다.");
-
-    }
-
     // 날씨 정보 셋팅
     public void setInfoAndScore(SmallRegion wantRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) throws IOException {
         try {
@@ -51,16 +42,16 @@ public class WeatherService {
             weatherDataResponseDto.setWeekInfo(weekInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
             convertInfoToScore(scoreResultDto, weekInfo);
-            log.info("캐시로 날씨 데이터 불러오기");
+            log.info("redis에서 날씨 데이터 불러오기");
         } catch (Exception e) {
-            log.info("캐시로 날씨 데이터 불러오기 실패");
+            log.info("mysql에서 날씨 데이터 불러오기");
             WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
             convertInfoToScore(scoreResultDto, weekInfo);
         }
     }
 
 
-    public void convertInfoToScore(ScoreResultDto scoreResultDto, WeatherWeekInfo weekInfo) throws IOException {
+    public void convertInfoToScore(ScoreResultDto scoreResultDto, WeatherWeekInfo weekInfo) {
         try {
             // 날짜별 환산점수 변환 시작
             List<String> getRainPer = new ArrayList<>();
@@ -84,6 +75,7 @@ public class WeatherService {
             scoreResultDto.setWindResult(getWind);
             scoreResultDto.setTempResult(getTemp);
         } catch (Exception e) {
+            log.info("날씨 점수 에러 발생 비상 비상 비상 비상 비상 비상 비상 비상");
             List<String> getRainPer = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getWeather = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
             List<String> getWind = new ArrayList<>(Arrays.asList("100", "100", "100", "100", "100", "100", "100"));
@@ -94,7 +86,6 @@ public class WeatherService {
             scoreResultDto.setHumidityResult(getHumidity);
             scoreResultDto.setWindResult(getWind);
             scoreResultDto.setTempResult(getTemp);
-            log.info("날씨 점수 에러 발생 비상 비상 비상 비상 비상 비상 비상 비상");
         }
     }
 
