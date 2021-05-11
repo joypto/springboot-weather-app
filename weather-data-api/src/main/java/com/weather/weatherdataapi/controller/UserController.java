@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,6 +21,7 @@ public class UserController {
     private final UserService userService;
     private final TotalDataService totalDataService;
 
+    @ResponseBody
     @GetMapping("/api/user")
     public User getUser(@RequestHeader(value = "token", required = false) String token) {
         User user = userService.getOrCreateUserByIdentification(token);
@@ -31,6 +29,7 @@ public class UserController {
         return user;
     }
 
+    @ResponseBody
     @GetMapping("/api/user/regions")
     public UserRegionResponseDto getAllMyRegion(CoordinateDto coordinateDto, @RequestHeader(value = "token", required = false) String token) throws ParseException {
         log.info("token='{}' \t coordinate={}", token, coordinateDto.toString());
@@ -44,6 +43,7 @@ public class UserController {
         return userRegionResponseDto;
     }
 
+    @ResponseBody
     @PostMapping("/api/user/preferences")
     public User updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "token", required = false) String token) {
         log.info("token='{}' \t scoreWeight={}", token, scoreWeightDto.toString());
@@ -55,6 +55,7 @@ public class UserController {
         return user;
     }
 
+    @ResponseBody
     @PostMapping("/api/user/regions")
     public User updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "token", required = false) String token) {
         log.info("token='{}' \t region={}", token, regionRequestDto.toString());
