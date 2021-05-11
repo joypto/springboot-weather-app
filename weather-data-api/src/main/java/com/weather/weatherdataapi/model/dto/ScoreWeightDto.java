@@ -13,6 +13,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ScoreWeightDto {
 
+    @Getter
+    private final static ScoreWeightDto defaultDto;
+
+    static {
+        defaultDto = new ScoreWeightDto(50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50);
+    }
+
     private int coronaWeight;
     private int pm10Weight;
     private int pm25Weight;

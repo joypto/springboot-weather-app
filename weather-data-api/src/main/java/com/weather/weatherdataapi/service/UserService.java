@@ -1,7 +1,7 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.exception.repository.InvalidUserException;
 import com.weather.weatherdataapi.model.dto.RegionDto;
+import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
@@ -11,8 +11,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.transaction.Transactional;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -21,75 +23,75 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    /**
-     * Total Data를 조회할 때 필요한 값 세팅입니다.
-     */
-    public User getCurrentUserPreference(String token) {
-        User user = new User();
-        if (StringUtils.hasText(token)) {
-            try {
-                user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-            } catch (InvalidUserException e) {
-                user = new User("default");
-            }
-        } else {
-            user = new User("default");
-        }
-        return user;
+    /* Create New User */
+
+    public User createNewUser() {
+        ScoreWeightDto defaultScoreWeightDto = ScoreWeightDto.getDefaultDto();
+        RegionRequestDto regionRequestDto = RegionRequestDto.getDefaultDto();
+
+        return createNewUser(defaultScoreWeightDto, regionRequestDto);
     }
 
-    public void setUserCurrentRegion(User user, String currentRegion) {
-        if (StringUtils.hasText(user.getIdentification())) {
-            user.setLatestRequestRegion(currentRegion);
-            userRepository.save(user);
-        }
+    public User createNewUser(ScoreWeightDto scoreWeightDto) {
+        return createNewUser(scoreWeightDto, RegionRequestDto.getDefaultDto());
     }
 
-    /**
-     * 유저가 설정한 지역 관련 메서드들입니다.
-     */
-    public UserRegionResponseDto getMyRegion(UserRegionResponseDto userRegionResponseDto, String token) {
-        try {
-            User user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-            String[] regions = user.getLatestRequestRegion().split(" ");
-            RegionDto regionDto = new RegionDto(regions[0], regions[1]);
-            userRegionResponseDto.setLatestRequestRegion(regionDto);
-
-            userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
-
-            return userRegionResponseDto;
-        } catch (NullPointerException | InvalidUserException e) {
-            return userRegionResponseDto;
-        }
+    public User createNewUser(RegionRequestDto regionRequestDto) {
+        return createNewUser(ScoreWeightDto.getDefaultDto(), regionRequestDto);
     }
 
-    public void saveMyRegion(RegionRequestDto regionRequestDto, String token) {
-        User user;
-        if (StringUtils.hasText(token)) {
-            user = new User("default");
-            user.setIdentification(token);
-            user.setOftenSeenRegions(regionRequestDto.getRegion());
-        } else {
-            user = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-            try {
-                List<String> oftenSeenRegions = user.getOftenSeenRegions();
-                oftenSeenRegions.addAll(regionRequestDto.getRegion());
-            } catch (NullPointerException | InvalidUserException e) {
-                List<String> oftenSeenRegions = new ArrayList<>();
-                oftenSeenRegions.addAll(regionRequestDto.getRegion());
-            }
-        }
+    public User createNewUser(ScoreWeightDto scoreWeightDto, RegionRequestDto regionRequestDto) {
+        String newIdentification = "wl" + ZonedDateTime.now().toString() + UUID.randomUUID();
+
+        User newUser = new User(newIdentification, scoreWeightDto);
+        newUser.setOftenSeenRegions(regionRequestDto.getRegionList());
+
+        userRepository.save(newUser);
+
+        return newUser;
+    }
+
+    public User getOrCreateUserByIdentification(String identification) {
+        if (StringUtils.hasText(identification))
+            return createNewUser();
+
+        Optional<User> queriedUser = userRepository.findByIdentification(identification);
+
+        if (queriedUser.isPresent() == false)
+            return createNewUser();
+
+        return queriedUser.get();
+    }
+
+    public UserRegionResponseDto getMyRegion(User user) {
+        // FIXME: 공백으로 나누는 것이 위험해보인다. smallRegion에는 공백으로 나누어진 문자열을 가지는 지역도 있기 때문...
+        String[] regions = user.getLatestRequestRegion().split(" ");
+        RegionDto regionDto = new RegionDto(regions[0], regions[1]);
+
+        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto();
+        userRegionResponseDto.setLatestRequestRegion(regionDto);
+        userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
+
+        return userRegionResponseDto;
+    }
+
+    // TODO: 같은 의미를 가리키는 것이지만 용어가 다르다. preference와 scoreWeight. 둘 중에 하나로 통일하는 것이 직관적이지 않을까?
+    @Transactional
+    public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
+        user.updateUserPreference(scoreWeightDto);
+    }
+
+    @Transactional
+    public void updateCurrentRegion(User user, String currentRegion) {
+        user.setLatestRequestRegion(currentRegion);
         userRepository.save(user);
     }
 
-    public void updateMyRegion(RegionRequestDto regionRequestDto, String token) {
-        User userPreference = userRepository.findByIdentification(token).orElseThrow(() -> new InvalidUserException());
-        List<String> saveRegion = userPreference.getOftenSeenRegions();
-        for (int i = 0; i <regionRequestDto.getRegion().size(); i++) {
-            String region = regionRequestDto.getRegion().get(i);
-            saveRegion.remove(region);
-        }
-        userRepository.save(userPreference);
+    @Transactional
+    public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
+        user.setOftenSeenRegions(regionRequestDto.getRegionList());
+
+        userRepository.save(user);
     }
 
 }

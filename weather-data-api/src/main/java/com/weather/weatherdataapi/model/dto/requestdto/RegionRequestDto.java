@@ -9,12 +9,19 @@ import java.util.List;
 @Setter
 public class RegionRequestDto {
 
-    private List<String> region;
+    @Getter
+    private final static RegionRequestDto defaultDto;
+
+    static {
+        defaultDto = new RegionRequestDto();
+    }
+
+    private List<String> regionList;
 
     @Override
     public String toString() {
         return "RegionRequestDto{" +
-                "region=" + region +
+                "region=" + regionList +
                 '}';
     }
 }
