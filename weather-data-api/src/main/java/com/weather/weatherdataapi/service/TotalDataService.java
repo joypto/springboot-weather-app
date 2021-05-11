@@ -30,7 +30,7 @@ public class TotalDataService {
     private final RegionService regionService;
     private final ReverseGeoCodingApi reverseGeoCodingApi;
 
-    public TotalDataResponseDto getTotalData(RegionDto totalDataRequestDto, String token) throws IOException {
+    public TotalDataResponseDto getTotalData(RegionDto totalDataRequestDto, String identification) throws IOException {
 
         // 해당 시/구 주소를 가진 Region 객체 가져오기
         BigRegion currentBigRegion = regionService.getBigRegionByName(totalDataRequestDto.getBigRegionName());
@@ -47,7 +47,7 @@ public class TotalDataService {
         airPollutionService.setInfoAndScore(currentSmallRegion, scoreResultDto, weatherDataResponseDto);
 
         // 식별값으로 DB 에서 유저 선호도 불러오기
-        User user = userService.getOrCreateUserByIdentification(token);
+        User user = userService.getOrCreateUserByIdentification(identification);
         userService.updateCurrentRegion(user, totalDataRequestDto.getBigRegionName() + " " + totalDataRequestDto.getSmallRegionName());
 
         // 클라이언트에서 보내준 사용자 선호도 수치를 담은 ScoreRequestDto 객체 생성
@@ -55,6 +55,8 @@ public class TotalDataService {
 
         List<Integer> dayScoreList = scoreService.getCalculatedScore(scoreWeightDto, scoreResultDto);
         weatherDataResponseDto.setDayScoreList(dayScoreList);
+
+        weatherDataResponseDto.setIdentification(user.getIdentification());
         return weatherDataResponseDto;
 
     }
