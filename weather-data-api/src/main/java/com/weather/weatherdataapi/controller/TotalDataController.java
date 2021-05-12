@@ -11,6 +11,8 @@ import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,23 +30,29 @@ public class TotalDataController {
     private final RegionService regionService;
 
     @GetMapping("/api/total/data/coordinate")
-    public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws ParseException, IOException {
+    public ResponseEntity<TotalDataResponseDto> getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws ParseException, IOException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         RegionDto totalDataRequestDto = regionService.getRegionName(coordinateDto);
 
-        return totalDataService.getTotalData(user, totalDataRequestDto);
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(totalDataService.getTotalData(user, totalDataRequestDto));
     }
 
     @GetMapping("/api/total/data/regionname")
-    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws IOException {
+    public ResponseEntity<TotalDataResponseDto> getTotalDataByRegionName(RegionDto regionDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws IOException {
         log.info("identification='{}' \t coordinate={}", identification, regionDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
-        return totalDataService.getTotalData(user, regionDto);
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(totalDataService.getTotalData(user, regionDto));
     }
 
 }
