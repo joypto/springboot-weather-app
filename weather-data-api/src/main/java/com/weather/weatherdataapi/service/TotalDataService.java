@@ -11,7 +11,6 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -61,7 +60,7 @@ public class TotalDataService {
 
     }
 
-    public RegionDto getRegionName(CoordinateDto coordinateDto) throws ParseException {
+    public RegionDto getRegionName(CoordinateDto coordinateDto) {
         // 해당 위경도로 시/구 주소 문자열 반환
         ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
         return new RegionDto(address.getBigRegion(), address.getSmallRegion());
