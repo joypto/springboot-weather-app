@@ -19,7 +19,7 @@ public class User {
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_preference_id")
+    @Column(name = "user_id")
     private Long id;
 
     @JsonIgnore
