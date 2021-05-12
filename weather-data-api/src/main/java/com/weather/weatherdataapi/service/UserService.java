@@ -104,6 +104,7 @@ public class UserService {
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
         user.updateUserPreference(scoreWeightDto);
 
+        userRepository.save(user);
         refreshCache(user);
     }
 
@@ -111,6 +112,7 @@ public class UserService {
     public void updateCurrentRegion(User user, String currentRegion) {
         user.setLatestRequestRegion(currentRegion);
 
+        userRepository.save(user);
         refreshCache(user);
     }
 
@@ -118,6 +120,7 @@ public class UserService {
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
+        userRepository.save(user);
         refreshCache(user);
     }
 
