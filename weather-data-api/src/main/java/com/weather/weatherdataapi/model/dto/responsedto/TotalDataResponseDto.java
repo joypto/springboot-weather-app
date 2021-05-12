@@ -19,8 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 public class TotalDataResponseDto {
 
-    private String identification;
-
     private BigRegion bigRegion;
 
     private SmallRegion smallRegion;
