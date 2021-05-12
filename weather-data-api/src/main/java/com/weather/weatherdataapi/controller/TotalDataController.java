@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.controller;
 
+import com.weather.weatherdataapi.Global;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
@@ -27,7 +28,7 @@ public class TotalDataController {
     private final RegionService regionService;
 
     @GetMapping("/api/total/data/coordinate")
-    public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException, IOException {
+    public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws ParseException, IOException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
@@ -38,7 +39,7 @@ public class TotalDataController {
     }
 
     @GetMapping("/api/total/data/regionname")
-    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader(value = "identification", required = false) String identification) throws IOException {
+    public TotalDataResponseDto getTotalDataByRegionName(RegionDto regionDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws IOException {
         log.info("identification='{}' \t coordinate={}", identification, regionDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);

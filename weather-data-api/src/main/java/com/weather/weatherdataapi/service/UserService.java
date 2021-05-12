@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.Global;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
@@ -116,7 +117,7 @@ public class UserService {
 
     public HttpHeaders createHeadersWithUserIdentification(User user) {
         HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("identification", user.getIdentification());
+        responseHeaders.set(Global.IDENTIFICATION_TEXT, user.getIdentification());
         return responseHeaders;
     }
 
