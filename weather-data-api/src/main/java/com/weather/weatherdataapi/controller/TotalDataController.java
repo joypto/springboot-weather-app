@@ -3,6 +3,7 @@ package com.weather.weatherdataapi.controller;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.service.TotalDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +21,13 @@ import java.io.IOException;
 public class TotalDataController {
 
     private final TotalDataService totalDataService;
+    private final RegionService regionService;
 
     @GetMapping("/api/total/data/coordinate")
     public TotalDataResponseDto getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException, IOException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
-        RegionDto totalDataRequestDto = totalDataService.getRegionName(coordinateDto);
+        RegionDto totalDataRequestDto = regionService.getRegionName(coordinateDto);
         return totalDataService.getTotalData(totalDataRequestDto, identification);
     }
 

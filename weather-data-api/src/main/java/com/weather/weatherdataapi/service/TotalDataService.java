@@ -1,15 +1,12 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
-import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,7 +24,6 @@ public class TotalDataService {
     private final UserService userService;
     private final ScoreService scoreService;
     private final RegionService regionService;
-    private final ReverseGeoCodingApi reverseGeoCodingApi;
 
     public TotalDataResponseDto getTotalData(RegionDto totalDataRequestDto, String identification) throws IOException {
 
@@ -60,9 +56,5 @@ public class TotalDataService {
 
     }
 
-    public RegionDto getRegionName(CoordinateDto coordinateDto) {
-        // 해당 위경도로 시/구 주소 문자열 반환
-        ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
-        return new RegionDto(address.getBigRegion(), address.getSmallRegion());
-    }
+
 }

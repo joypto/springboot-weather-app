@@ -6,7 +6,6 @@ import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserPreferenceResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
-import com.weather.weatherdataapi.service.TotalDataService;
 import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final TotalDataService totalDataService;
 
     @GetMapping("/api/user/preferences")
     public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {

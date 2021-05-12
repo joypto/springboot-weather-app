@@ -23,7 +23,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final TotalDataService totalDataService;
+    private final RegionService regionService;
 
     /* Create New User */
 
@@ -72,7 +72,7 @@ public class UserService {
      * @param coordinateDto 특정 사용자의 현재 위치입니다.
      */
     public UserRegionResponseDto getMyRegion(User user, CoordinateDto coordinateDto) {
-        RegionDto currentRegion = totalDataService.getRegionName(coordinateDto);
+        RegionDto currentRegion = regionService.getRegionName(coordinateDto);
 
         // FIXME: 공백으로 잘라서 지역을 얻어내는 것은 위험하니까, User에서 Region을 참조하는 FK를 하나 생성해두는건 어떨까?
         String latestRequestRegionName = user.getLatestRequestRegion();
