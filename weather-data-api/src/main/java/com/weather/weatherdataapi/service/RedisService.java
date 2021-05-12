@@ -13,6 +13,8 @@ import javax.transaction.Transactional;
 @Service
 public class RedisService {
 
+    private final UserRedisRepository userRedisRepository;
+
     private final BigRegionRedisRepository bigRegionRedisRepository;
     private final SmallRegionRedisRepository smallRegionRedisRepository;
 
@@ -25,6 +27,8 @@ public class RedisService {
     @Transactional
     public void initialize() {
         try {
+            userRedisRepository.deleteAll();
+
             bigRegionRedisRepository.deleteAll();
             smallRegionRedisRepository.deleteAll();
 
