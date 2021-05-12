@@ -18,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 @Component
 public class ReverseGeoCodingApi {
 
-    public ReverseGeocodingResponseDto reverseGeocoding(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException {
+    public ReverseGeocodingResponseDto reverseGeocoding(CoordinateDto coordinateDto) throws IndexOutOfBoundsException {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-NCP-APIGW-API-KEY-ID", "et23d38qwi");

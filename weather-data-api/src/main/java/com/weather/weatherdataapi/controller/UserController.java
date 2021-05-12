@@ -6,7 +6,6 @@ import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserPreferenceResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
-import com.weather.weatherdataapi.service.TotalDataService;
 import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final TotalDataService totalDataService;
 
     @GetMapping("/api/user/preferences")
     public ResponseEntity<UserPreferenceResponseDto> getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
@@ -44,9 +42,7 @@ public class UserController {
         User user = userService.getOrCreateUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
-        // TODO: 서비스 코드에서 userRegionResponseDto의 값을 모두 설정한 채로 내려줬으면 하는데, 어떻게 코드를 정리하는게 좋을까?
-        UserRegionResponseDto userRegionResponseDto = userService.getMyRegion(user);
-        userRegionResponseDto.setCurrentRegion(totalDataService.getRegionName(coordinateDto));
+        UserRegionResponseDto userRegionResponseDto = userService.getMyRegion(user, coordinateDto);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
@@ -66,7 +62,7 @@ public class UserController {
                 .headers(responseHeaders)
                 .body("Success");
     }
-    
+
     @PostMapping("/api/user/regions")
     public ResponseEntity<String> updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());

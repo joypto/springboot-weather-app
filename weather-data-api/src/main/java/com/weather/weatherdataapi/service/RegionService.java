@@ -2,6 +2,9 @@ package com.weather.weatherdataapi.service;
 
 import com.weather.weatherdataapi.exception.repository.InvalidBigRegionException;
 import com.weather.weatherdataapi.exception.repository.InvalidSmallRegionException;
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.RegionDto;
+import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.vo.csv.RegionCsvVO;
@@ -13,6 +16,7 @@ import com.weather.weatherdataapi.repository.redis.BigRegionRedisRepository;
 import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
+import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -34,8 +38,16 @@ public class RegionService {
     private final BigRegionRedisRepository bigRegionRedisRepository;
     private final SmallRegionRedisRepository smallRegionRedisRepository;
 
+    private final ReverseGeoCodingApi reverseGeoCodingApi;
+
     private Dictionary<String, String> bigRegionAdmCodeDict;
     private Dictionary<String, Dictionary<String, String>> smallRegionAdmCodeDict;
+
+    public RegionDto getRegionName(CoordinateDto coordinateDto) {
+        // 해당 위경도로 시/구 주소 문자열 반환
+        ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+        return new RegionDto(address.getBigRegion(), address.getSmallRegion());
+    }
 
     public BigRegion getBigRegionByName(String bigRegionName) {
         String admCode = getBigRegionAdmCodeByName(bigRegionName);

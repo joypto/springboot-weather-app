@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
@@ -23,6 +24,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final RegionService regionService;
 
     /* Create New User */
 
@@ -64,20 +66,30 @@ public class UserService {
         return queriedUser.get();
     }
 
-    public HttpHeaders createHeadersWithUserIdentification(User user) {
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.set("identification", user.getIdentification());
-        return responseHeaders;
-    }
+    /**
+     * 해당 User과 관련된 지역 정보를 반환합니다.
+     *
+     * @param user          특정 사용자입니다.
+     * @param coordinateDto 특정 사용자의 현재 위치입니다.
+     */
+    public UserRegionResponseDto getMyRegion(User user, CoordinateDto coordinateDto) {
+        RegionDto currentRegion = regionService.getRegionName(coordinateDto);
 
-    public UserRegionResponseDto getMyRegion(User user) {
-        // FIXME: 공백으로 나누는 것이 위험해보인다. smallRegion에는 공백으로 나누어진 문자열을 가지는 지역도 있기 때문...
-        String[] regions = user.getLatestRequestRegion().split(" ");
-        RegionDto regionDto = new RegionDto(regions[0], regions[1]);
+        // FIXME: 공백으로 잘라서 지역을 얻어내는 것은 위험하니까, User에서 Region을 참조하는 FK를 하나 생성해두는건 어떨까?
+        String latestRequestRegionName = user.getLatestRequestRegion();
+        RegionDto latestRequestRegion;
+
+        if (StringUtils.hasText(latestRequestRegionName)) {
+            // FIXME: 공백으로 나누는 것이 위험해보인다. smallRegion에는 공백으로 나누어진 문자열을 가지는 지역도 있기 때문...
+            String[] regions = latestRequestRegionName.split(" ");
+            latestRequestRegion = new RegionDto(regions[0], regions[1]);
+        } else {
+            latestRequestRegion = new RegionDto(currentRegion);
+        }
 
         UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto();
-        userRegionResponseDto.setIdentification(user.getIdentification());
-        userRegionResponseDto.setLatestRequestRegion(regionDto);
+        userRegionResponseDto.setCurrentRegion(currentRegion);
+        userRegionResponseDto.setLatestRequestRegion(latestRequestRegion);
         userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
 
         return userRegionResponseDto;
@@ -100,6 +112,12 @@ public class UserService {
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         userRepository.save(user);
+    }
+
+    public HttpHeaders createHeadersWithUserIdentification(User user) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("identification", user.getIdentification());
+        return responseHeaders;
     }
 
 }
