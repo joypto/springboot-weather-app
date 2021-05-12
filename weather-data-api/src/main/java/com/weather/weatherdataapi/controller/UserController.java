@@ -37,9 +37,7 @@ public class UserController {
 
         User user = userService.getOrCreateUserByIdentification(identification);
 
-        // TODO: 서비스 코드에서 userRegionResponseDto의 값을 모두 설정한 채로 내려줬으면 하는데, 어떻게 코드를 정리하는게 좋을까?
-        UserRegionResponseDto userRegionResponseDto = userService.getMyRegion(user);
-        userRegionResponseDto.setCurrentRegion(totalDataService.getRegionName(coordinateDto));
+        UserRegionResponseDto userRegionResponseDto = userService.getMyRegion(user, coordinateDto);
 
         return userRegionResponseDto;
     }
@@ -54,7 +52,7 @@ public class UserController {
 
         return user.getIdentification();
     }
-    
+
     @PostMapping("/api/user/regions")
     public String updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());
