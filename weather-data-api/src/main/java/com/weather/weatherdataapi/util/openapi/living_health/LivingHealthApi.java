@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -115,7 +116,7 @@ public class LivingHealthApi {
                     livingHealthInfo.setAsthmaTomorrow(tomorrow);
                     livingHealthInfo.setAsthmaTheDayAfterTomorrow(theDayAfterTomorrow);
                 } else if (method == "HealthWthrIdxService/getOakPollenRiskIdx") {
-                    if (today != "") {
+                    if (StringUtils.hasText(today) == false) {
                         livingHealthInfo.setOakPollenRiskToday(today);
                     } else {
                         LivingHealthInfo livingHealthInfoForPollenRisk = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).get();
