@@ -10,6 +10,8 @@ import com.weather.weatherdataapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -20,46 +22,59 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/api/user/preferences")
-    public UserPreferenceResponseDto getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
+    public ResponseEntity<UserPreferenceResponseDto> getUserPreference(@RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}'", identification);
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
+
         UserPreferenceResponseDto responseDto = new UserPreferenceResponseDto(user);
 
-        return responseDto;
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(responseDto);
     }
 
     @GetMapping("/api/user/regions")
-    public UserRegionResponseDto getUserRegion(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException {
+    public ResponseEntity<UserRegionResponseDto> getUserRegion(CoordinateDto coordinateDto, @RequestHeader(value = "identification", required = false) String identification) throws ParseException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         UserRegionResponseDto userRegionResponseDto = userService.getMyRegion(user, coordinateDto);
 
-        return userRegionResponseDto;
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body(userRegionResponseDto);
     }
 
     @PostMapping("/api/user/preferences")
-    public String updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "identification", required = false) String identification) {
+    public ResponseEntity<String> updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t scoreWeight={}", identification, scoreWeightDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         userService.updatePreference(user, scoreWeightDto);
 
-        return user.getIdentification();
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body("Success");
     }
 
     @PostMapping("/api/user/regions")
-    public String updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
+    public ResponseEntity<String> updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = "identification", required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());
 
         User user = userService.getOrCreateUserByIdentification(identification);
+        HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         userService.updateOftenSeenRegions(user, regionRequestDto);
 
-        return user.getIdentification();
+        return ResponseEntity.ok()
+                .headers(responseHeaders)
+                .body("Success");
     }
 
 }

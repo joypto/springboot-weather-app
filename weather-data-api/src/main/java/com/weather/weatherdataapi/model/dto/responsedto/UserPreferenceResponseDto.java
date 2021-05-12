@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.dto.responsedto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class UserPreferenceResponseDto {
 
+    @JsonIgnore
     private String identification;
 
     private int temp;

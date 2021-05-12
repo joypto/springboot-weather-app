@@ -23,6 +23,7 @@ public class User {
     @Column(name = "user_preference_id")
     private Long id;
 
+    @JsonIgnore
     @Column
     private String identification;
 
