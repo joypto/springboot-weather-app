@@ -7,7 +7,9 @@ import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.User;
+import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
 import com.weather.weatherdataapi.repository.UserRepository;
+import com.weather.weatherdataapi.repository.redis.UserRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +27,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserRedisRepository userRedisRepository;
     private final RegionService regionService;
 
     /* Create New User */
@@ -59,7 +62,7 @@ public class UserService {
         if (StringUtils.hasText(identification) == false)
             return createNewUser();
 
-        Optional<User> queriedUser = userRepository.findByIdentification(identification);
+        Optional<User> queriedUser = getUserByIdentification(identification);
 
         if (queriedUser.isPresent() == false)
             return createNewUser();
@@ -100,25 +103,54 @@ public class UserService {
     @Transactional
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
         user.updateUserPreference(scoreWeightDto);
+
+        refreshCache(user);
     }
 
     @Transactional
     public void updateCurrentRegion(User user, String currentRegion) {
         user.setLatestRequestRegion(currentRegion);
-        userRepository.save(user);
+
+        refreshCache(user);
     }
 
     @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
-        userRepository.save(user);
+        refreshCache(user);
     }
 
     public HttpHeaders createHeadersWithUserIdentification(User user) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Global.IDENTIFICATION_TEXT, user.getIdentification());
         return responseHeaders;
+    }
+
+    private Optional<User> getUserByIdentification(String identification) {
+        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
+
+        if (queriedUserRedisVO.isPresent()) {
+            User user = new User(queriedUserRedisVO.get());
+            return Optional.of(user);
+        }
+
+        Optional<User> queriedUser = userRepository.findByIdentification(identification);
+
+        if (queriedUser.isPresent())
+            refreshCache(queriedUser.get());
+
+        return queriedUser;
+    }
+
+    private void refreshCache(User user) {
+        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(user.getIdentification());
+
+        if (queriedUserRedisVO.isPresent())
+            userRedisRepository.deleteById(user.getIdentification());
+
+        UserRedisVO userRedisVO = new UserRedisVO(user);
+        userRedisRepository.save(userRedisVO);
     }
 
 }
