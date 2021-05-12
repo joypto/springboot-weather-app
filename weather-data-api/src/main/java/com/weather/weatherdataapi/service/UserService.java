@@ -55,7 +55,7 @@ public class UserService {
     }
 
     public User getOrCreateUserByIdentification(String identification) {
-        if (StringUtils.hasText(identification))
+        if (StringUtils.hasText(identification) == false)
             return createNewUser();
 
         Optional<User> queriedUser = userRepository.findByIdentification(identification);
