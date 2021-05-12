@@ -103,19 +103,22 @@ public class UserService {
     @Transactional
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
         user.updateUserPreference(scoreWeightDto);
+
+        refreshCache(user);
     }
 
     @Transactional
     public void updateCurrentRegion(User user, String currentRegion) {
         user.setLatestRequestRegion(currentRegion);
-        userRepository.save(user);
+
+        refreshCache(user);
     }
 
     @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
-        userRepository.save(user);
+        refreshCache(user);
     }
 
     public HttpHeaders createHeadersWithUserIdentification(User user) {
@@ -134,12 +137,20 @@ public class UserService {
 
         Optional<User> queriedUser = userRepository.findByIdentification(identification);
 
-        if (queriedUser.isPresent()) {
-            UserRedisVO userRedisVO = new UserRedisVO(queriedUser.get());
-            userRedisRepository.save(userRedisVO);
-        }
+        if (queriedUser.isPresent())
+            refreshCache(queriedUser.get());
 
         return queriedUser;
+    }
+
+    private void refreshCache(User user) {
+        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(user.getIdentification());
+
+        if (queriedUserRedisVO.isPresent())
+            userRedisRepository.deleteById(user.getIdentification());
+
+        UserRedisVO userRedisVO = new UserRedisVO(user);
+        userRedisRepository.save(userRedisVO);
     }
 
 }
