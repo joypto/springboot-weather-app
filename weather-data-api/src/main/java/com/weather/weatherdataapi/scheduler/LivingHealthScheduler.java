@@ -15,7 +15,7 @@ public class LivingHealthScheduler {
 
     private final LivingHealthService livingHealthService;
 
-    @Scheduled(cron = "0 5 6 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
+    @Scheduled(cron = "0 30 6 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("전일 생활보건기상지수 정보를 갱신합니다.");
