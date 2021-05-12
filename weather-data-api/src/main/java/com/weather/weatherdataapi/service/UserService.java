@@ -8,6 +8,7 @@ import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -61,6 +62,12 @@ public class UserService {
             return createNewUser();
 
         return queriedUser.get();
+    }
+
+    public HttpHeaders createHeadersWithUserIdentification(User user) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("identification", user.getIdentification());
+        return responseHeaders;
     }
 
     public UserRegionResponseDto getMyRegion(User user) {

@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.dto.responsedto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class UserRegionResponseDto {
 
+    @JsonIgnore
     private String identification;
+
     private RegionDto currentRegion;
     private RegionDto latestRequestRegion;
     private List<String> oftenSeenRegions;
