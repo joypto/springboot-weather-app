@@ -190,7 +190,7 @@ public class UserService {
             return Optional.empty();
 
         if (user.isFromRedis())
-            return Optional.of(userRepository.findByIdentification(user.getIdentification()).get());
+            return userRepository.findByIdentification(user.getIdentification());
 
         return Optional.of(user);
     }
