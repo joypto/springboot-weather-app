@@ -155,14 +155,26 @@ public class UserService {
         return queriedUser;
     }
 
+    /**
+     * 특정 user의 캐시를 갱신합니다.
+     *
+     * @param user 갱신할 대상인 user 입니다.
+     */
     private void refreshCache(User user) {
-        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(user.getIdentification());
+        if (user == null)
+            return;
 
-        if (queriedUserRedisVO.isPresent())
-            userRedisRepository.deleteById(user.getIdentification());
+        removeCache(user.getIdentification());
 
         UserRedisVO userRedisVO = new UserRedisVO(user);
         userRedisRepository.save(userRedisVO);
+    }
+
+    private void removeCache(String identification) {
+        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
+
+        if (queriedUserRedisVO.isPresent())
+            userRedisRepository.deleteById(identification);
     }
 
     /**
