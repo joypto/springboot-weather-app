@@ -33,7 +33,7 @@ public class TotalDataController {
     public ResponseEntity<TotalDataResponseDto> getTotalDataByCoordinate(CoordinateDto coordinateDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws ParseException, IOException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
-        User user = userService.getOrCreateUserByIdentification(identification);
+        User user = userService.getOrCreateGuarantedNonCachedUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         RegionDto totalDataRequestDto = regionService.getRegionName(coordinateDto);
@@ -47,7 +47,7 @@ public class TotalDataController {
     public ResponseEntity<TotalDataResponseDto> getTotalDataByRegionName(RegionDto regionDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) throws IOException {
         log.info("identification='{}' \t coordinate={}", identification, regionDto.toString());
 
-        User user = userService.getOrCreateUserByIdentification(identification);
+        User user = userService.getOrCreateGuarantedNonCachedUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         return ResponseEntity.ok()
