@@ -70,6 +70,18 @@ public class UserService {
         return queriedUser.get();
     }
 
+    public User getOrCreateGuarantedNonCachedUserByIdentification(String identification) {
+        if (StringUtils.hasText(identification) == false)
+            return createNewUser();
+
+        Optional<User> queriedUser = getGuarantedNonCachedUser(identification);
+
+        if (queriedUser.isPresent() == false)
+            return createNewUser();
+
+        return queriedUser.get();
+    }
+
     /**
      * 해당 User과 관련된 지역 정보를 반환합니다.
      *
@@ -102,25 +114,22 @@ public class UserService {
     // TODO: 같은 의미를 가리키는 것이지만 용어가 다르다. preference와 scoreWeight. 둘 중에 하나로 통일하는 것이 직관적이지 않을까?
     @Transactional
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
-        user = getGuarantedNonCachedUser(user);
-
         user.updateUserPreference(scoreWeightDto);
+
         refreshCache(user);
     }
 
     @Transactional
     public void updateCurrentRegion(User user, String currentRegion) {
-        user = getGuarantedNonCachedUser(user);
-
         user.setLatestRequestRegion(currentRegion);
+
         refreshCache(user);
     }
 
     @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
-        user = getGuarantedNonCachedUser(user);
-
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
+
         refreshCache(user);
     }
 
@@ -158,16 +167,35 @@ public class UserService {
 
     /**
      * 캐시되지 않은 user 객체를 반환받습니다.
+     * DB에 접근해 값을 직접 수정하기 위해서는 반드시 이 함수로 반환받은 user객체를 사용해야 변경될 수 있음을 보장받을 수 있습니다.
      * 이 user객체가 만약 redis에서 가져온 캐시된 유저 정보라면, 동일한 유저 정보를 DB에서 조회해옵니다.
      * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
      *
-     * @return 무조건 캐시되지 않은 것이 보장된 user 객체입니다.
+     * @return 캐시되지 않은 것이 보장된 user 객체입니다.
      */
-    private User getGuarantedNonCachedUser(User user) {
-        if (user.isFromRedis())
-            return userRepository.findByIdentification(user.getIdentification()).get();
+    private Optional<User> getGuarantedNonCachedUser(User user) {
+        if (user == null)
+            return Optional.empty();
 
-        return user;
+        if (user.isFromRedis())
+            return Optional.of(userRepository.findByIdentification(user.getIdentification()).get());
+
+        return Optional.of(user);
+    }
+
+    /**
+     * 캐시되지 않은 user 객체를 반환받습니다.
+     * DB에 접근해 값을 직접 수정하기 위해서는 반드시 이 함수로 반환받은 user객체를 사용해야 변경될 수 있음을 보장받을 수 있습니다.
+     * 이 user객체가 만약 redis에서 가져온 캐시된 유저 정보라면, 동일한 유저 정보를 DB에서 조회해옵니다.
+     * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
+     *
+     * @return 캐시되지 않은 것이 보장된 user 객체입니다.
+     */
+    private Optional<User> getGuarantedNonCachedUser(String identification) {
+        if (StringUtils.hasText(identification) == false)
+            return Optional.empty();
+
+        return userRepository.findByIdentification(identification);
     }
 
 }
