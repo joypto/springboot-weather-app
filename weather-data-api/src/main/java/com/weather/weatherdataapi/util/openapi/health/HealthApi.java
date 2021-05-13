@@ -37,9 +37,9 @@ public class HealthApi {
         service = retrofit.create(HealthService.class);
     }
 
-    public AsthmaItem getAsthmaResponse(String areaNo, LocalDateTime now) throws FailedFetchException {
+    public AsthmaItem getAsthmaResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(LocalDateTime.now());
+            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
             Call<AsthmaResponse> call = service.generateAsthmaResponseCall(SERVICE_KEY, areaNo, requestTimeText);
             Response<AsthmaResponse> execute = call.execute();
@@ -70,9 +70,9 @@ public class HealthApi {
 
     }
 
-    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDateTime now) throws FailedFetchException {
+    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(LocalDateTime.now());
+            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
             Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(SERVICE_KEY, areaNo, requestTimeText);
             Response<FoodPoisonResponse> execute = call.execute();
@@ -103,9 +103,9 @@ public class HealthApi {
 
     }
 
-    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDateTime now) throws FailedFetchException {
+    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(LocalDateTime.now());
+            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
             Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(SERVICE_KEY, areaNo, requestTimeText);
             Response<PollenRiskResponse> execute = call.execute();
