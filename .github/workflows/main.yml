@@ -1,7 +1,7 @@
 on:
   push:
     branches:
-      - gitaction
+      - gitaction1
 
 name: Deploy String boot to Amazon EC2
 env:
