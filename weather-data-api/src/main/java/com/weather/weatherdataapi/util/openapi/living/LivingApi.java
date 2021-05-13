@@ -2,6 +2,8 @@ package com.weather.weatherdataapi.util.openapi.living;
 
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.util.ExceptionUtil;
+import com.weather.weatherdataapi.util.openapi.living.uv.UvItem;
+import com.weather.weatherdataapi.util.openapi.living.uv.UvResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
@@ -32,7 +34,7 @@ public class LivingApi {
         service = retrofit.create(LivingService.class);
     }
 
-    public LivingItem getResponse(String areaNo, LocalDateTime now) throws FailedFetchException {
+    public UvItem getResponse(String areaNo, LocalDateTime now) throws FailedFetchException {
         try {
             // 생활지수 OpenApi는 당일 0시부터 6시 사이에 요청할 때,
             // 오늘의 데이터를 제공하지 않고 전일 18시 데이터를 제공합니다.
@@ -44,9 +46,9 @@ public class LivingApi {
             // 따라서 06시 데이터를 제공받도록 명시합니다.
             String requestTimeText = requestDateTime.format(DATE_TIME_FORMATTER) + "06";
 
-            Call<LivingResponse> call = service.generateResponseCall(SERVICE_KEY, areaNo, requestTimeText);
-            Response<LivingResponse> execute = call.execute();
-            LivingResponse response = execute.body();
+            Call<UvResponse> call = service.generateResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Response<UvResponse> execute = call.execute();
+            UvResponse response = execute.body();
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");

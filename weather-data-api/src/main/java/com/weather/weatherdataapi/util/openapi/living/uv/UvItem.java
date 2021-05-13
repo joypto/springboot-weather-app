@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.util.openapi.living;
+package com.weather.weatherdataapi.util.openapi.living.uv;
 
 import lombok.Getter;
 import org.simpleframework.xml.Element;
@@ -6,7 +6,7 @@ import org.simpleframework.xml.Root;
 
 @Getter
 @Root(name = "item", strict = false)
-public class LivingItem {
+public class UvItem {
 
     @Element(required = false)
     private String code;
