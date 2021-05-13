@@ -70,11 +70,11 @@ public class UserService {
         return queriedUser.get();
     }
 
-    public User getOrCreateGuarantedNonCachedUserByIdentification(String identification) {
+    public User getOrCreateGuaranteedNonCachedUserByIdentification(String identification) {
         if (StringUtils.hasText(identification) == false)
             return createNewUser();
 
-        Optional<User> queriedUser = getGuarantedNonCachedUser(identification);
+        Optional<User> queriedUser = getGuaranteedNonCachedUser(identification);
 
         if (queriedUser.isPresent() == false)
             return createNewUser();
@@ -173,7 +173,7 @@ public class UserService {
      *
      * @return 캐시되지 않은 것이 보장된 user 객체입니다.
      */
-    private Optional<User> getGuarantedNonCachedUser(User user) {
+    private Optional<User> getGuaranteedNonCachedUser(User user) {
         if (user == null)
             return Optional.empty();
 
@@ -191,7 +191,7 @@ public class UserService {
      *
      * @return 캐시되지 않은 것이 보장된 user 객체입니다.
      */
-    private Optional<User> getGuarantedNonCachedUser(String identification) {
+    private Optional<User> getGuaranteedNonCachedUser(String identification) {
         if (StringUtils.hasText(identification) == false)
             return Optional.empty();
 

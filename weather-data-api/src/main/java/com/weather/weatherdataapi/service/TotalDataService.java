@@ -50,7 +50,7 @@ public class TotalDataService {
      */
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto) throws IOException {
 
-        User user = userService.getOrCreateGuarantedNonCachedUserByIdentification(identification);
+        User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
 
         userService.updateCurrentRegion(user, regionDto.getBigRegionName() + " " + regionDto.getSmallRegionName());
 
