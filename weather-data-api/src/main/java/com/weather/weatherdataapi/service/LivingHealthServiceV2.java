@@ -100,7 +100,18 @@ public class LivingHealthServiceV2 {
             log.info("원격 서버에서 제공하는 최신 생활/보건기상지수 정보를 DB에 동기화합니다.");
             long startTime = System.currentTimeMillis();
 
-            fetchAndStoreInfoUsingOpenApi();
+            try {
+                fetchAndStoreInfoUsingOpenApi(LocalDateTime.now());
+            }
+            // 당일 정보를 가져오지 못했을 때 실행됩니다.
+            // 예상되는 이유는 다음과 같습니다.
+            //   -> 아직 원격 서버에서 오늘 일자의 최신 데이터를 업로드하지 않은 경우입니다.
+            // 따라서 전일 기준으로 다시 한 번 요청합니다.
+            catch (FailedFetchException e) {
+                log.error("원격 서버에서 당일 생활/보건기상지수 정보를 가져오는 데 실패하였습니다.");
+                log.error("전일 기준으로 다시 한 번 정보를 요청합니다.");
+                fetchAndStoreInfoUsingOpenApi(LocalDateTime.now().minusDays(1));
+            }
 
             long endTime = System.currentTimeMillis();
             float diffTimeSec = (endTime - startTime) / 1000f;
@@ -117,19 +128,17 @@ public class LivingHealthServiceV2 {
     }
 
     @Transactional
-    public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
-
-        LocalDateTime now = LocalDateTime.now();
+    public void fetchAndStoreInfoUsingOpenApi(LocalDateTime dateTime) throws AlreadyExistsLatestDataException, FailedFetchException {
 
         List<BigRegion> allValidBigRegionList = regionService.getAllValidBigRegionList();
 
         for (BigRegion bigRegion : allValidBigRegionList) {
             String admCode = bigRegion.getAdmCode();
 
-            UvItem uvItem = livingApi.getResponse(admCode, now);
-            AsthmaItem asthmaItem = healthApi.getAsthmaResponse(admCode, now);
-            FoodPoisonItem foodPoisonItem = healthApi.getFoodPoisonResponse(admCode, now);
-            PollenRiskItem pollenRiskItem = healthApi.getPollenRiskResponse(admCode, now);
+            UvItem uvItem = livingApi.getResponse(admCode, dateTime);
+            AsthmaItem asthmaItem = healthApi.getAsthmaResponse(admCode, dateTime);
+            FoodPoisonItem foodPoisonItem = healthApi.getFoodPoisonResponse(admCode, dateTime);
+            PollenRiskItem pollenRiskItem = healthApi.getPollenRiskResponse(admCode, dateTime);
 
             // FIXME: uv 정보의 시간으로 덮어쓰고 있다. 모든 정보의 시간이 일치하는지 확인해봐야 합니다.
             String fetchedItemTimeText = uvItem.getDate();
