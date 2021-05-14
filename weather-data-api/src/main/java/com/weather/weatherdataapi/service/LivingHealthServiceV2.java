@@ -146,22 +146,17 @@ public class LivingHealthServiceV2 {
         log.info("생활/보건기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    private void refreshCache() {
-        Optional<LivingHealthInfo> queriedLivingHealthInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
+    @Transactional
+    public void refreshCache() {
+        livingHealthRedisRepository.deleteAll();
 
-        if (queriedLivingHealthInfo.isPresent()) {
+        List<BigRegion> allValidBigRegionList = regionService.getAllValidBigRegionList();
 
-            /* 모든 지역의 코로나 정보를 캐싱합니다. */
-            List<LivingHealthInfo> latestInfoList = livingHealthInfoRepository.findAllByDate(queriedLivingHealthInfo.get().getDate());
+        for (BigRegion bigRegion : allValidBigRegionList) {
+            LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
 
-            livingHealthRedisRepository.deleteAll();
-
-            for (LivingHealthInfo info : latestInfoList) {
-                LivingHealthRedisVO redisVO = new LivingHealthRedisVO(info);
-
-                livingHealthRedisRepository.save(redisVO);
-            }
-
+            LivingHealthRedisVO redisVO = new LivingHealthRedisVO(livingHealthInfo);
+            livingHealthRedisRepository.save(redisVO);
         }
 
     }
