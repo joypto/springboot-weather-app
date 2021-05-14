@@ -166,10 +166,13 @@ public class LivingHealthServiceV2 {
         if (queriedLatestInfo.isPresent() == false)
             return false;
 
-        LocalDateTime latestItemTime = LocalDateTime.parse(queriedLatestInfo.get().getDate());
+        LocalDateTime latestItemTime = LocalDateTime.parse(queriedLatestInfo.get().getDate(), DATETIME_FORMATTER);
         LocalDateTime fetchedItemTime = LocalDateTime.parse(fetchedItemTimeText, DATETIME_FORMATTER);
 
-        return fetchedItemTime.isAfter(latestItemTime);
+        if (latestItemTime.isBefore(fetchedItemTime))
+            return false;
+
+        return true;
     }
 
 }
