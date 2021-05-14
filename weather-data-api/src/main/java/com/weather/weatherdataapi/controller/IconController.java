@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.Global;
+import com.weather.weatherdataapi.model.dto.responsedto.MessageResponseDto;
 import com.weather.weatherdataapi.service.IconService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
@@ -17,7 +18,7 @@ public class IconController {
     private final IconService iconService;
 
     @GetMapping("/api/icon/messages")
-    public ResponseEntity<String> getRandomIconMessage(@RequestParam(value = "icon") String icon, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
+    public ResponseEntity<MessageResponseDto> getRandomIconMessage(@RequestParam(value = "icon") String icon, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Global.IDENTIFICATION_TEXT, identification);
 
@@ -25,5 +26,4 @@ public class IconController {
                 .headers(responseHeaders)
                 .body(iconService.getRandomIconMessage(icon));
     }
-
 }

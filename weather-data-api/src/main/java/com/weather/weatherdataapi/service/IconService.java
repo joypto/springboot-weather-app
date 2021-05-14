@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.model.dto.responsedto.MessageResponseDto;
 import com.weather.weatherdataapi.model.vo.csv.IconCsvVO;
 import com.weather.weatherdataapi.model.vo.csv.MessageCsvVO;
 import com.weather.weatherdataapi.util.CsvParserUtil;
@@ -19,11 +20,13 @@ import java.util.List;
 @Service
 public class IconService {
 
-    public String getRandomIconMessage(String icon) {
+    public MessageResponseDto getRandomIconMessage(String icon) {
         String description = IconUtil.iconAndDescriptionDict.get(icon);
         ArrayList<String> messageList = IconUtil.descriptionAndMessageDict.get(description);
         Collections.shuffle(messageList);
-        return messageList.get(0);
+
+        MessageResponseDto messageResponseDto = new MessageResponseDto(messageList.get(0));
+        return messageResponseDto;
     }
 
     public void initialize() {
