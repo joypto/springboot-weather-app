@@ -29,7 +29,7 @@ public class HealthApi {
 
     public HealthApi() {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/")
+                .baseUrl("http://apis.data.go.kr/1360000/HealthWthrIdxService/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
