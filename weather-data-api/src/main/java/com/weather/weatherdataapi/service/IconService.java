@@ -1,17 +1,17 @@
 package com.weather.weatherdataapi.service;
 
-import com.weather.weatherdataapi.model.entity.Icon;
 import com.weather.weatherdataapi.model.vo.csv.IconCsvVO;
 import com.weather.weatherdataapi.model.vo.csv.MessageCsvVO;
-import com.weather.weatherdataapi.repository.IconRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
+import com.weather.weatherdataapi.util.IconUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -19,7 +19,12 @@ import java.util.List;
 @Service
 public class IconService {
 
-    private final IconRepository iconRepository;
+    public String getRandomIconMessage(String icon) {
+        String description = IconUtil.iconAndDescriptionDict.get(icon);
+        ArrayList<String> messageList = IconUtil.descriptionAndMessageDict.get(description);
+        Collections.shuffle(messageList);
+        return messageList.get(0);
+    }
 
     public void initialize() {
         try {
@@ -32,7 +37,7 @@ public class IconService {
             List<IconCsvVO> iconList = CsvParserUtil.parseCsvToObject(IconCsvVO.class, iconCsvResource.getInputStream(), IconCsvVO.getSchema());
             List<MessageCsvVO> messageList = CsvParserUtil.parseCsvToObject(MessageCsvVO.class, messageCsvResource.getInputStream(), MessageCsvVO.getSchema());
 
-            tryInitializedIconTable(iconList, messageList);
+            initializedIconDict(iconList, messageList);
 
             long endTime = System.currentTimeMillis();
             float diffTimeSec = (endTime - startTime) / 1000f;
@@ -44,39 +49,24 @@ public class IconService {
         }
     }
 
-    private void tryInitializedIconTable(List<IconCsvVO> iconList, List<MessageCsvVO> messageList) {
-        if (checkIconTableInitialized() == true) {
-            log.info("모든 아이콘 및 메시지 정보가 이미 DB에 존재합니다.");
-            return;
-        }
-
-        initializeIconTable(iconList, messageList);
-    }
-
-    @Transactional
-    public void initializeIconTable(List<IconCsvVO> iconList, List<MessageCsvVO> messageList) {
+    public void initializedIconDict(List<IconCsvVO> iconList, List<MessageCsvVO> messageList) {
 
         for (IconCsvVO iconVO : iconList) {
-            Icon newIcon = new Icon(iconVO.getDayIcon(), iconVO.getNightIcon(), iconVO.getDescription());
-            iconRepository.save(newIcon);
+            IconUtil.iconAndDescriptionDict.put(iconVO.getDayIcon(),iconVO.getDescription());
+            IconUtil.iconAndDescriptionDict.put(iconVO.getNightIcon(),iconVO.getDescription());
         }
 
         for (MessageCsvVO messageVO : messageList) {
-            Icon icon = iconRepository.findByDescription(messageVO.getDescription());
-            List<String> message = icon.getMessage();
-            message.add(messageVO.getMessage());
+            if (IconUtil.descriptionAndMessageDict.get(messageVO.getDescription()) != null) {
+                ArrayList<String> valueList = IconUtil.descriptionAndMessageDict.get(messageVO.getDescription());
+                valueList.add(messageVO.getMessage());
+            } else {
+                ArrayList<String> valueList = new ArrayList<>();
+                IconUtil.descriptionAndMessageDict.put(messageVO.getDescription(), valueList);
+            }
         }
 
-        log.info("아이콘 테이블 초기화를 성공적으로 마쳤습니다.");
-    }
-
-    private boolean checkIconTableInitialized() {
-
-        if(iconRepository.count() == 0) {
-            return false;
-        }
-
-        return true;
+        log.info("아이콘 딕셔너리 초기화를 성공적으로 마쳤습니다.");
     }
 
 }

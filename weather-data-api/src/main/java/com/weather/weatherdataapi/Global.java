@@ -1,5 +1,8 @@
 package com.weather.weatherdataapi;
 
+import java.util.Dictionary;
+import java.util.List;
+
 public final class Global {
 
 
