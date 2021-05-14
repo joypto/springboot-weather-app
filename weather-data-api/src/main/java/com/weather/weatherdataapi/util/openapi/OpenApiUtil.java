@@ -5,8 +5,6 @@ import java.time.format.DateTimeFormatter;
 
 public class OpenApiUtil {
 
-    private final static DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
-
     /**
      * 생활기상지수와 보건기상지수 OpenApi 요청할 때 건네줄 유효한 time 문자열을 반환받습니다.
      * <p>
@@ -18,6 +16,7 @@ public class OpenApiUtil {
      * @param now 현재 시각입니다.
      */
     public static String getValidRequestTime(LocalDateTime now) {
+        final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
         LocalDateTime dateTime = now.getHour() < 6 ? now.minusDays(1) : now;
 
