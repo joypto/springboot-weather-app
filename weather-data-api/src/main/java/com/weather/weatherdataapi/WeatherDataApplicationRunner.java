@@ -1,9 +1,6 @@
 package com.weather.weatherdataapi;
 
-import com.weather.weatherdataapi.service.CoronaService;
-import com.weather.weatherdataapi.service.LivingHealthService;
-import com.weather.weatherdataapi.service.RedisService;
-import com.weather.weatherdataapi.service.RegionService;
+import com.weather.weatherdataapi.service.*;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +19,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
     private final LivingHealthService livingHealthService;
 
     private final RegionService regionService;
+    private final IconService iconService;
 
     private final AirKoreaStationUtil airKoreaStationUtil;
 
@@ -32,6 +30,8 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
         redisService.initialize();
 
         regionService.initialize();
+
+        iconService.initialize();
 
         coronaService.tryFetchAndStoreInfoUsingOpenApi();
 

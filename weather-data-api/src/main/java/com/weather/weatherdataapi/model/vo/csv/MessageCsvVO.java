@@ -13,7 +13,7 @@ public class MessageCsvVO {
     @JsonProperty("message")
     private String message;
 
-    private static CsvSchema getSchema() {
+    public static CsvSchema getSchema() {
         CsvSchema schema = CsvSchema.builder()
                 .addColumn("description", CsvSchema.ColumnType.STRING)
                 .addColumn("message", CsvSchema.ColumnType.STRING)
