@@ -174,13 +174,7 @@ public class UserService {
      * @return 캐시되지 않은 것이 보장된 user 객체입니다.
      */
     private Optional<User> getGuaranteedNonCachedUser(User user) {
-        if (user == null)
-            return Optional.empty();
-
-        if (user.isFromRedis())
-            return Optional.of(userRepository.findByIdentification(user.getIdentification()).get());
-
-        return Optional.of(user);
+        return userRepository.findByIdentification(user.getIdentification());
     }
 
     /**
