@@ -100,16 +100,11 @@ public class LivingHealthApi {
 
                 // 여기서부터가 사용하는 값!
                 String date = (String) itemObject.get("date");
-                String areaNo = (String) itemObject.get("areaNo");
                 String today = (String) itemObject.get("today");
                 String tomorrow = (String) itemObject.get("tomorrow");
                 String theDayAfterTomorrow = (String) itemObject.get("theDayAfterTomorrow");
 
                 livingHealthInfo.setDate(date);
-
-                if (livingHealthInfo.getAreaNo() == null) {
-                    livingHealthInfo.setAreaNo(areaNo);
-                }
 
                 if (method == "HealthWthrIdxService/getAsthmaIdx") {
                     livingHealthInfo.setAsthmaToday(today);
@@ -135,7 +130,7 @@ public class LivingHealthApi {
                 }
             } catch (ParseException e) {
                 log.info("생활보건기상지수 OPEN API 정보 파싱에 실패했습니다.");
-                LivingHealthInfo yesterdayInfo = livingHealthInfoRepository.findSecondByAreaNoOrderByCreatedAtDesc(admcode).orElseThrow(() -> new InvalidLivingHealthInfoException());
+                LivingHealthInfo yesterdayInfo = livingHealthInfoRepository.findSecondByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
                 if (method == "HealthWthrIdxService/getAsthmaIdx") {
                     livingHealthInfo.setAsthmaToday(yesterdayInfo.getAsthmaToday());
                     livingHealthInfo.setAsthmaTomorrow(yesterdayInfo.getAsthmaTomorrow());

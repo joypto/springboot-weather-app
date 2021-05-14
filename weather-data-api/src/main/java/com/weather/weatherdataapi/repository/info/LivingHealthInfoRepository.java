@@ -8,11 +8,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface LivingHealthInfoRepository extends JpaRepository<LivingHealthInfo, Long> {
-    Optional<LivingHealthInfo> findByAreaNo(String areaNo);
 
     Optional<LivingHealthInfo> findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
-    Optional<LivingHealthInfo> findSecondByAreaNoOrderByCreatedAtDesc(String areaNo);
+    Optional<LivingHealthInfo> findSecondByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
     Optional<LivingHealthInfo> findFirstByOrderByCreatedAtDesc();
 

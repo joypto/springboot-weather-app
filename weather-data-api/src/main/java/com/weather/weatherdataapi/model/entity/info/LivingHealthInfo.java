@@ -35,10 +35,6 @@ public class LivingHealthInfo extends Timestamped {
     @Column
     private String date;
 
-    @JsonIgnore
-    @Column
-    private String areaNo;
-
     @Column
     private String uvToday;
 
@@ -98,7 +94,6 @@ public class LivingHealthInfo extends Timestamped {
     public LivingHealthInfo(LivingHealthRedisVO livingHealthRedisVO, BigRegion bigRegion) {
         this.id = livingHealthRedisVO.getId();
         this.bigRegion = bigRegion;
-        this.areaNo = livingHealthRedisVO.getAreaNo();
         this.uvToday = livingHealthRedisVO.getUvToday();
         this.uvTomorrow = livingHealthRedisVO.getUvTomorrow();
         this.uvTheDayAfterTomorrow = livingHealthRedisVO.getUvTheDayAfterTomorrow();
@@ -119,7 +114,6 @@ public class LivingHealthInfo extends Timestamped {
                 "id=" + id +
                 ", bigRegion=" + bigRegion +
                 ", date='" + date + '\'' +
-                ", areaNo='" + areaNo + '\'' +
                 ", uvToday='" + uvToday + '\'' +
                 ", uvTomorrow='" + uvTomorrow + '\'' +
                 ", uvTheDayAfterTomorrow='" + uvTheDayAfterTomorrow + '\'' +
