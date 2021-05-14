@@ -56,6 +56,12 @@ public class LivingHealthService {
                 log.info("00시 - 06시 사이의 요청입니다. 불러온 값을 DB에 저장하지 않습니다.");
                 return;
             }
+
+            if(livingHealthInfo.getDate().endsWith("18") == true) {
+                log.info("06시가 아닌 18시 데이터입니다. 불러온 값을 DB에 저장하지 않습니다.");
+                return;
+            }
+
             livingHealthInfoRepository.save(livingHealthInfo);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
