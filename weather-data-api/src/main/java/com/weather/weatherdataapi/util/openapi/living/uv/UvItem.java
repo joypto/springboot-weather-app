@@ -8,22 +8,22 @@ import org.simpleframework.xml.Root;
 @Root(name = "item", strict = false)
 public class UvItem {
 
-    @Element(required = false)
+    @Element
     private String code;
 
-    @Element(required = false)
+    @Element
     private String areaNo;
 
-    @Element(required = false)
+    @Element
     private String date;
 
-    @Element(required = false)
+    @Element
     private Integer today;
 
-    @Element(required = false)
+    @Element
     private Integer tomorrow;
 
-    @Element(required = false)
+    @Element
     private Integer theDayAfterTomorrow;
 
 }
