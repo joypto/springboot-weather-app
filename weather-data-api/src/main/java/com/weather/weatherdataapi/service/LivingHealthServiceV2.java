@@ -97,7 +97,14 @@ public class LivingHealthServiceV2 {
 
     public void tryFetchAndStoreInfoUsingOpenApi() {
         try {
+            log.info("원격 서버에서 제공하는 최신 생활/보건기상지수 정보를 DB에 동기화합니다.");
+            long startTime = System.currentTimeMillis();
+
             fetchAndStoreInfoUsingOpenApi();
+
+            long endTime = System.currentTimeMillis();
+            float diffTimeSec = (endTime - startTime) / 1000f;
+            log.info("동기화를 성공적으로 마쳤습니다. ({}sec)", diffTimeSec);
         } catch (AlreadyExistsLatestDataException e) {
             log.warn(e.getMessage());
             log.warn("원격 서버에서 제공하는 생활/보건기상지수 정보가 DB에 이미 저장되어 있습니다.");
