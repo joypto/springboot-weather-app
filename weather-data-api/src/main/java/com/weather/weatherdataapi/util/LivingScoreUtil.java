@@ -34,4 +34,20 @@ public class LivingScoreUtil {
     public static Integer convertHealthWthIdxToScore(String idx) {
         return livingScoreDict.get(idx);
     }
+
+    // 생활기상지수 중 자외선 지수의 점수 변환
+    public static Integer convertUvInfoToScore(Integer wthIdx) {
+
+        if (wthIdx <= 2)
+            return 100;
+        else if (wthIdx <= 5)
+            return 70;
+        else if (wthIdx <= 7)
+            return 40;
+        else if (wthIdx <= 12)
+            return 10;
+        else
+            return 0;
+
+    }
 }

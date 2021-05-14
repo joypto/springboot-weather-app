@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class User {
 
-    boolean isFromRedis;
-
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -104,8 +102,6 @@ public class User {
     }
 
     public User(UserRedisVO userRedisVO) {
-        this.isFromRedis = true;
-
         this.id = userRedisVO.getId();
         this.identification = userRedisVO.getIdentification();
         this.latestRequestRegion = userRedisVO.getLatestRequestRegion();

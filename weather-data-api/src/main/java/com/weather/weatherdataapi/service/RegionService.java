@@ -16,6 +16,7 @@ import com.weather.weatherdataapi.repository.redis.BigRegionRedisRepository;
 import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
+import com.weather.weatherdataapi.util.RegionUtil;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,10 +24,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -42,6 +40,7 @@ public class RegionService {
 
     private Dictionary<String, String> bigRegionAdmCodeDict;
     private Dictionary<String, Dictionary<String, String>> smallRegionAdmCodeDict;
+    private List<BigRegion> allValidBigRegionList;
 
     public RegionDto getRegionName(CoordinateDto coordinateDto) {
         // 해당 위경도로 시/구 주소 문자열 반환
@@ -107,6 +106,10 @@ public class RegionService {
         return smallRegionAdmCodeDict.get(bigRegionName).get(smallRegionName);
     }
 
+    public List<BigRegion> getAllValidBigRegionList() {
+        return allValidBigRegionList;
+    }
+
     public void initialize() {
         try {
             log.info("resources/data/region.csv 파일을 읽어 지역정보를 초기화합니다.");
@@ -123,6 +126,8 @@ public class RegionService {
             initializeRegionAdmCodeDict(allBigRegionList, allSmallRegionList);
 
             initializeRedisRepository(allBigRegionList, allSmallRegionList);
+
+            initializeAllValidBigRegionList();
 
             long endTime = System.currentTimeMillis();
             float diffTimeSec = (endTime - startTime) / 1000f;
@@ -215,6 +220,19 @@ public class RegionService {
             SmallRegionRedisVO smallRegionRedisVO = new SmallRegionRedisVO(smallRegion);
             smallRegionRedisRepository.save(smallRegionRedisVO);
         }
+    }
+
+    private void initializeAllValidBigRegionList() {
+        List<String> allBigRegionNameList = RegionUtil.getAllValidBigRegionNameList();
+
+        this.allValidBigRegionList = new ArrayList<>(allBigRegionNameList.size());
+
+        for (String name : allBigRegionNameList) {
+            BigRegion bigRegion = bigRegionRepository.findByBigRegionName(name).orElseThrow(() -> new InvalidBigRegionException());
+
+            this.allValidBigRegionList.add(bigRegion);
+        }
+
     }
 
     private boolean checkRegionTableInitialized(List<RegionCsvVO> regionList) {

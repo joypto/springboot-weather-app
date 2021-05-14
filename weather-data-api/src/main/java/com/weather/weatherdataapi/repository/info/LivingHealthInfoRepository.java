@@ -4,14 +4,16 @@ import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface LivingHealthInfoRepository extends JpaRepository<LivingHealthInfo, Long> {
-    Optional<LivingHealthInfo> findByAreaNo(String areaNo);
 
     Optional<LivingHealthInfo> findFirstByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
-    Optional<LivingHealthInfo> findSecondByAreaNoOrderByCreatedAtDesc(String areaNo);
+    Optional<LivingHealthInfo> findSecondByBigRegionOrderByCreatedAtDesc(BigRegion bigRegion);
 
     Optional<LivingHealthInfo> findFirstByOrderByCreatedAtDesc();
+
+    List<LivingHealthInfo> findAllByDate(String date);
 }

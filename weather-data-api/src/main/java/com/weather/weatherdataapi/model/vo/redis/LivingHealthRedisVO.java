@@ -51,7 +51,6 @@ public class LivingHealthRedisVO {
         this.id = livingHealthInfo.getId();
         this.bigRegionId = livingHealthInfo.getBigRegion().getId();
         this.date = livingHealthInfo.getDate();
-        this.areaNo = livingHealthInfo.getAreaNo();
         this.uvToday = livingHealthInfo.getUvToday();
         this.uvTomorrow = livingHealthInfo.getUvTomorrow();
         this.uvTheDayAfterTomorrow = livingHealthInfo.getUvTheDayAfterTomorrow();
@@ -73,7 +72,6 @@ public class LivingHealthRedisVO {
                 ", id=" + id +
                 ", bigRegionId=" + bigRegionId +
                 ", date='" + date + '\'' +
-                ", areaNo='" + areaNo + '\'' +
                 ", uvToday='" + uvToday + '\'' +
                 ", uvTomorrow='" + uvTomorrow + '\'' +
                 ", uvTheDayAfterTomorrow='" + uvTheDayAfterTomorrow + '\'' +
