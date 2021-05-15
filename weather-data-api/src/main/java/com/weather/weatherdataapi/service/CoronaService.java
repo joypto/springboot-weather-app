@@ -91,6 +91,7 @@ public class CoronaService {
             log.error("원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
         }
 
+        refreshCache();
     }
 
     @Transactional
@@ -113,8 +114,6 @@ public class CoronaService {
             CoronaInfo corona = new CoronaInfo(item, regionService);
             coronaRepository.save(corona);
         }
-
-        refreshCache();
 
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
@@ -140,7 +139,8 @@ public class CoronaService {
         scoreResultDto.setCoronaResult(score);
     }
 
-    private void refreshCache() {
+    @Transactional
+    public void refreshCache() {
         Optional<CoronaInfo> queriedLatestOneInfo = coronaRepository.findFirstByOrderByCreatedAtDesc();
 
         if (queriedLatestOneInfo.isPresent()) {

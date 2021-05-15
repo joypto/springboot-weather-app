@@ -6,8 +6,11 @@ import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
+import com.weather.weatherdataapi.model.entity.UserOftenSeenRegion;
 import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
+import com.weather.weatherdataapi.repository.UserOftenSeenRegionRepository;
 import com.weather.weatherdataapi.repository.UserRepository;
 import com.weather.weatherdataapi.repository.redis.UserRedisRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +31,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserRedisRepository userRedisRepository;
+    private final UserOftenSeenRegionRepository userOftenSeenRegionRepository;
     private final RegionService regionService;
 
     /* Create New User */
@@ -127,8 +131,37 @@ public class UserService {
     }
 
     @Transactional
+    public void updateCurrentRegion(User user, SmallRegion currentRegion) {
+        user.setLatestRequestRegionRef(currentRegion);
+
+        refreshCache(user);
+    }
+
+    @Transactional
     public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
         user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
+
+        refreshCache(user);
+    }
+
+    @Transactional
+    public void updateOftenSeenRegionRefs(User user, RegionRequestDto regionRequestDto) {
+
+        userOftenSeenRegionRepository.deleteAllByUser(user);
+
+        for (String regionText : regionRequestDto.getOftenSeenRegions()) {
+            // FIXME: region name을 이렇게 얻어내는 것은 별로 좋지 않아보인다.
+            // regionName을 주고받을 때에는 전부 regionDto에 맞게 주고받도록 통일시킬 필요가..
+            int whitespacePosition = regionText.indexOf(' ');
+            String bigRegionName = regionText.substring(0, whitespacePosition);
+            String smallRegionName = regionText.substring(whitespacePosition + 1);
+
+            SmallRegion smallRegion = regionService.getSmallRegionByName(bigRegionName, smallRegionName);
+
+            UserOftenSeenRegion userOftenSeenRegion = new UserOftenSeenRegion(user, smallRegion);
+
+            userOftenSeenRegionRepository.save(userOftenSeenRegion);
+        }
 
         refreshCache(user);
     }

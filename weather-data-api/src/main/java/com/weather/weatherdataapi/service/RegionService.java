@@ -48,6 +48,10 @@ public class RegionService {
         return new RegionDto(address.getBigRegion(), address.getSmallRegion());
     }
 
+    public SmallRegion getSmallRegionByDto(RegionDto regionDto) {
+        return getSmallRegionByName(regionDto.getBigRegionName(), regionDto.getSmallRegionName());
+    }
+
     public BigRegion getBigRegionByName(String bigRegionName) {
         String admCode = getBigRegionAdmCodeByName(bigRegionName);
 

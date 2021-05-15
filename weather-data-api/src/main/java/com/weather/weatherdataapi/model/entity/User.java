@@ -27,6 +27,11 @@ public class User {
     private String identification;
 
     @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "latest_request_region_id")
+    private SmallRegion latestRequestRegionRef;
+
+    @JsonIgnore
     @Column
     private String latestRequestRegion;
 
@@ -84,21 +89,6 @@ public class User {
         this.pollenRisk = scoreWeightDto.getPollenRiskWeight();
         this.asthma = scoreWeightDto.getAsthmaWeight();
         this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
-    }
-
-    public User(String identification) {
-        this.temp = 50;
-        this.rainPer = 50;
-        this.weather = 0;
-        this.humidity = 0;
-        this.wind = 0;
-        this.pm10 = 50;
-        this.pm25 = 50;
-        this.corona = 50;
-        this.uv = 0;
-        this.pollenRisk = 0;
-        this.asthma = 0;
-        this.foodPoison = 0;
     }
 
     public User(UserRedisVO userRedisVO) {

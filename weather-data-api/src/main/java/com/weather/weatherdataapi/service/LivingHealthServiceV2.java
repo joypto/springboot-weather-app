@@ -125,6 +125,7 @@ public class LivingHealthServiceV2 {
             log.error("원격 서버에서 생활/보건기상지수 정보를 가져오는 데 실패하였습니다.");
         }
 
+        refreshCache();
     }
 
     @Transactional
@@ -149,8 +150,6 @@ public class LivingHealthServiceV2 {
             LivingHealthInfo livingHealthInfo = new LivingHealthInfo(bigRegion, uvItem.getDate(), uvItem, asthmaItem, foodPoisonItem, pollenRiskItem);
             livingHealthInfoRepository.save(livingHealthInfo);
         }
-
-        refreshCache();
 
         log.info("생활/보건기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
