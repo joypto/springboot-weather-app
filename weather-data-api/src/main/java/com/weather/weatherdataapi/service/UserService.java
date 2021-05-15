@@ -217,7 +217,7 @@ public class UserService {
      * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
      *
      * @return 캐시되지 않은 것이 보장된 user 객체입니다.
-     */=
+     */
     private Optional<User> getGuaranteedNonCachedUser(User user) {
         return userRepository.findByIdentification(user.getIdentification());
     }
