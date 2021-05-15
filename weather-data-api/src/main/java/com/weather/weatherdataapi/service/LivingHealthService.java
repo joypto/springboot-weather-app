@@ -174,6 +174,7 @@ public class LivingHealthService {
         return score;
     }
 
+    @Transactional
     public void refreshCache() {
         Optional<LivingHealthInfo> queriedLatestOneInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
 

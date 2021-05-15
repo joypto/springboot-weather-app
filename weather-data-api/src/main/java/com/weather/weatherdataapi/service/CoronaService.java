@@ -139,7 +139,8 @@ public class CoronaService {
         scoreResultDto.setCoronaResult(score);
     }
 
-    private void refreshCache() {
+    @Transactional
+    public void refreshCache() {
         Optional<CoronaInfo> queriedLatestOneInfo = coronaRepository.findFirstByOrderByCreatedAtDesc();
 
         if (queriedLatestOneInfo.isPresent()) {
