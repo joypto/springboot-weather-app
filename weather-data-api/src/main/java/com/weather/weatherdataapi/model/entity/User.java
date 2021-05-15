@@ -27,6 +27,11 @@ public class User {
     private String identification;
 
     @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "latest_request_region_id")
+    private SmallRegion latestRequestRegionRef;
+
+    @JsonIgnore
     @Column
     private String latestRequestRegion;
 
