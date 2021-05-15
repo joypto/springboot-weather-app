@@ -6,6 +6,7 @@ import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
 import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
+import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
 import com.weather.weatherdataapi.repository.UserRepository;
@@ -122,6 +123,13 @@ public class UserService {
     @Transactional
     public void updateCurrentRegion(User user, String currentRegion) {
         user.setLatestRequestRegion(currentRegion);
+
+        refreshCache(user);
+    }
+
+    @Transactional
+    public void updateCurrentRegion(User user, SmallRegion currentRegion) {
+        user.setLatestRequestRegionRef(currentRegion);
 
         refreshCache(user);
     }

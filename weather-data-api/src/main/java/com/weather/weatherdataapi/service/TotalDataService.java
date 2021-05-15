@@ -51,8 +51,10 @@ public class TotalDataService {
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto) throws IOException {
 
         User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
+        SmallRegion currentRequestRegion = regionService.getSmallRegionByDto(regionDto);
 
         userService.updateCurrentRegion(user, regionDto.getBigRegionName() + " " + regionDto.getSmallRegionName());
+        userService.updateCurrentRegion(user, currentRequestRegion);
 
         ScoreWeightDto scoreWeightDto = new ScoreWeightDto(user);
 
