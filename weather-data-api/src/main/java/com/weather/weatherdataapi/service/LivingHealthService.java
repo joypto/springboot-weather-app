@@ -41,10 +41,7 @@ public class LivingHealthService {
         if (checkAlreadyHasLatestInfo() == true)
             return;
 
-        livingHealthRedisRepository.deleteAll();
-
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
-
 
         for (int i = 0; i < 19; i++) {
             BigRegion bigRegion = bigRegionList.get(i);
@@ -56,9 +53,7 @@ public class LivingHealthService {
                 log.info("00시 - 06시 사이의 요청입니다. 불러온 값을 DB에 저장하지 않습니다.");
                 return;
             }
-            livingHealthInfoRepository.save(livingHealthInfo);
-            LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
-            livingHealthRedisRepository.save(livingHealthRedisVO);
+
         }
         log.info("생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
