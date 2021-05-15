@@ -152,7 +152,7 @@ public class UserService {
         for (String regionText : regionRequestDto.getOftenSeenRegions()) {
             // FIXME: region name을 이렇게 얻어내는 것은 별로 좋지 않아보인다.
             // regionName을 주고받을 때에는 전부 regionDto에 맞게 주고받도록 통일시킬 필요가..
-            int whitespacePosition = regionText.charAt(' ');
+            int whitespacePosition = regionText.indexOf(' ');
             String bigRegionName = regionText.substring(0, whitespacePosition);
             String smallRegionName = regionText.substring(whitespacePosition + 1);
 
