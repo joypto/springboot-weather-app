@@ -16,8 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class User {
 
-    boolean isFromRedis;
-
     @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,6 +25,11 @@ public class User {
     @JsonIgnore
     @Column
     private String identification;
+
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "latest_request_region_id")
+    private SmallRegion latestRequestRegionRef;
 
     @JsonIgnore
     @Column
@@ -88,24 +91,7 @@ public class User {
         this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
     }
 
-    public User(String identification) {
-        this.temp = 50;
-        this.rainPer = 50;
-        this.weather = 0;
-        this.humidity = 0;
-        this.wind = 0;
-        this.pm10 = 50;
-        this.pm25 = 50;
-        this.corona = 50;
-        this.uv = 0;
-        this.pollenRisk = 0;
-        this.asthma = 0;
-        this.foodPoison = 0;
-    }
-
     public User(UserRedisVO userRedisVO) {
-        this.isFromRedis = true;
-
         this.id = userRedisVO.getId();
         this.identification = userRedisVO.getIdentification();
         this.latestRequestRegion = userRedisVO.getLatestRequestRegion();

@@ -12,11 +12,11 @@ import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaUtil;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionApi;
 import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea.AirKoreaAirPollutionItem;
-import com.weather.weatherdataapi.util.openapi.air_pollution.airkorea_station.AirKoreaStationApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Slf4j
@@ -28,7 +28,6 @@ public class AirPollutionService {
     private final AirPollutionRedisRepository airPollutionRedisRepository;
 
     private final AirKoreaAirPollutionApi airKoreaAirPollutionOpenApi;
-    private final AirKoreaStationApi airKoreaStationOpenApi;
     private final AirKoreaStationUtil airKoreaStationUtil;
     private final AirKoreaUtil airKoreaUtil;
 
@@ -174,6 +173,11 @@ public class AirPollutionService {
         }
 
         return airKoreaUtil.checkLatestInfoAlreadyExists(latestData, latestFetchedData);
+    }
+
+    @Transactional
+    public void refreshCache() {
+        airPollutionRedisRepository.deleteAll();
     }
 
 }

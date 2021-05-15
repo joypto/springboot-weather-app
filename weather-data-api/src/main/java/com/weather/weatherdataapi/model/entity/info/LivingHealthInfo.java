@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
+import com.weather.weatherdataapi.util.openapi.health.asthma.AsthmaItem;
+import com.weather.weatherdataapi.util.openapi.health.food_poison.FoodPoisonItem;
+import com.weather.weatherdataapi.util.openapi.health.pollen_risk.PollenRiskItem;
+import com.weather.weatherdataapi.util.openapi.living.uv.UvItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,10 +34,6 @@ public class LivingHealthInfo extends Timestamped {
     @JsonIgnore
     @Column
     private String date;
-
-    @JsonIgnore
-    @Column
-    private String areaNo;
 
     @Column
     private String uvToday;
@@ -71,10 +71,29 @@ public class LivingHealthInfo extends Timestamped {
     @Column
     private String asthmaTheDayAfterTomorrow;
 
+    public LivingHealthInfo(BigRegion bigRegion, String date, UvItem uvItem, AsthmaItem asthmaItem, FoodPoisonItem foodPoisonItem, PollenRiskItem pollenRiskItem) {
+        // final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhh");
+        // this.date = dateTime.format(DATE_FORMATTER);
+
+        this.bigRegion = bigRegion;
+        this.date = date;
+        this.uvToday = uvItem.getToday().toString();
+        this.uvTomorrow = uvItem.getTomorrow().toString();
+        this.uvTheDayAfterTomorrow = uvItem.getTheDayAfterTomorrow().toString();
+        this.asthmaToday = asthmaItem.getToday();
+        this.asthmaTomorrow = asthmaItem.getTomorrow();
+        this.asthmaTheDayAfterTomorrow = asthmaItem.getTheDayAfterTomorrow();
+        this.foodPoisonToday = foodPoisonItem.getToday();
+        this.foodPoisonTomorrow = foodPoisonItem.getTomorrow();
+        this.foodPoisonTheDayAfterTomorrow = foodPoisonItem.getTheDayAfterTomorrow();
+        this.oakPollenRiskToday = pollenRiskItem.getToday();
+        this.oakPollenRiskTomorrow = pollenRiskItem.getTomorrow();
+        this.oakPollenRiskTheDayAfterTomorrow = pollenRiskItem.getTheDayAfterTomorrow();
+    }
+
     public LivingHealthInfo(LivingHealthRedisVO livingHealthRedisVO, BigRegion bigRegion) {
         this.id = livingHealthRedisVO.getId();
         this.bigRegion = bigRegion;
-        this.areaNo = livingHealthRedisVO.getAreaNo();
         this.uvToday = livingHealthRedisVO.getUvToday();
         this.uvTomorrow = livingHealthRedisVO.getUvTomorrow();
         this.uvTheDayAfterTomorrow = livingHealthRedisVO.getUvTheDayAfterTomorrow();
@@ -95,7 +114,6 @@ public class LivingHealthInfo extends Timestamped {
                 "id=" + id +
                 ", bigRegion=" + bigRegion +
                 ", date='" + date + '\'' +
-                ", areaNo='" + areaNo + '\'' +
                 ", uvToday='" + uvToday + '\'' +
                 ", uvTomorrow='" + uvTomorrow + '\'' +
                 ", uvTheDayAfterTomorrow='" + uvTheDayAfterTomorrow + '\'' +
