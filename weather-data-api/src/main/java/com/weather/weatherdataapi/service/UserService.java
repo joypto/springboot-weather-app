@@ -188,14 +188,26 @@ public class UserService {
         return queriedUser;
     }
 
+    /**
+     * 특정 user의 캐시를 갱신합니다.
+     *
+     * @param user 갱신할 대상인 user 입니다.
+     */
     private void refreshCache(User user) {
-        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(user.getIdentification());
+        if (user == null)
+            return;
 
-        if (queriedUserRedisVO.isPresent())
-            userRedisRepository.deleteById(user.getIdentification());
+        removeCache(user.getIdentification());
 
         UserRedisVO userRedisVO = new UserRedisVO(user);
         userRedisRepository.save(userRedisVO);
+    }
+
+    private void removeCache(String identification) {
+        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
+
+        if (queriedUserRedisVO.isPresent())
+            userRedisRepository.deleteById(identification);
     }
 
     /**
@@ -205,7 +217,7 @@ public class UserService {
      * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
      *
      * @return 캐시되지 않은 것이 보장된 user 객체입니다.
-     */
+     */=
     private Optional<User> getGuaranteedNonCachedUser(User user) {
         return userRepository.findByIdentification(user.getIdentification());
     }
