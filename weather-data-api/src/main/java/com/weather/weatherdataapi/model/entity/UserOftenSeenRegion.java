@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Setter
 @NoArgsConstructor
 @Entity
-public class UserOftenSeenRegion {
+public class UserOftenSeenRegion extends Timestamped {
 
     @JsonIgnore
     @Id
@@ -28,5 +28,10 @@ public class UserOftenSeenRegion {
     @ManyToOne
     @JoinColumn(name = "small_region_id")
     private SmallRegion smallRegion;
+
+    public UserOftenSeenRegion(User user, SmallRegion smallRegion) {
+        this.user = user;
+        this.smallRegion = smallRegion;
+    }
 
 }

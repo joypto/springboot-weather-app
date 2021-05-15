@@ -72,6 +72,7 @@ public class UserController {
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         userService.updateOftenSeenRegions(user, regionRequestDto);
+        userService.updateOftenSeenRegionRefs(user, regionRequestDto);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
