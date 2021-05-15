@@ -21,6 +21,7 @@ public class LivingHealthScheduler {
             log.info("전일 생활보건기상지수 정보를 갱신합니다.");
 
             livingHealthService.fetchAndStoreInfoUsingOpenApi();
+            livingHealthService.refreshCache();
 
             log.info("생활보건기상지수 정보를 성공적으로 갱신하였습니다.");
 

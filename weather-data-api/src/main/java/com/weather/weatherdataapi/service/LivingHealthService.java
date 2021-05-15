@@ -179,4 +179,24 @@ public class LivingHealthService {
         return score;
     }
 
+    public void refreshCache() {
+        Optional<LivingHealthInfo> queriedLatestOneInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
+
+        if (queriedLatestOneInfo.isPresent()) {
+
+            /* 모든 지역의 코로나 정보를 캐싱합니다. */
+            List<LivingHealthInfo> latestInfoList = livingHealthInfoRepository.findAllByDate(queriedLatestOneInfo.get().getDate());
+
+            livingHealthRedisRepository.deleteAll();
+
+            for (LivingHealthInfo info : latestInfoList) {
+                LivingHealthRedisVO redisVO = new LivingHealthRedisVO(info);
+
+                livingHealthRedisRepository.save(redisVO);
+            }
+
+        }
+
+    }
+
 }
