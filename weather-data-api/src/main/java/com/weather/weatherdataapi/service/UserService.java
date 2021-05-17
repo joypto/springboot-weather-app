@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -58,7 +59,6 @@ public class UserService {
         String newIdentification = "wl" + ZonedDateTime.now().toString() + UUID.randomUUID();
 
         User newUser = new User(newIdentification, scoreWeightDto);
-        newUser.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         userRepository.save(newUser);
 
@@ -110,10 +110,9 @@ public class UserService {
             latestRequestRegion = new RegionDto(currentRegion);
         }
 
-        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto();
-        userRegionResponseDto.setCurrentRegion(currentRegion);
-        userRegionResponseDto.setLatestRequestRegion(latestRequestRegion);
-        userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
+        List<UserOftenSeenRegion> oftenSeenRegions = userOftenSeenRegionRepository.findAllByUser(user);
+
+        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto(user.getIdentification(), currentRegion, latestRequestRegion, oftenSeenRegions);
 
         return userRegionResponseDto;
     }
@@ -136,13 +135,6 @@ public class UserService {
     @Transactional
     public void updateCurrentRegion(User user, SmallRegion currentRegion) {
         user.setLatestRequestRegionRef(currentRegion);
-
-        refreshCache(user);
-    }
-
-    @Transactional
-    public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
-        user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         refreshCache(user);
     }

@@ -50,7 +50,6 @@ public class UserRedisVO {
 
         this.id = user.getId();
         this.latestRequestRegion = user.getLatestRequestRegion();
-        this.oftenSeenRegions = user.getOftenSeenRegions();
         this.temp = user.getTemp();
         this.rainPer = user.getRainPer();
         this.weather = user.getWeather();

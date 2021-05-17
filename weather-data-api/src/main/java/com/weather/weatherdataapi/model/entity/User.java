@@ -6,7 +6,6 @@ import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
@@ -34,10 +33,6 @@ public class User {
     @JsonIgnore
     @Column
     private String latestRequestRegion;
-
-    @JsonIgnore
-    @ElementCollection
-    private List<String> oftenSeenRegions;
 
     @Column
     private int temp;
@@ -95,7 +90,6 @@ public class User {
         this.id = userRedisVO.getId();
         this.identification = userRedisVO.getIdentification();
         this.latestRequestRegion = userRedisVO.getLatestRequestRegion();
-        this.oftenSeenRegions = userRedisVO.getOftenSeenRegions();
         this.temp = userRedisVO.getTemp();
         this.rainPer = userRedisVO.getRainPer();
         this.weather = userRedisVO.getWeather();
@@ -131,7 +125,6 @@ public class User {
                 "id=" + id +
                 ", identification='" + identification + '\'' +
                 ", latestRequestRegion='" + latestRequestRegion + '\'' +
-                ", oftenSeenRegions=" + oftenSeenRegions +
                 ", temp=" + temp +
                 ", rainPer=" + rainPer +
                 ", weather=" + weather +
