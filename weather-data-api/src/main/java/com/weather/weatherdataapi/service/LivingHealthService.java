@@ -54,6 +54,15 @@ public class LivingHealthService {
                 return;
             }
 
+            if(livingHealthInfo.getDate().endsWith("18") == true) {
+                log.info("06시가 아닌 18시 데이터입니다. 불러온 값을 DB에 저장하지 않습니다.");
+                return;
+            }
+
+            livingHealthInfoRepository.save(livingHealthInfo);
+            LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
+            livingHealthRedisRepository.save(livingHealthRedisVO);
+
         }
         log.info("생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
