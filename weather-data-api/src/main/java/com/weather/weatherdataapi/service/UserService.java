@@ -42,9 +42,8 @@ public class UserService {
 
     public User createNewUser() {
         ScoreWeightDto defaultScoreWeightDto = ScoreWeightDto.getDefaultDto();
-        RegionRequestDto regionRequestDto = RegionRequestDto.getDefaultDto();
 
-        return createNewUser(defaultScoreWeightDto, regionRequestDto);
+        return createNewUser(defaultScoreWeightDto);
     }
 
     public User createNewUser(ScoreWeightDto scoreWeightDto) {
@@ -61,6 +60,8 @@ public class UserService {
         User newUser = new User(newIdentification, scoreWeightDto);
 
         userRepository.save(newUser);
+
+        updateOftenSeenRegionRefs(newUser, regionRequestDto);
 
         return newUser;
     }
@@ -144,12 +145,9 @@ public class UserService {
 
         userOftenSeenRegionRepository.deleteAllByUser(user);
 
-        for (String regionText : regionRequestDto.getOftenSeenRegions()) {
-            // FIXME: region name을 이렇게 얻어내는 것은 별로 좋지 않아보인다.
-            // regionName을 주고받을 때에는 전부 regionDto에 맞게 주고받도록 통일시킬 필요가..
-            int whitespacePosition = regionText.indexOf(' ');
-            String bigRegionName = regionText.substring(0, whitespacePosition);
-            String smallRegionName = regionText.substring(whitespacePosition + 1);
+        for (RegionDto regionDto : regionRequestDto.getOftenSeenRegions()) {
+            String bigRegionName = regionDto.getBigRegionName();
+            String smallRegionName = regionDto.getSmallRegionName();
 
             SmallRegion smallRegion = regionService.getSmallRegionByName(bigRegionName, smallRegionName);
 
