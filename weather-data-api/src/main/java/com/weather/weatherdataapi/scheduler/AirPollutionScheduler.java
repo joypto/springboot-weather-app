@@ -41,10 +41,9 @@ public class AirPollutionScheduler {
 
             if (airPollutionService.checkLatestDataAlreadyExistsByRegion(criteriaRegion)) {
                 log.info("이미 최신데이터를 가지고 있습니다.");
-            } else {
-                log.info("갱신되었음을 확인했습니다. 캐시 데이터를 삭제합니다.");
-                airPollutionRedisRepository.deleteAll();
             }
+
+            airPollutionService.refreshCache();
 
         } catch (Exception e) {
             log.error(e.getMessage());

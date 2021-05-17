@@ -54,7 +54,7 @@ public class UserController {
     public ResponseEntity<String> updateUserPreference(@RequestBody ScoreWeightDto scoreWeightDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
         log.info("identification='{}' \t scoreWeight={}", identification, scoreWeightDto.toString());
 
-        User user = userService.getOrCreateGuarantedNonCachedUserByIdentification(identification);
+        User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         userService.updatePreference(user, scoreWeightDto);
@@ -68,10 +68,11 @@ public class UserController {
     public ResponseEntity<String> updateMyRegion(@RequestBody RegionRequestDto regionRequestDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
         log.info("identification='{}' \t region={}", identification, regionRequestDto.toString());
 
-        User user = userService.getOrCreateGuarantedNonCachedUserByIdentification(identification);
+        User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
         userService.updateOftenSeenRegions(user, regionRequestDto);
+        userService.updateOftenSeenRegionRefs(user, regionRequestDto);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)

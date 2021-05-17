@@ -74,16 +74,24 @@ public class CoronaService {
 
     public void tryFetchAndStoreInfoUsingOpenApi() {
         try {
+            log.info("원격 서버에서 제공하는 최신 코로나 정보를 DB에 동기화합니다.");
+            long startTime = System.currentTimeMillis();
+
             fetchAndStoreInfoUsingOpenApi();
+
+            long endTime = System.currentTimeMillis();
+            float diffTimeSec = (endTime - startTime) / 1000f;
+            log.info("동기화를 성공적으로 마쳤습니다. ({}sec)", diffTimeSec);
         } catch (AlreadyExistsLatestDataException e) {
             log.warn(e.getMessage());
-            log.warn("run::원격 서버에서 제공하는 코로나 정보가 DB에 이미 저장되어 있습니다.");
+            log.warn("원격 서버에서 제공하는 코로나 정보가 DB에 이미 저장되어 있습니다.");
         } catch (FailedFetchException e) {
             log.error(e.getMessage());
             log.error(ExceptionUtil.getStackTraceString(e));
-            log.error("run::원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
+            log.error("원격 서버에서 코로나 정보를 가져오는 데 실패하였습니다.");
         }
 
+        refreshCache();
     }
 
     @Transactional
@@ -106,8 +114,6 @@ public class CoronaService {
             CoronaInfo corona = new CoronaInfo(item, regionService);
             coronaRepository.save(corona);
         }
-
-        refreshCache();
 
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
@@ -133,7 +139,8 @@ public class CoronaService {
         scoreResultDto.setCoronaResult(score);
     }
 
-    private void refreshCache() {
+    @Transactional
+    public void refreshCache() {
         Optional<CoronaInfo> queriedLatestOneInfo = coronaRepository.findFirstByOrderByCreatedAtDesc();
 
         if (queriedLatestOneInfo.isPresent()) {

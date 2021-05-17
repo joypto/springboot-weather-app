@@ -36,6 +36,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
         coronaService.tryFetchAndStoreInfoUsingOpenApi();
 
         livingHealthService.fetchAndStoreInfoUsingOpenApi();
+        livingHealthService.refreshCache();
 
         airKoreaStationUtil.initializeRegionStationNameDict();
 

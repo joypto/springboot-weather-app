@@ -41,10 +41,7 @@ public class LivingHealthService {
         if (checkAlreadyHasLatestInfo() == true)
             return;
 
-        livingHealthRedisRepository.deleteAll();
-
         List<BigRegion> bigRegionList = bigRegionRepository.findAll();
-
 
         for (int i = 0; i < 19; i++) {
             BigRegion bigRegion = bigRegionList.get(i);
@@ -65,6 +62,7 @@ public class LivingHealthService {
             livingHealthInfoRepository.save(livingHealthInfo);
             LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
             livingHealthRedisRepository.save(livingHealthRedisVO);
+
         }
         log.info("생활기상지수 데이터를 성공적으로 갱신하였습니다.");
     }
@@ -183,6 +181,27 @@ public class LivingHealthService {
     public Integer convertUvInfoToScore(String wthIdx) {
         Integer score = LivingScoreUtil.convertHealthWthIdxToScore(wthIdx);
         return score;
+    }
+
+    @Transactional
+    public void refreshCache() {
+        Optional<LivingHealthInfo> queriedLatestOneInfo = livingHealthInfoRepository.findFirstByOrderByCreatedAtDesc();
+
+        if (queriedLatestOneInfo.isPresent()) {
+
+            /* 모든 지역의 코로나 정보를 캐싱합니다. */
+            List<LivingHealthInfo> latestInfoList = livingHealthInfoRepository.findAllByDate(queriedLatestOneInfo.get().getDate());
+
+            livingHealthRedisRepository.deleteAll();
+
+            for (LivingHealthInfo info : latestInfoList) {
+                LivingHealthRedisVO redisVO = new LivingHealthRedisVO(info);
+
+                livingHealthRedisRepository.save(redisVO);
+            }
+
+        }
+
     }
 
 }
