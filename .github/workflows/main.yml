@@ -1,0 +1,58 @@
+on:
+  push:
+    branches:
+      - main
+
+name: Deploy String boot to Amazon EC2
+env:
+  PROJECT_NAME: WeatherLevel
+jobs:
+  deploy:
+    name: DEPLOY
+    runs-on: ubuntu-18.04
+    env:
+      working-directory: ./weather-data-api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 1.8
+
+      #리눅스 해당 파일에 대한 실행 권한 획득
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+        working-directory: ./weather-data-api
+        shell: bash
+
+      #build 실행
+      - name: Build with Gradle
+        run: ./gradlew build
+        working-directory: ./weather-data-api
+        shell: bash
+
+      #codedeploy를 하기 위해서는 S3를 거쳐야하는데 옮겨주기 위해서 압축 파일을 만들어주고 옮긴다.
+      - name: make zip file
+        run: zip -qq -r ./$GITHUB_SHA.zip .
+        shell: bash
+        working-directory: ./weather-data-api
+
+      # AWS 서비스를 사용하기 위한 인증 과정 setting 안에 secrets값 등록
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      # 배포할 zip 파일을 s3에 업로드
+      - name: Upload to S3
+        run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://theweatherlevelapi/$PROJECT_NAME/$GITHUB_SHA.zip
+
+
+      # 코드 배포 시작
+      - name: Code Deploy
+        run: aws deploy create-deployment --application-name theweatherlevel --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dev --s3-location bucket=theweatherlevelapi,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
