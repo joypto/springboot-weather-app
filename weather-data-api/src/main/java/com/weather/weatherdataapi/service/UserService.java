@@ -100,20 +100,12 @@ public class UserService {
         RegionDto currentRegion = regionService.getRegionName(coordinateDto);
 
         // FIXME: 공백으로 잘라서 지역을 얻어내는 것은 위험하니까, User에서 Region을 참조하는 FK를 하나 생성해두는건 어떨까?
-        String latestRequestRegionName = user.getLatestRequestRegion();
-        RegionDto latestRequestRegion;
-
-        if (StringUtils.hasText(latestRequestRegionName)) {
-            // FIXME: 공백으로 나누는 것이 위험해보인다. smallRegion에는 공백으로 나누어진 문자열을 가지는 지역도 있기 때문...
-            String[] regions = latestRequestRegionName.split(" ");
-            latestRequestRegion = new RegionDto(regions[0], regions[1]);
-        } else {
-            latestRequestRegion = new RegionDto(currentRegion);
-        }
+        SmallRegion latestRequestRegion = user.getLatestRequestRegion();
+        RegionDto latestRequestRegionDto = new RegionDto(latestRequestRegion.getBigRegion().getBigRegionName(), latestRequestRegion.getSmallRegionName());
 
         List<UserOftenSeenRegion> oftenSeenRegions = userOftenSeenRegionRepository.findAllByUser(user);
 
-        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto(user.getIdentification(), currentRegion, latestRequestRegion, oftenSeenRegions);
+        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto(user.getIdentification(), currentRegion, latestRequestRegionDto, oftenSeenRegions);
 
         return userRegionResponseDto;
     }
@@ -127,15 +119,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateCurrentRegion(User user, String currentRegion) {
-        user.setLatestRequestRegion(currentRegion);
-
-        refreshCache(user);
-    }
-
-    @Transactional
     public void updateCurrentRegion(User user, SmallRegion currentRegion) {
-        user.setLatestRequestRegionRef(currentRegion);
+        user.setLatestRequestRegion(currentRegion);
 
         refreshCache(user);
     }
@@ -169,7 +154,9 @@ public class UserService {
         Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
 
         if (queriedUserRedisVO.isPresent()) {
-            User user = new User(queriedUserRedisVO.get());
+            SmallRegion latestRequestRegion = regionService.getSmallRegionById(queriedUserRedisVO.get().getLatestRequestRegionId());
+
+            User user = new User(queriedUserRedisVO.get(), latestRequestRegion);
             return Optional.of(user);
         }
 
