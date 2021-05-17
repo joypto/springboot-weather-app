@@ -41,7 +41,7 @@ public class WeatherDayInfo extends Timestamped {
     // 강수확률
     @ElementCollection
     private List<String> rainPer;
-    // 강수확률
+    // 시간정보
     @ElementCollection
     private List<String> dailyTime;
     // 날씨 아이콘
