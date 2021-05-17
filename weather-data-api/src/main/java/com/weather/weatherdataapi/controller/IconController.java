@@ -21,13 +21,10 @@ public class IconController {
 
     @GetMapping("/api/icon/messages")
     public ResponseEntity<MessageResponseDto> getRandomIconMessage(
-            @RequestParam(value = "icon") String icon, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification,
-            @RequestHeader(value = "user-agent") String userInfo) {
+            @RequestParam(value = "icon") String icon, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Global.IDENTIFICATION_TEXT, identification);
-
-        log.info("접속한 user 기록입니다: " + userInfo);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)

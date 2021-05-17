@@ -8,8 +8,10 @@ import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
+import com.weather.weatherdataapi.model.entity.UserDevice;
 import com.weather.weatherdataapi.model.entity.UserOftenSeenRegion;
 import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
+import com.weather.weatherdataapi.repository.UserDeviceRepository;
 import com.weather.weatherdataapi.repository.UserOftenSeenRegionRepository;
 import com.weather.weatherdataapi.repository.UserRepository;
 import com.weather.weatherdataapi.repository.redis.UserRedisRepository;
@@ -32,6 +34,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final UserRedisRepository userRedisRepository;
     private final UserOftenSeenRegionRepository userOftenSeenRegionRepository;
+    private final UserDeviceRepository userDeviceRepository;
     private final RegionService regionService;
 
     /* Create New User */
@@ -235,6 +238,19 @@ public class UserService {
             return Optional.empty();
 
         return userRepository.findByIdentification(identification);
+    }
+
+    public void saveUserDevice(String deviceInfo, String identification) {
+        try {
+            User user = userRepository.findByIdentification(identification).orElseThrow(
+                    () -> new IllegalArgumentException("찾는 유저가 없습니다")
+            );
+            UserDevice userDevice = new UserDevice(deviceInfo, user);
+            userDeviceRepository.save(userDevice);
+        } catch (IllegalArgumentException e) {
+            UserDevice userDevice = new UserDevice(deviceInfo);
+            userDeviceRepository.save(userDevice);
+        }
     }
 
 }
