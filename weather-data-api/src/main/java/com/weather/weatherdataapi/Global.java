@@ -7,6 +7,7 @@ public final class Global {
 
 
     public final static String IDENTIFICATION_TEXT = "Identification";
+    public final static String USER_AGENT_TEXT = "user-agent";
 
     public enum EInfoResponseCode {
         NORMAL("일반적인 응답입니다."),

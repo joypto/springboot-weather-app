@@ -35,10 +35,10 @@ public class TotalDataService {
      * @param coordinateDto  요청을 원하는 지역의 좌표입니다.
      * @return 응답 객체입니다. RestController에서 이 응답값을 바로 리턴하면 됩니다.
      */
-    public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, CoordinateDto coordinateDto) throws IOException {
+    public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, CoordinateDto coordinateDto, String deviceInfo) throws IOException {
         RegionDto regionDto = regionService.getRegionName(coordinateDto);
 
-        return getTotalDataResponse(identification, regionDto);
+        return getTotalDataResponse(identification, regionDto, deviceInfo);
     }
 
     /**
@@ -48,7 +48,7 @@ public class TotalDataService {
      * @param regionDto      요청을 원하는 지역입니다.
      * @return 응답 객체입니다. RestController에서 이 응답값을 바로 리턴하면 됩니다.
      */
-    public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto) throws IOException {
+    public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto, String deviceInfo) throws IOException {
 
         User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
         SmallRegion currentRequestRegion = regionService.getSmallRegionByDto(regionDto);
@@ -60,6 +60,8 @@ public class TotalDataService {
 
         TotalDataResponseDto responseDto = getTotalData(regionDto, scoreWeightDto);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
+
+        userService.saveUserDevice(identification, regionDto, deviceInfo);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)

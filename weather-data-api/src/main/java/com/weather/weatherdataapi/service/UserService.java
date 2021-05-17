@@ -240,17 +240,10 @@ public class UserService {
         return userRepository.findByIdentification(identification);
     }
 
-    public void saveUserDevice(String deviceInfo, String identification) {
-        try {
-            User user = userRepository.findByIdentification(identification).orElseThrow(
-                    () -> new IllegalArgumentException("찾는 유저가 없습니다")
-            );
-            UserDevice userDevice = new UserDevice(deviceInfo, user);
-            userDeviceRepository.save(userDevice);
-        } catch (IllegalArgumentException e) {
-            UserDevice userDevice = new UserDevice(deviceInfo);
-            userDeviceRepository.save(userDevice);
-        }
+    public void saveUserDevice(String identification, RegionDto regionDto, String deviceInfo) {
+        String requestRegion = regionDto.getBigRegionName() + " " + regionDto.getSmallRegionName();
+        UserDevice userDevice = new UserDevice(identification, requestRegion, deviceInfo);
+        userDeviceRepository.save(userDevice);
     }
 
 }

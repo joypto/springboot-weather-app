@@ -22,28 +22,23 @@ import java.io.IOException;
 public class TotalDataController {
 
     private final TotalDataService totalDataService;
-    private final UserService userService;
 
     @GetMapping("/api/total/data/coordinate")
     public ResponseEntity<TotalDataResponseDto> getTotalDataByCoordinate(
-            CoordinateDto coordinateDto,@RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification,
-            @RequestHeader(value = "user-agent") String deviceInfo) throws IOException {
+            CoordinateDto coordinateDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification,
+            @RequestHeader(value = Global.USER_AGENT_TEXT) String deviceInfo) throws IOException {
         log.info("identification='{}' \t coordinate={}", identification, coordinateDto.toString());
 
-        userService.saveUserDevice(deviceInfo, identification);
-
-        return totalDataService.getTotalDataResponse(identification, coordinateDto);
+        return totalDataService.getTotalDataResponse(identification, coordinateDto, deviceInfo);
     }
 
     @GetMapping("/api/total/data/regionname")
     public ResponseEntity<TotalDataResponseDto> getTotalDataByRegionName(
             RegionDto regionDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification,
-            @RequestHeader(value = "user-agent") String deviceInfo) throws IOException {
+            @RequestHeader(value = Global.USER_AGENT_TEXT) String deviceInfo) throws IOException {
         log.info("identification='{}' \t region={}", identification, regionDto.toString());
 
-        userService.saveUserDevice(deviceInfo, identification);
-
-        return totalDataService.getTotalDataResponse(identification, regionDto);
+        return totalDataService.getTotalDataResponse(identification, regionDto, deviceInfo);
     }
 
 }

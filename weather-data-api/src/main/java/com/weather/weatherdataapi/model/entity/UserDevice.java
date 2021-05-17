@@ -16,20 +16,18 @@ public class UserDevice extends Timestamped{
     private Long id;
 
     @Column
+    private String identification;
+
+    @Column
     private String deviceInfo;
 
-    @OneToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @Column
+    private String requestRegion;
 
-    public UserDevice(String deviceInfo, User user) {
+    public UserDevice(String identification, String requestRegion, String deviceInfo) {
+        this.identification = identification;
+        this.requestRegion = requestRegion;
         this.deviceInfo = deviceInfo;
-        this.user = user;
-    }
-
-    public UserDevice(String deviceInfo) {
-        this.deviceInfo = deviceInfo;
-        this.user = null;
     }
 
 }
