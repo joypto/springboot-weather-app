@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry
                 .addMapping("/**")
-                .allowedOrigins("*")
+                .allowedOrigins("https://theweatherlevel.com")
                 .exposedHeaders(Global.IDENTIFICATION_TEXT)
                 .allowedMethods(
                 HttpMethod.GET.name(),
