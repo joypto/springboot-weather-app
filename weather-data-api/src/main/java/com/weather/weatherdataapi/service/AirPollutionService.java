@@ -116,13 +116,21 @@ public class AirPollutionService {
     }
 
     public void convertInfoToScore(AirPollutionInfo airPollution, ScoreResultDto scoreResultDto) {
-        final int PM10_GOOD = 30;
-        final int PM10_NORMAL = 80;
-        final int PM10_BAD = 150;
+        final int PM10_LEVEL1 = 15;
+        final int PM10_LEVEL2 = 30;
+        final int PM10_LEVEL3 = 40;
+        final int PM10_LEVEL4 = 50;
+        final int PM10_LEVEL5 = 75;
+        final int PM10_LEVEL6 = 100;
+        final int PM10_LEVEL7 = 150;
 
-        final int PM25_GOOD = 15;
-        final int PM25_NORMAL = 35;
-        final int PM25_BAD = 75;
+        final int PM25_LEVEL1 = 8;
+        final int PM25_LEVEL2 = 15;
+        final int PM25_LEVEL3 = 20;
+        final int PM25_LEVEL4 = 25;
+        final int PM25_LEVEL5 = 37;
+        final int PM25_LEVEL6 = 50;
+        final int PM25_LEVEL7 = 75;
 
         int pm10Score = 0;
         int pm25Score = 0;
@@ -130,27 +138,43 @@ public class AirPollutionService {
         Integer pm10Value = airPollution.getPm10Value();
 
         if (pm10Value != null) {
-            if (pm10Value <= PM10_GOOD)
+            if (pm10Value <= PM10_LEVEL1)
                 pm10Score = 100;
-            else if (pm10Value <= PM10_NORMAL)
+            else if (pm10Value <= PM10_LEVEL2)
+                pm10Score = 85;
+            else if (pm10Value <= PM10_LEVEL3)
                 pm10Score = 70;
-            else if (pm10Value <= PM10_BAD)
+            else if (pm10Value <= PM10_LEVEL4)
+                pm10Score = 55;
+            else if (pm10Value <= PM10_LEVEL5)
                 pm10Score = 40;
-            else
+            else if (pm10Value <= PM10_LEVEL6)
+                pm10Score = 25;
+            else if (pm10Value <= PM10_LEVEL7)
                 pm10Score = 10;
+            else
+                pm10Score = 5;
         }
 
-        Integer pm20Value = airPollution.getPm25Value();
+        Integer pm25Value = airPollution.getPm25Value();
 
-        if (pm20Value != null) {
-            if (airPollution.getPm25Value() <= PM25_GOOD)
+        if (pm25Value != null) {
+            if (pm25Value <= PM25_LEVEL1)
                 pm25Score = 100;
-            else if (airPollution.getPm25Value() <= PM25_NORMAL)
+            else if (pm25Value <= PM25_LEVEL2)
+                pm25Score = 85;
+            else if (pm25Value <= PM25_LEVEL3)
                 pm25Score = 70;
-            else if (airPollution.getPm25Value() <= PM25_BAD)
+            else if (pm25Value <= PM25_LEVEL4)
+                pm25Score = 55;
+            else if (pm25Value <= PM25_LEVEL5)
                 pm25Score = 40;
-            else
+            else if (pm25Value <= PM25_LEVEL6)
+                pm25Score = 25;
+            else if (pm25Value <= PM25_LEVEL7)
                 pm25Score = 10;
+            else
+                pm25Score = 5;
         }
 
         scoreResultDto.setPm10Result(pm10Score);
