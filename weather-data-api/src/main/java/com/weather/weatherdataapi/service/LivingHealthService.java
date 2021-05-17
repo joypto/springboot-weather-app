@@ -60,8 +60,6 @@ public class LivingHealthService {
             }
 
             livingHealthInfoRepository.save(livingHealthInfo);
-            LivingHealthRedisVO livingHealthRedisVO = new LivingHealthRedisVO(livingHealthInfo);
-            livingHealthRedisRepository.save(livingHealthRedisVO);
 
         }
         log.info("생활기상지수 데이터를 성공적으로 갱신하였습니다.");
@@ -189,7 +187,6 @@ public class LivingHealthService {
 
         if (queriedLatestOneInfo.isPresent()) {
 
-            /* 모든 지역의 코로나 정보를 캐싱합니다. */
             List<LivingHealthInfo> latestInfoList = livingHealthInfoRepository.findAllByDate(queriedLatestOneInfo.get().getDate());
 
             livingHealthRedisRepository.deleteAll();
