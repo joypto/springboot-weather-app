@@ -6,6 +6,7 @@ import com.weather.weatherdataapi.exception.repository.info.InvalidCoronaInfoExc
 import com.weather.weatherdataapi.exception.repository.redis.InvalidCoronaRedisVOException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.info.CoronaResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
@@ -48,14 +49,13 @@ public class CoronaService {
         return cachedAllNewCaseCount;
     }
 
-    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto totalDataResponseDto) {
         CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
+        Integer allNewCaseCount = getAllNewCaseCount();
 
-        weatherDataResponseDto.setCoronaCurrentBigRegionNewCaseCount(coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount());
+        setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
 
-        weatherDataResponseDto.setCoronaAllNewCaseCount(getAllNewCaseCount());
-
-        convertInfoToScore(scoreResultDto);
+        convertInfoToScore(scoreResultDto, allNewCaseCount);
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -118,20 +118,26 @@ public class CoronaService {
         log.info("코로나 데이터를 성공적으로 갱신하였습니다.");
     }
 
-    public void convertInfoToScore(ScoreResultDto scoreResultDto) {
+    private void setInfo(TotalDataResponseDto totalDataResponseDto, CoronaInfo coronaInfo, Integer allNewCaseCount) {
+        Integer bigRegionNewCaseCount = coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount();
+        CoronaResponseDto coronaResponseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
+
+        totalDataResponseDto.setCorona(coronaResponseDto);
+    }
+
+    private void convertInfoToScore(ScoreResultDto scoreResultDto, Integer allNewCaseCount) {
         final int CORONA_LEVEL15 = 300;
         final int CORONA_LEVEL2 = 400;
         final int CORONA_LEVEL25 = 800;
 
-        int newCaseCount = getAllNewCaseCount();
         int score = 0;
 
         // 코로나 단계별로 점수를 반환합니다.
-        if (newCaseCount <= CORONA_LEVEL15)
+        if (allNewCaseCount <= CORONA_LEVEL15)
             score = 100;
-        else if (newCaseCount <= CORONA_LEVEL2)
+        else if (allNewCaseCount <= CORONA_LEVEL2)
             score = 70;
-        else if (newCaseCount <= CORONA_LEVEL25)
+        else if (allNewCaseCount <= CORONA_LEVEL25)
             score = 40;
         else
             score = 10;
