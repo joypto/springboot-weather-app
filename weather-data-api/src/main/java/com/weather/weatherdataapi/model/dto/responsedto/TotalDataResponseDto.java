@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.dto.responsedto;
 
+import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
@@ -19,9 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 public class TotalDataResponseDto {
 
-    private BigRegion bigRegion;
-
-    private SmallRegion smallRegion;
+    private RegionDto region;
 
     private LivingHealthInfo livingHealthWeather;
 
@@ -38,21 +37,18 @@ public class TotalDataResponseDto {
     private List<Integer> dayScoreList;
 
     public TotalDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion) {
-        this.bigRegion = bigRegion;
-        this.smallRegion = smallRegion;
+        this.region = new RegionDto(bigRegion.getBigRegionName(), smallRegion.getSmallRegionName());
     }
 
     public TotalDataResponseDto(BigRegion bigRegion, SmallRegion smallRegion, List<Integer> dayScoreList) {
-        this.bigRegion = bigRegion;
-        this.smallRegion = smallRegion;
+        this.region = new RegionDto(bigRegion.getBigRegionName(), smallRegion.getSmallRegionName());
         this.dayScoreList = dayScoreList;
     }
 
     @Override
     public String toString() {
         return "TotalDataResponseDto{" +
-                "bigRegion=" + bigRegion +
-                ", smallRegion=" + smallRegion +
+                "region=" + region +
                 ", livingHealthWeather=" + livingHealthWeather +
                 ", weekInfo=" + weekInfo +
                 ", dayInfo=" + dayInfo +
