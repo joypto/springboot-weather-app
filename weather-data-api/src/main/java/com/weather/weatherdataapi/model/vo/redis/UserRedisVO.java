@@ -6,8 +6,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
-import java.util.List;
-
 @Getter
 @RedisHash("user")
 @NoArgsConstructor
@@ -17,9 +15,7 @@ public class UserRedisVO {
 
     private Long id;
 
-    private String latestRequestRegion;
-
-    private List<String> oftenSeenRegions;
+    private Long latestRequestRegionId;
 
     private int temp;
 
@@ -49,8 +45,7 @@ public class UserRedisVO {
         this.identification = user.getIdentification();
 
         this.id = user.getId();
-        this.latestRequestRegion = user.getLatestRequestRegion();
-        this.oftenSeenRegions = user.getOftenSeenRegions();
+        this.latestRequestRegionId = user.getLatestRequestRegion() != null ? user.getLatestRequestRegion().getId() : null;
         this.temp = user.getTemp();
         this.rainPer = user.getRainPer();
         this.weather = user.getWeather();
