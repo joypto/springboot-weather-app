@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 @Getter
 @RedisHash("small_region")
@@ -13,7 +14,8 @@ public class SmallRegionRedisVO {
     @Id
     private String admCode;
 
-    private long id;
+    @Indexed
+    private long smallRegionId;
 
     private Long big_region_id;
 
@@ -26,7 +28,7 @@ public class SmallRegionRedisVO {
     public SmallRegionRedisVO(SmallRegion smallRegion) {
         this.admCode = smallRegion.getAdmCode();
 
-        this.id = smallRegion.getId();
+        this.smallRegionId = smallRegion.getId();
         this.big_region_id = smallRegion.getBigRegion() == null ? null : smallRegion.getBigRegion().getId();
         this.smallRegionName = smallRegion.getSmallRegionName();
         this.longitude = smallRegion.getLongitude();
@@ -37,7 +39,7 @@ public class SmallRegionRedisVO {
     public String toString() {
         return "SmallRegionRedisVO{" +
                 "admCode='" + admCode + '\'' +
-                ", id=" + id +
+                ", smallRegionId=" + smallRegionId +
                 ", big_region_id=" + big_region_id +
                 ", smallRegionName='" + smallRegionName + '\'' +
                 ", longitude='" + longitude + '\'' +

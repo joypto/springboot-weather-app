@@ -71,7 +71,6 @@ public class UserController {
         User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
-        userService.updateOftenSeenRegions(user, regionRequestDto);
         userService.updateOftenSeenRegionRefs(user, regionRequestDto);
 
         return ResponseEntity.ok()

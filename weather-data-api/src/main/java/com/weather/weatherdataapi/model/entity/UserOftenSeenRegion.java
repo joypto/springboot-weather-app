@@ -20,7 +20,7 @@ public class UserOftenSeenRegion extends Timestamped {
     private Long id;
 
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "user_id")
     private User user;
 
