@@ -103,13 +103,13 @@ public class RegionService {
     }
 
     public BigRegion getBigRegionById(Long id) {
-        BigRegionRedisVO bigRegionRedisVO = bigRegionRedisRepository.findById(id);
+        BigRegionRedisVO bigRegionRedisVO = bigRegionRedisRepository.findByBigRegionId(id);
         BigRegion bigRegion = new BigRegion(bigRegionRedisVO);
         return bigRegion;
     }
 
     public SmallRegion getSmallRegionById(Long id) {
-        SmallRegionRedisVO smallRegionRedisVO = smallRegionRedisRepository.findById(id);
+        SmallRegionRedisVO smallRegionRedisVO = smallRegionRedisRepository.findBySmallRegionId(id);
 
         BigRegion bigRegion = getBigRegionById(smallRegionRedisVO.getBig_region_id());
         SmallRegion smallRegion = new SmallRegion(smallRegionRedisVO, bigRegion);

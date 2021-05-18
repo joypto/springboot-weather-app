@@ -99,9 +99,8 @@ public class UserService {
     public UserRegionResponseDto getMyRegion(User user, CoordinateDto coordinateDto) {
         RegionDto currentRegion = regionService.getRegionName(coordinateDto);
 
-        // FIXME: 공백으로 잘라서 지역을 얻어내는 것은 위험하니까, User에서 Region을 참조하는 FK를 하나 생성해두는건 어떨까?
         SmallRegion latestRequestRegion = user.getLatestRequestRegion();
-        RegionDto latestRequestRegionDto = new RegionDto(latestRequestRegion.getBigRegion().getBigRegionName(), latestRequestRegion.getSmallRegionName());
+        RegionDto latestRequestRegionDto = latestRequestRegion == null ? null : new RegionDto(latestRequestRegion.getBigRegion().getBigRegionName(), latestRequestRegion.getSmallRegionName());
 
         List<UserOftenSeenRegion> oftenSeenRegions = userOftenSeenRegionRepository.findAllByUser(user);
 
