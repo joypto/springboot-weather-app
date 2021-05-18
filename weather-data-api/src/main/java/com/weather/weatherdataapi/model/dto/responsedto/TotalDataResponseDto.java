@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.model.dto.responsedto;
 
 import com.weather.weatherdataapi.model.dto.RegionDto;
+import com.weather.weatherdataapi.model.dto.responsedto.info.CoronaResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
@@ -30,9 +31,7 @@ public class TotalDataResponseDto {
 
     private AirPollutionInfo airPollution;
 
-    private Integer coronaCurrentBigRegionNewCaseCount;
-
-    private Integer coronaAllNewCaseCount;
+    private CoronaResponseDto corona;
 
     private List<Integer> dayScoreList;
 
@@ -53,8 +52,7 @@ public class TotalDataResponseDto {
                 ", weekInfo=" + weekInfo +
                 ", dayInfo=" + dayInfo +
                 ", airPollution=" + airPollution +
-                ", coronaCurrentBigRegionNewCaseCount=" + coronaCurrentBigRegionNewCaseCount +
-                ", coronaAllNewCaseCount=" + coronaAllNewCaseCount +
+                ", corona=" + corona +
                 ", dayScoreList=" + dayScoreList +
                 '}';
     }
