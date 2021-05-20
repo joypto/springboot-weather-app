@@ -96,6 +96,7 @@ public class WeatherApi {
             List<String> hour_weatherDes = new ArrayList<>();
             List<String> hour_rainPer = new ArrayList<>();
             List<String> hour_time = new ArrayList<>();
+            List<String> hour_time_dump = new ArrayList<>();
             List<String> windSpeed = new ArrayList<>();
             List<String> weatherIcon = new ArrayList<>();
             List<String> hour_weatherIcon = new ArrayList<>();
@@ -140,7 +141,6 @@ public class WeatherApi {
 
             // 하루 시간별 날씨 파싱
             array = (JSONArray) jsonObj.get("hourly");
-
             for (int i = 0; i < 48; i++) {
                 jObj = (JSONObject) array.get(i);
                 // 기온
@@ -160,18 +160,21 @@ public class WeatherApi {
                 hour_weatherDes.add(jObj2b.get("description").toString());
                 hour_weatherIcon.add(jObj2b.get("icon").toString());
             }
+            hour_time_dump.add(hour_time.get(0));
+
             WeatherDayInfo dayInfo = WeatherDayInfo.builder()
                     .rainPer(hour_rainPer)
                     .tmp(hour_tmp)
                     .weather(hour_weather)
                     .weatherDes(hour_weatherDes)
-                    .dailyTime(hour_time)
+                    .dailyTime(hour_time_dump)
                     .weatherIcon(hour_weatherIcon)
                     .build();
 
             // 파싱한 값 저장, 매핑
             dayInfo.setSmallRegion(wantRegion);
             dayInfoRepository.save(dayInfo);
+            dayInfo.setDailyTime(hour_time);
             weatherDataResponseDto.setDayInfo(dayInfo);
             WeatherDayRedisVO dayCache = new WeatherDayRedisVO(dayInfo,18000);
             weatherDayRedisRepository.save(dayCache);
