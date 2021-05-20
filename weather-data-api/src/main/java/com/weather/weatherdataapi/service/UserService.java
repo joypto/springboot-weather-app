@@ -216,9 +216,9 @@ public class UserService {
         return userRepository.findByIdentification(identification);
     }
 
-    public void saveUserDevice(String identification, RegionDto regionDto, String deviceInfo) {
-        String requestRegion = regionDto.getBigRegionName() + " " + regionDto.getSmallRegionName();
-        UserDevice userDevice = new UserDevice(identification, requestRegion, deviceInfo);
+    @Transactional
+    public void saveUserDevice(User user, SmallRegion requestRegion, String deviceInfo) {
+        UserDevice userDevice = new UserDevice(user, requestRegion, deviceInfo);
         userDeviceRepository.save(userDevice);
     }
 
