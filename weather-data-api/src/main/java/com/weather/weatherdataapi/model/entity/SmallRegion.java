@@ -47,7 +47,7 @@ public class SmallRegion {
     }
 
     public SmallRegion(SmallRegionRedisVO smallRegionRedisVO, BigRegion bigRegion) {
-        this.id = smallRegionRedisVO.getSmallRegionId();
+        this.id = smallRegionRedisVO.getId();
         this.bigRegion = bigRegion;
         this.smallRegionName = smallRegionRedisVO.getSmallRegionName();
         this.admCode = smallRegionRedisVO.getAdmCode();
