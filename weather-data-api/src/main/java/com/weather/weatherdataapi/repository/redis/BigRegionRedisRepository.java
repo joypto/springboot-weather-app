@@ -5,6 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface BigRegionRedisRepository extends CrudRepository<BigRegionRedisVO, String> {
 
-    BigRegionRedisVO findById(Long id);
-
 }

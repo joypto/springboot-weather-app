@@ -15,7 +15,7 @@ public class UserRedisVO {
 
     private Long id;
 
-    private Long latestRequestRegionId;
+    private String latestRequestRegionAdmCode;
 
     private int temp;
 
@@ -45,7 +45,7 @@ public class UserRedisVO {
         this.identification = user.getIdentification();
 
         this.id = user.getId();
-        this.latestRequestRegionId = user.getLatestRequestRegion() != null ? user.getLatestRequestRegion().getId() : null;
+        this.latestRequestRegionAdmCode = user.getLatestRequestRegion() != null ? user.getLatestRequestRegion().getAdmCode() : null;
         this.temp = user.getTemp();
         this.rainPer = user.getRainPer();
         this.weather = user.getWeather();
