@@ -51,7 +51,7 @@ jobs:
       # 배포할 zip 파일을 s3에 업로드
       - name: Upload to S3
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://theweatherlevelapi/$PROJECT_NAME/$GITHUB_SHA.zip
-
+        working-directory: ./weather-data-api
 
       # 코드 배포 시작
       - name: Code Deploy

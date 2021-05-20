@@ -49,7 +49,7 @@ public class BigRegion {
     }
 
     public BigRegion(BigRegionRedisVO regionRedisVO) {
-        this.id = regionRedisVO.getId();
+        this.id = regionRedisVO.getBigRegionId();
         this.bigRegionName = regionRedisVO.getBigRegionName();
         this.admCode = regionRedisVO.getAdmCode();
         this.longitude = regionRedisVO.getLongitude();

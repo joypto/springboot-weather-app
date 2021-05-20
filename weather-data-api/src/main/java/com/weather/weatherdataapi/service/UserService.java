@@ -23,6 +23,7 @@ import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -41,9 +42,8 @@ public class UserService {
 
     public User createNewUser() {
         ScoreWeightDto defaultScoreWeightDto = ScoreWeightDto.getDefaultDto();
-        RegionRequestDto regionRequestDto = RegionRequestDto.getDefaultDto();
 
-        return createNewUser(defaultScoreWeightDto, regionRequestDto);
+        return createNewUser(defaultScoreWeightDto);
     }
 
     public User createNewUser(ScoreWeightDto scoreWeightDto) {
@@ -58,9 +58,10 @@ public class UserService {
         String newIdentification = "wl" + ZonedDateTime.now().toString() + UUID.randomUUID();
 
         User newUser = new User(newIdentification, scoreWeightDto);
-        newUser.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
 
         userRepository.save(newUser);
+
+        updateOftenSeenRegionRefs(newUser, regionRequestDto);
 
         return newUser;
     }
@@ -98,22 +99,12 @@ public class UserService {
     public UserRegionResponseDto getMyRegion(User user, CoordinateDto coordinateDto) {
         RegionDto currentRegion = regionService.getRegionName(coordinateDto);
 
-        // FIXME: 공백으로 잘라서 지역을 얻어내는 것은 위험하니까, User에서 Region을 참조하는 FK를 하나 생성해두는건 어떨까?
-        String latestRequestRegionName = user.getLatestRequestRegion();
-        RegionDto latestRequestRegion;
+        SmallRegion latestRequestRegion = user.getLatestRequestRegion();
+        RegionDto latestRequestRegionDto = latestRequestRegion == null ? null : new RegionDto(latestRequestRegion.getBigRegion().getBigRegionName(), latestRequestRegion.getSmallRegionName());
 
-        if (StringUtils.hasText(latestRequestRegionName)) {
-            // FIXME: 공백으로 나누는 것이 위험해보인다. smallRegion에는 공백으로 나누어진 문자열을 가지는 지역도 있기 때문...
-            String[] regions = latestRequestRegionName.split(" ");
-            latestRequestRegion = new RegionDto(regions[0], regions[1]);
-        } else {
-            latestRequestRegion = new RegionDto(currentRegion);
-        }
+        List<UserOftenSeenRegion> oftenSeenRegions = userOftenSeenRegionRepository.findAllByUser(user);
 
-        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto();
-        userRegionResponseDto.setCurrentRegion(currentRegion);
-        userRegionResponseDto.setLatestRequestRegion(latestRequestRegion);
-        userRegionResponseDto.setOftenSeenRegions(user.getOftenSeenRegions());
+        UserRegionResponseDto userRegionResponseDto = new UserRegionResponseDto(user.getIdentification(), currentRegion, latestRequestRegionDto, oftenSeenRegions);
 
         return userRegionResponseDto;
     }
@@ -127,22 +118,8 @@ public class UserService {
     }
 
     @Transactional
-    public void updateCurrentRegion(User user, String currentRegion) {
-        user.setLatestRequestRegion(currentRegion);
-
-        refreshCache(user);
-    }
-
-    @Transactional
     public void updateCurrentRegion(User user, SmallRegion currentRegion) {
-        user.setLatestRequestRegionRef(currentRegion);
-
-        refreshCache(user);
-    }
-
-    @Transactional
-    public void updateOftenSeenRegions(User user, RegionRequestDto regionRequestDto) {
-        user.setOftenSeenRegions(regionRequestDto.getOftenSeenRegions());
+        user.setLatestRequestRegion(currentRegion);
 
         refreshCache(user);
     }
@@ -152,12 +129,9 @@ public class UserService {
 
         userOftenSeenRegionRepository.deleteAllByUser(user);
 
-        for (String regionText : regionRequestDto.getOftenSeenRegions()) {
-            // FIXME: region name을 이렇게 얻어내는 것은 별로 좋지 않아보인다.
-            // regionName을 주고받을 때에는 전부 regionDto에 맞게 주고받도록 통일시킬 필요가..
-            int whitespacePosition = regionText.indexOf(' ');
-            String bigRegionName = regionText.substring(0, whitespacePosition);
-            String smallRegionName = regionText.substring(whitespacePosition + 1);
+        for (RegionDto regionDto : regionRequestDto.getOftenSeenRegions()) {
+            String bigRegionName = regionDto.getBigRegionName();
+            String smallRegionName = regionDto.getSmallRegionName();
 
             SmallRegion smallRegion = regionService.getSmallRegionByName(bigRegionName, smallRegionName);
 
@@ -179,7 +153,9 @@ public class UserService {
         Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
 
         if (queriedUserRedisVO.isPresent()) {
-            User user = new User(queriedUserRedisVO.get());
+            SmallRegion latestRequestRegion = regionService.getSmallRegionById(queriedUserRedisVO.get().getLatestRequestRegionId());
+
+            User user = new User(queriedUserRedisVO.get(), latestRequestRegion);
             return Optional.of(user);
         }
 
