@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @NoArgsConstructor
 @Entity
-public class UserDevice extends Timestamped{
+public class UserDevice extends Timestamped {
 
     @JsonIgnore
     @Id
@@ -15,17 +15,19 @@ public class UserDevice extends Timestamped{
     @Column(name = "user_device_id")
     private Long id;
 
-    @Column
-    private String identification;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @ManyToOne
+    @JoinColumn(name = "request_region_id")
+    private SmallRegion requestRegion;
 
     @Column
     private String deviceInfo;
 
-    @Column
-    private String requestRegion;
-
-    public UserDevice(String identification, String requestRegion, String deviceInfo) {
-        this.identification = identification;
+    public UserDevice(User user, SmallRegion requestRegion, String deviceInfo) {
+        this.user = user;
         this.requestRegion = requestRegion;
         this.deviceInfo = deviceInfo;
     }
