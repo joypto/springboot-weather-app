@@ -3,6 +3,8 @@ package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea;
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -20,10 +22,16 @@ public class AirKoreaAirPollutionApi {
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     public AirKoreaAirPollutionApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/B552584/ArpltnInforInqireSvc/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
                 .build();
 
         service = retrofit.create(AirKoreaAirPollutionService.class);
