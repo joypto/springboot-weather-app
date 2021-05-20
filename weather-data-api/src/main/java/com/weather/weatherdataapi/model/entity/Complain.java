@@ -20,8 +20,9 @@ public class Complain extends Timestamped {
     @Column(name = "complain_id")
     private Long id;
 
-    @Column
-    private String identification;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Column
     private String title;
@@ -29,8 +30,8 @@ public class Complain extends Timestamped {
     @Column
     private String contents;
 
-    public Complain(ComplainReqeustDto complainReqeustDto, String identification) {
-        this.identification = identification;
+    public Complain(ComplainReqeustDto complainReqeustDto, User user) {
+        this.user = user;
         this.title = complainReqeustDto.getTitle();
         this.contents = complainReqeustDto.getContents();
     }
