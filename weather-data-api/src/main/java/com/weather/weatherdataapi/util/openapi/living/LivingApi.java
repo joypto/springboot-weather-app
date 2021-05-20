@@ -6,6 +6,8 @@ import com.weather.weatherdataapi.util.openapi.OpenApiUtil;
 import com.weather.weatherdataapi.util.openapi.living.uv.UvItem;
 import com.weather.weatherdataapi.util.openapi.living.uv.UvResponse;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -26,10 +28,16 @@ public class LivingApi {
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     public LivingApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/1360000/LivingWthrIdxService01/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
                 .build();
 
         service = retrofit.create(LivingService.class);
