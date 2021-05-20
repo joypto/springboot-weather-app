@@ -15,7 +15,7 @@ public class SmallRegionRedisVO {
 
     private long id;
 
-    private Long big_region_id;
+    private String bigRegionAdmCode;
 
     private String smallRegionName;
 
@@ -27,7 +27,7 @@ public class SmallRegionRedisVO {
         this.admCode = smallRegion.getAdmCode();
 
         this.id = smallRegion.getId();
-        this.big_region_id = smallRegion.getBigRegion() == null ? null : smallRegion.getBigRegion().getId();
+        this.bigRegionAdmCode = smallRegion.getBigRegion() == null ? null : smallRegion.getBigRegion().getAdmCode();
         this.smallRegionName = smallRegion.getSmallRegionName();
         this.longitude = smallRegion.getLongitude();
         this.latitude = smallRegion.getLatitude();
@@ -38,7 +38,7 @@ public class SmallRegionRedisVO {
         return "SmallRegionRedisVO{" +
                 "admCode='" + admCode + '\'' +
                 ", id=" + id +
-                ", big_region_id=" + big_region_id +
+                ", bigRegionAdmCode=" + bigRegionAdmCode +
                 ", smallRegionName='" + smallRegionName + '\'' +
                 ", longitude='" + longitude + '\'' +
                 ", latitude='" + latitude + '\'' +

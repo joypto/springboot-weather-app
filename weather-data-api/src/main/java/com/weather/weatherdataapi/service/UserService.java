@@ -153,7 +153,7 @@ public class UserService {
         Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
 
         if (queriedUserRedisVO.isPresent()) {
-            SmallRegion latestRequestRegion = regionService.getSmallRegionById(queriedUserRedisVO.get().getLatestRequestRegionId());
+            SmallRegion latestRequestRegion = regionService.getSmallRegionByAdmCode(queriedUserRedisVO.get().getLatestRequestRegionAdmCode());
 
             User user = new User(queriedUserRedisVO.get(), latestRequestRegion);
             return Optional.of(user);
