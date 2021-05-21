@@ -1,6 +1,7 @@
 package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
+import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.info.CoronaResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
@@ -13,7 +14,6 @@ import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
-import org.json.simple.parser.ParseException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,12 +34,9 @@ public class DevController {
     private final LivingHealthService livingHealthService;
     private final LivingHealthServiceV2 livingHealthServiceV2;
 
-    @GetMapping("/dev/api/air_pollution/data")
-    public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
-        CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
-        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
-
-        SmallRegion smallRegion = regionService.getSmallRegionByName(reverseGeocodingResponseDto.getBigRegion(), reverseGeocodingResponseDto.getSmallRegion());
+    @GetMapping("/dev/api/air_pollution")
+    public AirPollutionInfo getAirPollution(RegionDto regionDto) {
+        SmallRegion smallRegion = regionService.getSmallRegionByName(regionDto.getBigRegionName(), regionDto.getSmallRegionName());
 
         AirPollutionInfo airPollution = airPollutionService.getInfoBySmallRegion(smallRegion);
 
@@ -92,7 +89,7 @@ public class DevController {
     }
 
     @GetMapping("/dev/api/reversegeo")
-    public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException {
+    public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) {
         try {
             return reverseGeoCodingApi.reverseGeocoding(coordinateDto);
         } catch (IndexOutOfBoundsException e) {
