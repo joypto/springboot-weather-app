@@ -85,6 +85,12 @@ public class DevController {
         }
     }
 
+    @GetMapping("/dev/api/reverse_geocoding")
+    public ReverseGeocodingResponseDto getReverseGeocoding(CoordinateDto coordinateDto) {
+        ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
+        return reverseGeocodingResponseDto;
+    }
+
     @GetMapping("/dev/api/reversegeo")
     public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException {
         try {
