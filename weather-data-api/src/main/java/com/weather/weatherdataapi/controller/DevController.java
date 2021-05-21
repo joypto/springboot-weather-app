@@ -2,9 +2,13 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.info.CoronaResponseDto;
+import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
+import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.service.AirPollutionService;
+import com.weather.weatherdataapi.service.CoronaService;
 import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
@@ -21,10 +25,13 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class DevController {
 
-    private final ReverseGeoCodingApi reverseGeoCodingApi;
     private final RegionService regionService;
-    private final AirPollutionService airPollutionService;
+
+    private final ReverseGeoCodingApi reverseGeoCodingApi;
     private final KakaoGeoApi kakaoGeoApi;
+
+    private final AirPollutionService airPollutionService;
+    private final CoronaService coronaService;
 
     @GetMapping("/dev/api/air_pollution/data")
     public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
@@ -36,6 +43,18 @@ public class DevController {
         AirPollutionInfo airPollution = airPollutionService.getInfoBySmallRegion(smallRegion);
 
         return airPollution;
+    }
+
+    @GetMapping("/dev/api/corona")
+    public CoronaResponseDto getCorona(@RequestParam("bigRegionName") String bigRegionName) {
+        BigRegion bigRegion = regionService.getBigRegionByName(bigRegionName);
+
+        CoronaInfo coronaInfo = coronaService.getInfoByBigRegion(bigRegion);
+        Integer bigRegionNewCaseCount = coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount();
+        Integer allNewCaseCount = coronaService.getAllNewCaseCount();
+
+        CoronaResponseDto responseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
+        return responseDto;
     }
 
     @GetMapping("/dev/api/transcoord")
