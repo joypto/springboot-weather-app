@@ -52,7 +52,7 @@ public class TotalDataService {
     @Transactional
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto, String deviceInfo) throws IOException {
 
-        User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
+        User user = userService.getOrCreateUserByIdentification(identification);
         SmallRegion currentRequestRegion = regionService.getSmallRegionByDto(regionDto);
 
         userService.updateCurrentRegion(user, currentRequestRegion);

@@ -10,11 +10,9 @@ import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.model.entity.UserDevice;
 import com.weather.weatherdataapi.model.entity.UserOftenSeenRegion;
-import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
 import com.weather.weatherdataapi.repository.UserDeviceRepository;
 import com.weather.weatherdataapi.repository.UserOftenSeenRegionRepository;
 import com.weather.weatherdataapi.repository.UserRepository;
-import com.weather.weatherdataapi.repository.redis.UserRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +31,6 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final UserRedisRepository userRedisRepository;
     private final UserOftenSeenRegionRepository userOftenSeenRegionRepository;
     private final UserDeviceRepository userDeviceRepository;
     private final RegionService regionService;
@@ -78,18 +75,6 @@ public class UserService {
         return queriedUser.get();
     }
 
-    public User getOrCreateGuaranteedNonCachedUserByIdentification(String identification) {
-        if (StringUtils.hasText(identification) == false)
-            return createNewUser();
-
-        Optional<User> queriedUser = getGuaranteedNonCachedUser(identification);
-
-        if (queriedUser.isPresent() == false)
-            return createNewUser();
-
-        return queriedUser.get();
-    }
-
     /**
      * 해당 User과 관련된 지역 정보를 반환합니다.
      *
@@ -113,15 +98,11 @@ public class UserService {
     @Transactional
     public void updatePreference(User user, ScoreWeightDto scoreWeightDto) {
         user.updateUserPreference(scoreWeightDto);
-
-        refreshCache(user);
     }
 
     @Transactional
     public void updateCurrentRegion(User user, SmallRegion currentRegion) {
         user.setLatestRequestRegion(currentRegion);
-
-        refreshCache(user);
     }
 
     @Transactional
@@ -140,7 +121,6 @@ public class UserService {
             userOftenSeenRegionRepository.save(userOftenSeenRegion);
         }
 
-        refreshCache(user);
     }
 
     public HttpHeaders createHeadersWithUserIdentification(User user) {
@@ -150,69 +130,6 @@ public class UserService {
     }
 
     private Optional<User> getUserByIdentification(String identification) {
-        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
-
-        if (queriedUserRedisVO.isPresent()) {
-            SmallRegion latestRequestRegion = regionService.getSmallRegionByAdmCode(queriedUserRedisVO.get().getLatestRequestRegionAdmCode());
-
-            User user = new User(queriedUserRedisVO.get(), latestRequestRegion);
-            return Optional.of(user);
-        }
-
-        Optional<User> queriedUser = userRepository.findByIdentification(identification);
-
-        if (queriedUser.isPresent())
-            refreshCache(queriedUser.get());
-
-        return queriedUser;
-    }
-
-    /**
-     * 특정 user의 캐시를 갱신합니다.
-     *
-     * @param user 갱신할 대상인 user 입니다.
-     */
-    private void refreshCache(User user) {
-        if (user == null)
-            return;
-
-        removeCache(user.getIdentification());
-
-        UserRedisVO userRedisVO = new UserRedisVO(user);
-        userRedisRepository.save(userRedisVO);
-    }
-
-    private void removeCache(String identification) {
-        Optional<UserRedisVO> queriedUserRedisVO = userRedisRepository.findById(identification);
-
-        if (queriedUserRedisVO.isPresent())
-            userRedisRepository.deleteById(identification);
-    }
-
-    /**
-     * 캐시되지 않은 user 객체를 반환받습니다.
-     * DB에 접근해 값을 직접 수정하기 위해서는 반드시 이 함수로 반환받은 user객체를 사용해야 변경될 수 있음을 보장받을 수 있습니다.
-     * 이 user객체가 만약 redis에서 가져온 캐시된 유저 정보라면, 동일한 유저 정보를 DB에서 조회해옵니다.
-     * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
-     *
-     * @return 캐시되지 않은 것이 보장된 user 객체입니다.
-     */
-    private Optional<User> getGuaranteedNonCachedUser(User user) {
-        return userRepository.findByIdentification(user.getIdentification());
-    }
-
-    /**
-     * 캐시되지 않은 user 객체를 반환받습니다.
-     * DB에 접근해 값을 직접 수정하기 위해서는 반드시 이 함수로 반환받은 user객체를 사용해야 변경될 수 있음을 보장받을 수 있습니다.
-     * 이 user객체가 만약 redis에서 가져온 캐시된 유저 정보라면, 동일한 유저 정보를 DB에서 조회해옵니다.
-     * 만약 이 user정보가 캐시된 값이 아니라면, 아무 처리도 하지 않고 전달받은 user를 다시 반환합니다.
-     *
-     * @return 캐시되지 않은 것이 보장된 user 객체입니다.
-     */
-    private Optional<User> getGuaranteedNonCachedUser(String identification) {
-        if (StringUtils.hasText(identification) == false)
-            return Optional.empty();
-
         return userRepository.findByIdentification(identification);
     }
 
