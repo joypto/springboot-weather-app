@@ -2,11 +2,8 @@ package com.weather.weatherdataapi.controller;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
-import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.repository.BigRegionRepository;
-import com.weather.weatherdataapi.repository.SmallRegionRepository;
 import com.weather.weatherdataapi.service.AirPollutionService;
 import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
@@ -29,7 +26,7 @@ public class DevController {
     private final AirPollutionService airPollutionService;
     private final KakaoGeoApi kakaoGeoApi;
 
-    @GetMapping("/api/air_pollution/data")
+    @GetMapping("/dev/api/air_pollution/data")
     public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
         CoordinateDto coordinateDto = new CoordinateDto(longitude, latitude);
         ReverseGeocodingResponseDto reverseGeocodingResponseDto = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
@@ -41,7 +38,7 @@ public class DevController {
         return airPollution;
     }
 
-    @GetMapping("/api/transcoord")
+    @GetMapping("/dev/api/transcoord")
     public String getTranscoord(@RequestParam String x, @RequestParam String y) {
         try {
             KakaoGeoTranscoordResponseDocument document = kakaoGeoApi.convertWGS84ToWTM(x, y);
@@ -52,8 +49,8 @@ public class DevController {
         }
     }
 
-    @GetMapping("/api/reversegeo")
-    public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException{
+    @GetMapping("/dev/api/reversegeo")
+    public ReverseGeocodingResponseDto getRegionName(CoordinateDto coordinateDto) throws ParseException, IndexOutOfBoundsException {
         try {
             return reverseGeoCodingApi.reverseGeocoding(coordinateDto);
         } catch (IndexOutOfBoundsException e) {
