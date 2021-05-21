@@ -19,10 +19,11 @@ public class ComplainController {
 
     @PostMapping("/api/complains")
     public ResponseEntity<String> postComplain(@RequestBody ComplainReqeustDto complainReqeustDto, @RequestHeader(value = Global.IDENTIFICATION_TEXT, required = false) String identification) {
+        complainService.postComplain(complainReqeustDto, identification);
+
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(Global.IDENTIFICATION_TEXT, identification);
 
-        complainService.postComplain(complainReqeustDto, identification);
         return ResponseEntity.ok()
                 .headers(responseHeaders)
                 .body("Success");

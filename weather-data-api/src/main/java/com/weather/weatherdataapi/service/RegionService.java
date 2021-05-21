@@ -102,18 +102,51 @@ public class RegionService {
         }
     }
 
-    public BigRegion getBigRegionById(Long id) {
-        BigRegionRedisVO bigRegionRedisVO = bigRegionRedisRepository.findByBigRegionId(id);
-        BigRegion bigRegion = new BigRegion(bigRegionRedisVO);
-        return bigRegion;
+    public BigRegion getBigRegionByAdmCode(String admCode) {
+        Optional<BigRegionRedisVO> queriedRedisVO = bigRegionRedisRepository.findById(admCode);
+
+        BigRegionRedisVO bigRegionRedisVO = null;
+
+        // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
+        if (queriedRedisVO.isPresent() == true) {
+            bigRegionRedisVO = queriedRedisVO.get();
+            BigRegion bigRegion = new BigRegion(bigRegionRedisVO);
+
+            return bigRegion;
+        }
+        // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
+        // 조회한 데이터는 이제부터 캐시됩니다.
+        else {
+            BigRegion bigRegion = bigRegionRepository.findByAdmCode(admCode).orElseThrow(() -> new InvalidBigRegionException());
+            bigRegionRedisVO = new BigRegionRedisVO(bigRegion);
+            bigRegionRedisRepository.save(bigRegionRedisVO);
+
+            return bigRegion;
+        }
     }
 
-    public SmallRegion getSmallRegionById(Long id) {
-        SmallRegionRedisVO smallRegionRedisVO = smallRegionRedisRepository.findBySmallRegionId(id);
+    public SmallRegion getSmallRegionByAdmCode(String admCode) {
+        SmallRegionRedisVO smallRegionRedisVO = null;
+        Optional<SmallRegionRedisVO> queriedSmallRegionRedisVO = smallRegionRedisRepository.findById(admCode);
 
-        BigRegion bigRegion = getBigRegionById(smallRegionRedisVO.getBig_region_id());
-        SmallRegion smallRegion = new SmallRegion(smallRegionRedisVO, bigRegion);
-        return smallRegion;
+        // 캐시된 데이터가 있다면 캐시된 데이터를 우선적으로 사용합니다.
+        if (queriedSmallRegionRedisVO.isPresent() == true) {
+            smallRegionRedisVO = queriedSmallRegionRedisVO.get();
+
+            BigRegion bigRegion = getBigRegionByAdmCode(smallRegionRedisVO.getBigRegionAdmCode());
+            SmallRegion smallRegion = new SmallRegion(smallRegionRedisVO, bigRegion);
+
+            return smallRegion;
+        }
+        // 그렇지 않다면 DB에서 조회한 데이터를 사용합니다.
+        // 조회한 데이터는 이제부터 캐시됩니다.
+        else {
+            SmallRegion smallRegion = smallRegionRepository.findByAdmCode(admCode).orElseThrow(() -> new InvalidSmallRegionException());
+            smallRegionRedisVO = new SmallRegionRedisVO(smallRegion);
+            smallRegionRedisRepository.save(smallRegionRedisVO);
+
+            return smallRegion;
+        }
     }
 
     private String getBigRegionAdmCodeByName(String bigRegionName) {

@@ -5,6 +5,4 @@ import org.springframework.data.repository.CrudRepository;
 
 public interface SmallRegionRedisRepository extends CrudRepository<SmallRegionRedisVO, String> {
 
-    SmallRegionRedisVO findBySmallRegionId(Long id);
-
 }

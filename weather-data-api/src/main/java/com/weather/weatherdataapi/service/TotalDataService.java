@@ -13,6 +13,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 
@@ -48,9 +49,10 @@ public class TotalDataService {
      * @param regionDto      요청을 원하는 지역입니다.
      * @return 응답 객체입니다. RestController에서 이 응답값을 바로 리턴하면 됩니다.
      */
+    @Transactional
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, RegionDto regionDto, String deviceInfo) throws IOException {
 
-        User user = userService.getOrCreateGuaranteedNonCachedUserByIdentification(identification);
+        User user = userService.getOrCreateUserByIdentification(identification);
         SmallRegion currentRequestRegion = regionService.getSmallRegionByDto(regionDto);
 
         userService.updateCurrentRegion(user, currentRequestRegion);
@@ -60,7 +62,7 @@ public class TotalDataService {
         TotalDataResponseDto responseDto = getTotalData(regionDto, scoreWeightDto);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
 
-        userService.saveUserDevice(identification, regionDto, deviceInfo);
+        userService.saveUserDevice(user, currentRequestRegion, deviceInfo);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)

@@ -10,6 +10,8 @@ import com.weather.weatherdataapi.util.openapi.health.food_poison.FoodPoisonResp
 import com.weather.weatherdataapi.util.openapi.health.pollen_risk.PollenRiskItem;
 import com.weather.weatherdataapi.util.openapi.health.pollen_risk.PollenRiskResponse;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -28,10 +30,16 @@ public class HealthApi {
     private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
 
     public HealthApi() {
+        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        OkHttpClient client = new OkHttpClient.Builder()
+                .addInterceptor(interceptor).build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("http://apis.data.go.kr/1360000/HealthWthrIdxService/")
                 .addConverterFactory(SimpleXmlConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .client(client)
                 .build();
 
         service = retrofit.create(HealthService.class);
