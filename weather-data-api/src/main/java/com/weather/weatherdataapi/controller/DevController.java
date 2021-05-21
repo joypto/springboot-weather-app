@@ -7,9 +7,8 @@ import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
-import com.weather.weatherdataapi.service.AirPollutionService;
-import com.weather.weatherdataapi.service.CoronaService;
-import com.weather.weatherdataapi.service.RegionService;
+import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.service.*;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
@@ -32,6 +31,8 @@ public class DevController {
 
     private final AirPollutionService airPollutionService;
     private final CoronaService coronaService;
+    private final LivingHealthService livingHealthService;
+    private final LivingHealthServiceV2 livingHealthServiceV2;
 
     @GetMapping("/dev/api/air_pollution/data")
     public AirPollutionInfo getAirPollution(@RequestParam("longitude") String longitude, @RequestParam("latitude") String latitude) throws ParseException {
@@ -55,6 +56,22 @@ public class DevController {
 
         CoronaResponseDto responseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
         return responseDto;
+    }
+
+    @GetMapping("/dev/api/living_health")
+    public LivingHealthInfo getLivingHealth(@RequestParam("bigRegionName") String bigRegionName) {
+        BigRegion bigRegion = regionService.getBigRegionByName(bigRegionName);
+
+        LivingHealthInfo livingHealthInfo = livingHealthService.getInfoByBigRegion(bigRegion);
+        return livingHealthInfo;
+    }
+
+    @GetMapping("/dev/api/v2/living_health")
+    public LivingHealthInfo getLivingHealthV2(@RequestParam("bigRegionName") String bigRegionName) {
+        BigRegion bigRegion = regionService.getBigRegionByName(bigRegionName);
+
+        LivingHealthInfo livingHealthInfo = livingHealthServiceV2.getInfoByBigRegion(bigRegion);
+        return livingHealthInfo;
     }
 
     @GetMapping("/dev/api/transcoord")
