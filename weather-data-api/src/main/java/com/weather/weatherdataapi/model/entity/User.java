@@ -2,7 +2,6 @@ package com.weather.weatherdataapi.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.dto.ScoreWeightDto;
-import com.weather.weatherdataapi.model.vo.redis.UserRedisVO;
 import lombok.*;
 
 import javax.persistence.*;
@@ -80,24 +79,6 @@ public class User {
         this.pollenRisk = scoreWeightDto.getPollenRiskWeight();
         this.asthma = scoreWeightDto.getAsthmaWeight();
         this.foodPoison = scoreWeightDto.getFoodPoisonWeight();
-    }
-
-    public User(UserRedisVO userRedisVO, SmallRegion latestRequestRegion) {
-        this.id = userRedisVO.getId();
-        this.identification = userRedisVO.getIdentification();
-        this.latestRequestRegion = latestRequestRegion;
-        this.temp = userRedisVO.getTemp();
-        this.rainPer = userRedisVO.getRainPer();
-        this.weather = userRedisVO.getWeather();
-        this.humidity = userRedisVO.getHumidity();
-        this.wind = userRedisVO.getWind();
-        this.pm10 = userRedisVO.getPm10();
-        this.pm25 = userRedisVO.getPm25();
-        this.corona = userRedisVO.getCorona();
-        this.uv = userRedisVO.getUv();
-        this.pollenRisk = userRedisVO.getPollenRisk();
-        this.asthma = userRedisVO.getAsthma();
-        this.foodPoison = userRedisVO.getFoodPoison();
     }
 
     public void updateUserPreference(ScoreWeightDto scoreWeightDto) {
