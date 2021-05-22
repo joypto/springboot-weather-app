@@ -30,6 +30,9 @@ public class User {
     private SmallRegion latestRequestRegion;
 
     @Column
+    private String device;
+
+    @Column
     private int temp;
 
     @Column

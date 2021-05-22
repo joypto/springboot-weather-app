@@ -8,9 +8,7 @@ import com.weather.weatherdataapi.model.dto.requestdto.RegionRequestDto;
 import com.weather.weatherdataapi.model.dto.responsedto.UserRegionResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
-import com.weather.weatherdataapi.model.entity.UserDevice;
 import com.weather.weatherdataapi.model.entity.UserOftenSeenRegion;
-import com.weather.weatherdataapi.repository.UserDeviceRepository;
 import com.weather.weatherdataapi.repository.UserOftenSeenRegionRepository;
 import com.weather.weatherdataapi.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +30,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserOftenSeenRegionRepository userOftenSeenRegionRepository;
-    private final UserDeviceRepository userDeviceRepository;
     private final RegionService regionService;
 
     /* Create New User */
@@ -106,6 +103,11 @@ public class UserService {
     }
 
     @Transactional
+    public void updateDevice(User user, String device) {
+        user.setDevice(device);
+    }
+
+    @Transactional
     public void updateOftenSeenRegionRefs(User user, RegionRequestDto regionRequestDto) {
 
         userOftenSeenRegionRepository.deleteAllByUser(user);
@@ -131,12 +133,6 @@ public class UserService {
 
     private Optional<User> getUserByIdentification(String identification) {
         return userRepository.findByIdentification(identification);
-    }
-
-    @Transactional
-    public void saveUserDevice(User user, SmallRegion requestRegion, String deviceInfo) {
-        UserDevice userDevice = new UserDevice(user, requestRegion, deviceInfo);
-        userDeviceRepository.save(userDevice);
     }
 
 }
