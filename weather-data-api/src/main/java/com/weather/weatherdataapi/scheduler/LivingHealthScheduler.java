@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.scheduler;
 
-import com.weather.weatherdataapi.service.LivingHealthService;
+import com.weather.weatherdataapi.service.LivingHealthServiceV2;
 import com.weather.weatherdataapi.util.DateTimeUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +13,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class LivingHealthScheduler {
 
-    private final LivingHealthService livingHealthService;
+    private final LivingHealthServiceV2 livingHealthService;
 
     @Scheduled(cron = "0 30 6 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("전일 생활보건기상지수 정보를 갱신합니다.");
 
-            livingHealthService.fetchAndStoreInfoUsingOpenApi();
-            livingHealthService.refreshCache();
+            livingHealthService.tryFetchAndStoreInfoUsingOpenApi();
 
             log.info("생활보건기상지수 정보를 성공적으로 갱신하였습니다.");
 

@@ -23,7 +23,7 @@ public class TotalDataService {
 
     private final AirPollutionService airPollutionService;
     private final CoronaService coronaService;
-    private final LivingHealthService livingHealthService;
+    private final LivingHealthServiceV2 livingHealthService;
     private final WeatherService weatherService;
     private final UserService userService;
     private final ScoreService scoreService;
