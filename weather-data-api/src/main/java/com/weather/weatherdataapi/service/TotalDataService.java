@@ -56,13 +56,12 @@ public class TotalDataService {
         SmallRegion currentRequestRegion = regionService.getSmallRegionByDto(regionDto);
 
         userService.updateCurrentRegion(user, currentRequestRegion);
+        userService.updateDevice(user, deviceInfo);
 
         ScoreWeightDto scoreWeightDto = new ScoreWeightDto(user);
 
         TotalDataResponseDto responseDto = getTotalData(regionDto, scoreWeightDto);
         HttpHeaders responseHeaders = userService.createHeadersWithUserIdentification(user);
-
-        userService.saveUserDevice(user, currentRequestRegion, deviceInfo);
 
         return ResponseEntity.ok()
                 .headers(responseHeaders)
