@@ -16,7 +16,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
     private final RedisService redisService;
 
     private final CoronaService coronaService;
-    private final LivingHealthService livingHealthService;
+    private final LivingHealthServiceV2 livingHealthService;
 
     private final RegionService regionService;
     private final IconService iconService;
@@ -24,7 +24,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
     private final AirKoreaStationUtil airKoreaStationUtil;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         log.info("서버를 시작하기 전 초기화를 진행합니다.");
 
         redisService.initialize();
@@ -35,8 +35,7 @@ public class WeatherDataApplicationRunner implements ApplicationRunner {
 
         coronaService.tryFetchAndStoreInfoUsingOpenApi();
 
-        livingHealthService.fetchAndStoreInfoUsingOpenApi();
-        livingHealthService.refreshCache();
+        livingHealthService.tryFetchAndStoreInfoUsingOpenApi();
 
         airKoreaStationUtil.initializeRegionStationNameDict();
 
