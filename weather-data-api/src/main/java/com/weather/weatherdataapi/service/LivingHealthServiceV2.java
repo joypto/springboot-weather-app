@@ -4,6 +4,7 @@ import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.exception.repository.info.InvalidLivingHealthInfoException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
+import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
@@ -40,6 +41,11 @@ public class LivingHealthServiceV2 {
 
     private final LivingApi livingApi;
     private final HealthApi healthApi;
+
+    public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
+        weatherDataResponseDto.setLivingHealthWeather(getInfoByBigRegion(currentBigRegion));
+        convertInfoToScore(currentBigRegion, scoreResultDto);
+    }
 
     public void convertInfoToScore(BigRegion bigRegion, ScoreResultDto scoreResultDto) {
         LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
