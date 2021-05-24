@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### Project Secrets ###
+**/application-prod-db.yml

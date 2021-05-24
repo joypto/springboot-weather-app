@@ -2,17 +2,11 @@ spring:
   config:
     activate:
       on-profile: local
+    import:
+      - "classpath:/application-prod-db.yml"
   jpa:
     hibernate:
       ddl-auto: update
-  datasource:
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url:
-#    username:
-#    password:
-  redis:
-    host: localhost
-    port: 6379
 logging:
   level:
     root: info
