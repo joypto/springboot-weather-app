@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.util.openapi.geo.kakao;
 
+import com.weather.weatherdataapi.util.openapi.OpenApiUtil;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponse;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
 import org.springframework.stereotype.Component;
@@ -12,11 +13,14 @@ import java.io.IOException;
 
 @Component
 public class KakaoGeoApi {
-    private final static String REST_API_KEY = "KakaoAK 00fe8b530605b8965d56229072117e02";
 
     private final KakaoGeoService service;
 
-    public KakaoGeoApi() {
+    private final OpenApiUtil openApiUtil;
+
+    public KakaoGeoApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://dapi.kakao.com/v2/local/geo/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -27,7 +31,7 @@ public class KakaoGeoApi {
     }
 
     public KakaoGeoTranscoordResponseDocument convertWGS84ToWTM(String x, String y) throws IOException {
-        Call<KakaoGeoTranscoordResponse> kakaoGeoTranscoordResponseCall = service.generateTranscoordCall(REST_API_KEY, x, y);
+        Call<KakaoGeoTranscoordResponse> kakaoGeoTranscoordResponseCall = service.generateTranscoordCall(openApiUtil.getKakaoApiKey(), x, y);
         KakaoGeoTranscoordResponse response = kakaoGeoTranscoordResponseCall.execute().body();
 
         return response.getDocuments().get(0);

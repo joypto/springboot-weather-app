@@ -2,6 +2,7 @@ package com.weather.weatherdataapi.util.openapi.air_pollution.airkorea;
 
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.util.ExceptionUtil;
+import com.weather.weatherdataapi.util.openapi.OpenApiUtil;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -19,9 +20,11 @@ import java.io.IOException;
 public class AirKoreaAirPollutionApi {
 
     private final AirKoreaAirPollutionService service;
-    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
+    private final OpenApiUtil openApiUtil;
 
-    public AirKoreaAirPollutionApi() {
+    public AirKoreaAirPollutionApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -39,7 +42,7 @@ public class AirKoreaAirPollutionApi {
 
     public AirKoreaAirPollutionItem getResponseByStationName(String stationName) throws FailedFetchException {
         try {
-            Call<AirKoreaAirPollutionResponse> call = service.getResponseByStationName(SERVICE_KEY, stationName);
+            Call<AirKoreaAirPollutionResponse> call = service.getResponseByStationName(openApiUtil.getDataGoKrApiKey(), stationName);
             Response<AirKoreaAirPollutionResponse> execute = call.execute();
             AirKoreaAirPollutionResponse response = execute.body();
 

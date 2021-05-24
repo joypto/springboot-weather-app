@@ -2,17 +2,12 @@ spring:
   config:
     activate:
       on-profile: dev
+    import:
+      - "classpath:/application-prod-db.yml"
+      - "classpath:/application-secret.yml"
   jpa:
     hibernate:
       ddl-auto: update
-  datasource:
-#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
-#    url:
-#    username:
-#    password:
-  redis:
-    host: localhost
-    port: 6379
 logging:
   level:
     root: info

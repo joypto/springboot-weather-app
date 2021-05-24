@@ -1,7 +1,7 @@
 spring:
   config:
     activate:
-      on-profile: local
+      on-profile: prod
     import:
       - "classpath:/application-prod-db.yml"
       - "classpath:/application-secret.yml"
