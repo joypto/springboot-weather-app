@@ -37,7 +37,7 @@ public class TotalDataService {
      * @return 응답 객체입니다. RestController에서 이 응답값을 바로 리턴하면 됩니다.
      */
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, CoordinateDto coordinateDto, String deviceInfo) throws IOException {
-        RegionDto regionDto = regionService.getRegionName(coordinateDto);
+        RegionDto regionDto = regionService.getRegionByCoordinate(coordinateDto);
 
         return getTotalDataResponse(identification, regionDto, deviceInfo);
     }
