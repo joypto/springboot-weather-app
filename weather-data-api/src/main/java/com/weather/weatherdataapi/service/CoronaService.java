@@ -16,7 +16,6 @@ import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
-import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,8 +36,6 @@ public class CoronaService {
     private final RegionService regionService;
 
     private final GovCoronaApi govCoronaOpenApi;
-
-    private final ReverseGeoCodingApi reverseGeoCodingApi;
 
     private Integer cachedAllNewCaseCount;
 
