@@ -4,6 +4,7 @@ spring:
       on-profile: local
     import:
       - "classpath:/application-prod-db.yml"
+      - "classpath:/application-secret.yml"
   jpa:
     hibernate:
       ddl-auto: update

@@ -2,6 +2,8 @@ package com.weather.weatherdataapi.util.openapi.geo.naver;
 
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
+import com.weather.weatherdataapi.util.openapi.OpenApiUtil;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -14,15 +16,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@RequiredArgsConstructor
 @Slf4j
 @Component
 public class ReverseGeoCodingApi {
 
+    private final OpenApiUtil openApiUtil;
+
     public ReverseGeocodingResponseDto reverseGeocoding(CoordinateDto coordinateDto) throws IndexOutOfBoundsException {
         RestTemplate rest = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
-        headers.add("X-NCP-APIGW-API-KEY-ID", "et23d38qwi");
-        headers.add("X-NCP-APIGW-API-KEY", "6RmECdY1MD4qhrXo7UNCFIzkfBr2XmheawWfrB8Y");
+        headers.add("X-NCP-APIGW-API-KEY-ID", openApiUtil.getNaverApiKeyId());
+        headers.add("X-NCP-APIGW-API-KEY", openApiUtil.getNaverApiKey());
 
         String locate = coordinateDto.getLongitude() + "," + coordinateDto.getLatitude();
         String url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?sourcecrs=epsg:4326&orders=legalcode,admcode&output=json&coords=" + locate;

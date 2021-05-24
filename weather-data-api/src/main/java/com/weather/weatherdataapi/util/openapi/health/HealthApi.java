@@ -27,9 +27,11 @@ import java.time.LocalDateTime;
 public class HealthApi {
 
     private final HealthService service;
-    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
+    private final OpenApiUtil openApiUtil;
 
-    public HealthApi() {
+    public HealthApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -49,7 +51,7 @@ public class HealthApi {
         try {
             String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
-            Call<AsthmaResponse> call = service.generateAsthmaResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<AsthmaResponse> call = service.generateAsthmaResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<AsthmaResponse> execute = call.execute();
             AsthmaResponse response = execute.body();
 
@@ -82,7 +84,7 @@ public class HealthApi {
         try {
             String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
-            Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<FoodPoisonResponse> execute = call.execute();
             FoodPoisonResponse response = execute.body();
 
@@ -115,7 +117,7 @@ public class HealthApi {
         try {
             String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
-            Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<PollenRiskResponse> execute = call.execute();
             PollenRiskResponse response = execute.body();
 

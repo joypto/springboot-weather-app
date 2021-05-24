@@ -24,10 +24,12 @@ import java.time.format.DateTimeFormatter;
 public class LivingApi {
 
     private final LivingService service;
-    private final String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
+    private final OpenApiUtil openApiUtil;
     private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    public LivingApi() {
+    public LivingApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -47,7 +49,7 @@ public class LivingApi {
         try {
             String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
-            Call<UvResponse> call = service.generateResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<UvResponse> call = service.generateResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<UvResponse> execute = call.execute();
             UvResponse response = execute.body();
 

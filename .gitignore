@@ -38,3 +38,4 @@ out/
 
 ### Project Secrets ###
 **/application-prod-db.yml
+**/application-secret.yml
