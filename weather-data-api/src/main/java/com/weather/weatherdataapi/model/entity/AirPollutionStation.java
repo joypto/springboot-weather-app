@@ -24,9 +24,13 @@ public class AirPollutionStation extends Timestamped {
     @Column(name = "station_name")
     private String stationName;
 
-    public AirPollutionStation(SmallRegion smallRegion, String stationName) {
+    @Column(name = "distance")
+    private Double distance;
+
+    public AirPollutionStation(SmallRegion smallRegion, String stationName, Double distance) {
         this.smallRegion = smallRegion;
         this.stationName = stationName;
+        this.distance = distance;
     }
 
     @Override
@@ -35,6 +39,7 @@ public class AirPollutionStation extends Timestamped {
                 "id=" + id +
                 ", smallRegion=" + smallRegion +
                 ", stationName='" + stationName + '\'' +
+                ", distance=" + distance +
                 '}';
     }
 
