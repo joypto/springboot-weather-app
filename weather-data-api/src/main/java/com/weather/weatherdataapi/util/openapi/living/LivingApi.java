@@ -15,7 +15,6 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -50,8 +49,17 @@ public class LivingApi {
             String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
 
             Call<UvResponse> call = service.generateResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
-            Response<UvResponse> execute = call.execute();
-            UvResponse response = execute.body();
+            Response<UvResponse> execute;
+            UvResponse response;
+
+            try {
+                execute = call.execute();
+                response = execute.body();
+            }
+            // retrofit에서 exception이 발생할 때 실행됩니다.
+            catch (Exception e) {
+                throw new FailedFetchException();
+            }
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
@@ -67,13 +75,6 @@ public class LivingApi {
             log.error(ExceptionUtil.getStackTraceString(e));
 
             throw e;
-        }
-        // retrofit에서 exception이 발생할 때 실행됩니다.
-        catch (IOException e) {
-            log.error(e.getMessage());
-            log.error(ExceptionUtil.getStackTraceString(e));
-
-            throw new FailedFetchException("원격 서버에서 응답받은 xml데이터가 LivingResponse객체에 매핑될 수 없습니다.");
         }
 
     }

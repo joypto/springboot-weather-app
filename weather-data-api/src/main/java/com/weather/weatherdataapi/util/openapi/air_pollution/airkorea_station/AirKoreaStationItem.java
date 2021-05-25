@@ -9,7 +9,7 @@ import org.simpleframework.xml.Root;
 public class AirKoreaStationItem {
 
     @Element
-    String tm;
+    Double tm;
 
     @Element
     String addr;

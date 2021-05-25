@@ -11,6 +11,7 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 @Slf4j
 @Component
@@ -31,7 +32,7 @@ public class AirKoreaStationApi {
         service = retrofit.create(AirKoreaStationService.class);
     }
 
-    public AirKoreaStationItem getResponseItem(String tmX, String tmY) throws FailedFetchException {
+    public List<AirKoreaStationItem> getNearStationList(String tmX, String tmY) throws FailedFetchException {
         try {
             Call<AirKoreaStationResponse> call = service.getResponseCall(openApiUtil.getDataGoKrApiKey(), tmX, tmY);
             AirKoreaStationResponse response = call.execute().body();
@@ -39,7 +40,7 @@ public class AirKoreaStationApi {
             if (response.getHeader().getResultCode().equals("00") == false)
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
 
-            return response.getBody().getItemList().get(0);
+            return response.getBody().getItemList();
         }
         // 값을 정상적으로 조회하지 못했을 때 실행됩니다.
         catch (FailedFetchException e) {
