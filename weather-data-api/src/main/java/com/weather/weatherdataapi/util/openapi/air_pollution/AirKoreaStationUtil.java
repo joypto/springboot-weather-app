@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -30,6 +31,7 @@ public class AirKoreaStationUtil {
 
     private Dictionary<String, Dictionary<String, List<String>>> regionNameStationNameDict;
 
+    @Transactional
     public void initializeRegionStationNameDict() {
         log.info("각 지역에 대응되는 미세먼지 측정소 매핑을 시작합니다.");
         long startTime = System.currentTimeMillis();
@@ -40,8 +42,8 @@ public class AirKoreaStationUtil {
             List<SmallRegion> allSmallRegionList = smallRegionRepository.findAll();
 
             // 이미 DB에 측정소 정보가 저장되어 있다면, DB에 저장되어 있는 정보를 그대로 가져다 사용하면 됩니다.
-            if (allSmallRegionList.size() == airPollutionStationRepository.count()) {
-                log.info("모든 지역에 매핑된 미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
+            if (airPollutionStationRepository.count() > 0) {
+                log.info("미세먼지 측정소 정보가 DB에 이미 존재합니다. DB의 데이터를 불러옵니다.");
 
                 for (SmallRegion smallRegion : allSmallRegionList) {
 
