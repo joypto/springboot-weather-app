@@ -16,10 +16,14 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Component
 public class GovCoronaApi implements ICoronaOpenApi {
+
+    private final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     private final GovCoronaService service;
     private final OpenApiUtil openApiUtil;
@@ -43,9 +47,11 @@ public class GovCoronaApi implements ICoronaOpenApi {
     }
 
     @Override
-    public ICoronaInfo getInfo() {
+    public ICoronaInfo getInfo(LocalDate date) {
         try {
-            Call<GovCoronaResponse> call = service.getResponseCall(openApiUtil.getDataGoKrApiKey());
+            String dateString = date.format(DATETIME_FORMATTER);
+
+            Call<GovCoronaResponse> call = service.getResponseCall(openApiUtil.getDataGoKrApiKey(), dateString, dateString);
             Response<GovCoronaResponse> response = call.execute();
             GovCoronaResponse body = response.body();
 

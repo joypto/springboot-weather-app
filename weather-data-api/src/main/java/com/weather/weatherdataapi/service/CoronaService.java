@@ -96,10 +96,16 @@ public class CoronaService {
         if (checkAlreadyHasLatestData() == true)
             return;
 
-        ICoronaInfo info = govCoronaOpenApi.getInfo();
+        ICoronaInfo info;
 
-        if (info.getItemList().isEmpty())
-            throw new FailedFetchException("가져온 아이템 리스트가 비어있습니다.");
+        try {
+            info = govCoronaOpenApi.getInfo(LocalDate.now());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error("당일 코로나 정보를 가져오는 데 실패하였습니다. 전일 데이터를 요청합니다.");
+
+            info = govCoronaOpenApi.getInfo(LocalDate.now().minusDays(1));
+        }
 
         for (int i = 0; i < info.getItemList().size(); i++) {
             ICoronaItem item = info.getItemList().get(i);
