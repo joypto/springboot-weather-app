@@ -42,7 +42,12 @@ public class RegionService {
     private List<BigRegion> allValidBigRegionList;
 
     public RegionDto getRegionByCoordinate(CoordinateDto coordinateDto) {
-        return naverGeoApi.reverseGeocoding(coordinateDto);
+        try {
+            return naverGeoApi.reverseGeocoding(coordinateDto);
+        } catch (Exception e) {
+            log.error("서비스 대상 지역이 아닙니다. 서울시 강남구 데이터를 반환합니다.");
+            return new RegionDto("서울특별시", "강남구");
+        }
     }
 
     public SmallRegion getSmallRegionByDto(RegionDto regionDto) {
