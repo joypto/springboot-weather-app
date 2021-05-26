@@ -104,22 +104,23 @@ public class CoronaService {
 
     @Transactional
     public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
-        if (checkAlreadyHasLatestData() == true)
-            throw new AlreadyExistsLatestDataException();
 
-        ICoronaInfo info;
+        ICoronaInfo fetchedInfo;
 
         try {
-            info = govCoronaOpenApi.getInfo(LocalDate.now());
+            fetchedInfo = govCoronaOpenApi.getInfo(LocalDate.now());
         } catch (Exception e) {
             log.error(e.getMessage());
             log.error("당일 코로나 정보를 가져오는 데 실패하였습니다. 전일 데이터를 요청합니다.");
 
-            info = govCoronaOpenApi.getInfo(LocalDate.now().minusDays(1));
+            fetchedInfo = govCoronaOpenApi.getInfo(LocalDate.now().minusDays(1));
         }
 
-        for (int i = 0; i < info.getItemList().size(); i++) {
-            ICoronaItem item = info.getItemList().get(i);
+        if (checkAlreadyHasLatestData(fetchedInfo) == true)
+            throw new AlreadyExistsLatestDataException();
+
+        for (int i = 0; i < fetchedInfo.getItemList().size(); i++) {
+            ICoronaItem item = fetchedInfo.getItemList().get(i);
 
             // 파싱해온 정보 중, 합계 정보는 저장하지 않습니다.
             if (item.getRegionName().equals("합계"))
@@ -191,16 +192,24 @@ public class CoronaService {
 
     }
 
-    private boolean checkAlreadyHasLatestData() {
+    private boolean checkAlreadyHasLatestData(ICoronaInfo fetched) {
         if (coronaRepository.count() == 0)
             return false;
 
         CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidCoronaInfoException());
-        LocalDate current = LocalDate.now();
+        LocalDate latestDate = latestData.getDate();
 
-        if (latestData == null)
+        // DB에 저장되어 있는 가장 최신의 데이터가
+        // 오늘자의 데이터인지 확인합니다.
+        if (latestDate.equals(LocalDate.now()))
+            return true;
+
+        // 원격 서버에서 제공하는 최신 데이터보다 뒤쳐진 데이터인지 확인합니다.
+        LocalDate fetchedDate = fetched.getItemList().get(0).getDate();
+
+        if (latestDate.isBefore(fetchedDate))
             return false;
 
-        return latestData.getDate().isEqual(current);
+        return true;
     }
 }
