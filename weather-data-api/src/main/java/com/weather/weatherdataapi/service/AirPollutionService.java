@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.service;
 
+import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
@@ -34,9 +35,12 @@ public class AirPollutionService {
     public void setInfoAndScore(SmallRegion smallRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
         AirPollutionInfo airPollutionInfo = getInfoBySmallRegion(smallRegion);
 
-        weatherDataResponseDto.setAirPollution(airPollutionInfo);
+        if (airPollutionInfo.getDateTime() != null) {
+            weatherDataResponseDto.setAirPollution(airPollutionInfo);
 
-        convertInfoToScore(airPollutionInfo, scoreResultDto);
+            convertInfoToScore(airPollutionInfo, scoreResultDto);
+        }
+
     }
 
     public AirPollutionInfo getInfoBySmallRegion(SmallRegion smallRegion) {
@@ -66,39 +70,41 @@ public class AirPollutionService {
     /**
      * 원격 서버에서 제공하는 최신 정보와 일치하는 정보 객체를 반환합니다.
      * DB에 최신 정보가 저장되어 있지 않다면 최신 정보를 DB에도 저장합니다.
-     * 만약 원격 서버에서 제공받을 수 없다면 차선택으로 DB에 이미 저장되어 있는 데이터 중 가장 최신의 정보를 반환합니다.
+     * 만약 원격 서버에서 제공받을 수 없다면 빈 객체(empty object)를 반환합니다.
      *
      * @return 일반적으로 원격 서버에서 제공되는 최신 정보를 반환합니다.
-     * 만약 원격 서버에서 제공받을 수 없다면 차선택으로 DB에 이미 저장되어 있는 데이터 중 가장 최신의 정보를 반환합니다.
+     * 만약 원격 서버에서 제공받을 수 없다면 빈 객체(empty object)를 반환합니다.
      */
     private AirPollutionInfo getSyncedLatestInfo(SmallRegion smallRegion) {
+        AirKoreaAirPollutionItem fetchedItem;
 
-        AirKoreaAirPollutionItem fetchedItem = fetchUsingOpenApi(smallRegion);
-
-        // 원격 서버에서 가져온 데이터가 없을 경우 예외를 발생시킵니다.
-        if (fetchedItem == null) {
-            throw new RuntimeException("대기오염 정보를 가져올 수 없습니다.");
+        try {
+            fetchedItem = fetchUsingOpenApi(smallRegion);
         }
-        // 원격 서버에서 가져온 데이터가 있는 경우, DB에 저장되어 있는지 확인한 후 저장되어 있지 않다면 저장합니다.
-        else {
+        // 원격 서버에서 정보를 가져오는 데 실패한다면 빈 객체(empty object)를 반환합니다.
+        catch (Exception e) {
+            AirPollutionInfo emptyInfo = new AirPollutionInfo();
+            emptyInfo.setSmallRegion(smallRegion);
 
-            Optional<AirPollutionInfo> queriedExistedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
-
-            // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
-            // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
-            if (queriedExistedInfo.isPresent() == false
-                    || airKoreaUtil.checkLatestInfoAlreadyExists(queriedExistedInfo.get(), fetchedItem) == false) {
-
-                AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
-                airPollutionRepository.save(newInfo);
-
-                return newInfo;
-            }
-
-            // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
-            return queriedExistedInfo.get();
+            return emptyInfo;
         }
 
+
+        // DB에 해당 지역에 대한 어떠한 대기오염 정보도 저장되어 있지 않거나,
+        // 또는 최신 데이터가 아닐 경우 DB에 저장합니다.
+        Optional<AirPollutionInfo> queriedExistedInfo = airPollutionRepository.findFirstBySmallRegionOrderByCreatedAtDesc(smallRegion);
+
+        if (queriedExistedInfo.isPresent() == false
+                || airKoreaUtil.checkLatestInfoAlreadyExists(queriedExistedInfo.get(), fetchedItem) == false) {
+
+            AirPollutionInfo newInfo = new AirPollutionInfo(fetchedItem, smallRegion);
+            airPollutionRepository.save(newInfo);
+
+            return newInfo;
+        }
+
+        // DB에 이미 최신 정보가 저장되어 있는 경우, 기존의 값을 반환합니다.
+        return queriedExistedInfo.get();
     }
 
     private AirKoreaAirPollutionItem fetchUsingOpenApi(SmallRegion smallRegion) {
@@ -113,11 +119,15 @@ public class AirPollutionService {
                 return response;
             } catch (Exception e) {
                 log.error(e.getMessage());
-            }
 
-            if (i < nearStationNameList.size() - 1) {
-                String nextNearStationName = nearStationNameList.get(i + 1);
-                log.error("그 다음으로 가까운 미세먼지 측정소에서 정보를 가져오기를 시도합니다. ((실패){} -> (다음 측정소명){})", nearStationName, nextNearStationName);
+                if (i < nearStationNameList.size() - 1) {
+                    String nextNearStationName = nearStationNameList.get(i + 1);
+                    log.error("그 다음으로 가까운 미세먼지 측정소에서 정보를 가져오기를 시도합니다. ((실패){} -> (다음 측정소명){})", nearStationName, nextNearStationName);
+                }
+                // 인접한 모든 미세먼지 측정소에서 정보를 가져오는 데 실패하였을 때 실행됩니다.
+                else {
+                    throw new FailedFetchException("인접한 모든 미세먼지 측정소에서 정보를 가져오는 데 실패하였습니다.");
+                }
             }
 
         }

@@ -48,11 +48,14 @@ public class CoronaService {
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto totalDataResponseDto) {
         CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
-        Integer allNewCaseCount = getAllNewCaseCount();
 
-        setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
+        if (coronaInfo.getDate() != null) {
+            Integer allNewCaseCount = getAllNewCaseCount();
 
-        convertInfoToScore(scoreResultDto, allNewCaseCount);
+            setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
+            convertInfoToScore(scoreResultDto, allNewCaseCount);
+        }
+
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -63,10 +66,18 @@ public class CoronaService {
             refreshCache();
         }
 
-        CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidCoronaRedisVOException());
-        coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
+        try {
+            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidCoronaRedisVOException());
+            coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
 
-        return coronaInfo;
+            return coronaInfo;
+        } catch (InvalidCoronaRedisVOException e) {
+            log.error(e.getMessage());
+            log.error("코로나 정보를 반환할 수 없습니다. 캐시되어 있는 코로나 정보가 없습니다.");
+
+            return new CoronaInfo();
+        }
+
     }
 
     public void tryFetchAndStoreInfoUsingOpenApi() {
@@ -94,7 +105,7 @@ public class CoronaService {
     @Transactional
     public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
         if (checkAlreadyHasLatestData() == true)
-            return;
+            throw new AlreadyExistsLatestDataException();
 
         ICoronaInfo info;
 
@@ -122,6 +133,7 @@ public class CoronaService {
     }
 
     private void setInfo(TotalDataResponseDto totalDataResponseDto, CoronaInfo coronaInfo, Integer allNewCaseCount) {
+
         Integer bigRegionNewCaseCount = coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount();
         CoronaResponseDto coronaResponseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
 

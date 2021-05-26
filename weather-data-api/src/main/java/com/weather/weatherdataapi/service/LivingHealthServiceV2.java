@@ -43,13 +43,17 @@ public class LivingHealthServiceV2 {
     private final HealthApi healthApi;
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
-        weatherDataResponseDto.setLivingHealthWeather(getInfoByBigRegion(currentBigRegion));
-        convertInfoToScore(currentBigRegion, scoreResultDto);
+        LivingHealthInfo info = getInfoByBigRegion(currentBigRegion);
+
+        if (info.getDate() != null) {
+            weatherDataResponseDto.setLivingHealthWeather(info);
+
+            convertInfoToScore(scoreResultDto, info);
+        }
+        
     }
 
-    public void convertInfoToScore(BigRegion bigRegion, ScoreResultDto scoreResultDto) {
-        LivingHealthInfo livingHealthInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion).orElseThrow(() -> new InvalidLivingHealthInfoException());
-
+    public void convertInfoToScore(ScoreResultDto scoreResultDto, LivingHealthInfo livingHealthInfo) {
         List<Integer> uvInfoList = new ArrayList<>(7);
         List<Integer> asthmaInfoList = new ArrayList<>(7);
         List<Integer> pollenRiskInfoList = new ArrayList<>(7);
@@ -95,10 +99,18 @@ public class LivingHealthServiceV2 {
             refreshCache();
         }
 
-        LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidLivingHealthInfoException());
-        livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
+        try {
+            LivingHealthRedisVO livingHealthRedisVO = livingHealthRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidLivingHealthInfoException());
+            livingHealthInfo = new LivingHealthInfo(livingHealthRedisVO, bigRegion);
 
-        return livingHealthInfo;
+            return livingHealthInfo;
+        } catch (InvalidLivingHealthInfoException e) {
+            log.error(e.getMessage());
+            log.error("생활/보건기상지수 정보를 반환할 수 없습니다. 캐시되어 있는 생활/보건기상지수 정보가 없습니다.");
+
+            return new LivingHealthInfo();
+        }
+
     }
 
     public void tryFetchAndStoreInfoUsingOpenApi() {
