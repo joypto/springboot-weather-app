@@ -105,7 +105,7 @@ public class CoronaService {
     @Transactional
     public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
         if (checkAlreadyHasLatestData() == true)
-            return;
+            throw new AlreadyExistsLatestDataException();
 
         ICoronaInfo info;
 
