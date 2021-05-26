@@ -20,14 +20,21 @@ public class ScoreWeightDto {
         defaultDto = new ScoreWeightDto(50, 50, 50, 50, 50, 0, 0, 0, 0, 0, 0, 0);
     }
 
+    /* 코로나 */
     private int coronaWeight;
+
+    /* 미세먼지 */
     private int pm10Weight;
     private int pm25Weight;
+
+    /* 날씨 */
     private int tempWeight;
     private int rainPerWeight;
     private int weatherWeight;
     private int humidityWeight;
     private int windWeight;
+
+    /* 생활/보건기상지수 */
     private int uvWeight;
     private int pollenRiskWeight;
     private int asthmaWeight;
@@ -46,6 +53,18 @@ public class ScoreWeightDto {
         this.pollenRiskWeight = userPreference.getPollenRisk();
         this.asthmaWeight = userPreference.getAsthma();
         this.foodPoisonWeight = userPreference.getFoodPoison();
+    }
+
+    public int getSumOfAirPollutionWeight() {
+        return this.pm10Weight + this.pm25Weight;
+    }
+
+    public int getSumOfWeatherWeight() {
+        return this.tempWeight + this.rainPerWeight + this.weatherWeight + this.humidityWeight + this.windWeight;
+    }
+
+    public int getSumOfLivingHealthWeight() {
+        return this.uvWeight + this.pollenRiskWeight + this.asthmaWeight + this.foodPoisonWeight;
     }
 
     public int getSumOfAllWeight() {

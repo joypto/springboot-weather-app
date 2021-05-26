@@ -9,6 +9,11 @@ import java.util.List;
 @Setter
 public class ScoreResultDto {
 
+    private boolean isCoronaValid;
+    private boolean isAirPollutionValid;
+    private boolean livingHealthValid;
+    private boolean weatherValid;
+
     private Integer coronaResult;
     private Integer pm10Result;
     private Integer pm25Result;
