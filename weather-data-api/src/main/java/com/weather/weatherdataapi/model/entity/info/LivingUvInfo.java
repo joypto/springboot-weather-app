@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.model.vo.redis.LivingUvRedisVO;
+import com.weather.weatherdataapi.service.info.LivingUvService;
+import com.weather.weatherdataapi.util.openapi.living.uv.UvItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,6 +43,15 @@ public class LivingUvInfo extends Timestamped {
 
     @Column
     private Integer theDayAfterTomorrow;
+
+    public LivingUvInfo(UvItem item, BigRegion bigRegion) {
+        this.bigRegion = bigRegion;
+
+        this.date = LivingUvService.convertDateFromString(item.getDate());
+        this.today = item.getToday();
+        this.tomorrow = item.getTomorrow();
+        this.theDayAfterTomorrow = item.getTheDayAfterTomorrow();
+    }
 
     public LivingUvInfo(LivingUvRedisVO redisVO, BigRegion bigRegion) {
         this.bigRegion = bigRegion;

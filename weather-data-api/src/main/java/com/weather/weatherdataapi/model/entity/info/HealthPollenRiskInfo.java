@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
 import com.weather.weatherdataapi.model.vo.redis.HealthPollenRiskRedisVO;
+import com.weather.weatherdataapi.service.info.LivingUvService;
+import com.weather.weatherdataapi.util.openapi.health.pollen_risk.PollenRiskItem;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -40,6 +42,15 @@ public class HealthPollenRiskInfo extends Timestamped {
 
     @Column
     private Integer theDayAfterTomorrow;
+
+    public HealthPollenRiskInfo(PollenRiskItem item, BigRegion bigRegion) {
+        this.bigRegion = bigRegion;
+
+        this.date = LivingUvService.convertDateFromString(item.getDate());
+        this.today = item.getToday();
+        this.tomorrow = item.getTomorrow();
+        this.theDayAfterTomorrow = item.getTheDayAfterTomorrow();
+    }
 
     public HealthPollenRiskInfo(HealthPollenRiskRedisVO redisVO, BigRegion bigRegion) {
         this.bigRegion = bigRegion;
