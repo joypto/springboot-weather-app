@@ -74,4 +74,53 @@
 
 # 업데이트
 
+### 1차 업데이트 21.05.01
+
+- 변수명 기능과 목적에 맞게 수정
+- 각각의 날씨정보 받아오는 기능의 명칭 통일
+- 각각의 날씨정보 받아오는 구조 통일
+
+![](https://images.velog.io/images/hyundong_kk/post/93635822-178b-44d1-9320-0a07aa45bb61/Untitled.png)
+
+setInfoAndScore 안의 convertInfoToScore, setInfoAndScore에서 각각의 정보 받아오기
+
+- 각각의 작업(coronaService,livingHealthService,weatherService,airPollutionService)에서 발생하는 오류 try-catch로 처리
+- Region 분리
+- 데이터의 관리를 위한 정규화 작업
+
+![](https://images.velog.io/images/hyundong_kk/post/4f34f0a3-7452-4304-a756-679e497be877/Untitled%20(1).png)
+
+
+### 2차 업데이트 21.05.04
+
+#### 성능 향상을 위한 캐시 디비 도입
+- 요청처리 속도: 2.2s -> 50ms 까지 성능 향상
+
+
+### 3차 업데이트 21.05.11
+
+#### 수집데이터 예외처리 작업
+- 날씨 정보 예외처리 완료
+- 미세먼지, 초미세먼지 예외처리 완료
+- 생활건강지수 예외처리 완료
+
+#### 에러 추적을 위한 로그 삽입
+- log4dbc 설정완료
+
+#### 지역정보 오류 보고 처리완료
+- 세종시 맵핑오류 수정 완료
+
+### 4차 업데이트 21.05.21
+
+- 로그인 없이 사용자 설정값 유지를 위한 UserToken 기능 추가
+- 카카오톡 공유기능 추가
+- 카카오톡 플러스 친구 등록
+
+### 5차 업데이트 21.05.24
+
+- DB엔드 포인트 노출로인한 DB이전 및 암호화
+- GitHub Flow 전략 적용
+- 코드 가독성 증가를 위한 리팩토링
+
+
 
