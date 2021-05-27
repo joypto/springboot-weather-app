@@ -1,5 +1,6 @@
 package com.weather.weatherdataapi.model.vo.redis;
 
+import com.weather.weatherdataapi.model.entity.info.HealthFoodPoisonInfo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -26,5 +27,15 @@ public class HealthFoodPoisonRedisVO {
     private Integer tomorrow;
 
     private Integer theDayAfterTomorrow;
+
+    public HealthFoodPoisonRedisVO(HealthFoodPoisonInfo info) {
+        this.bigRegionAdmCode = info.getBigRegion().getAdmCode();
+
+        this.id = info.getId();
+        this.date = info.getDate();
+        this.today = info.getToday();
+        this.tomorrow = info.getTomorrow();
+        this.theDayAfterTomorrow = info.getTheDayAfterTomorrow();
+    }
 
 }
