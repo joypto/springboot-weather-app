@@ -3,7 +3,7 @@ package com.weather.weatherdataapi.model.entity.info;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.Timestamped;
-import com.weather.weatherdataapi.model.vo.redis.LivingUvRedisVO;
+import com.weather.weatherdataapi.model.vo.redis.HealthAsthmaRedisVO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -41,7 +41,7 @@ public class HealthAsthmaInfo extends Timestamped {
     @Column
     private Integer theDayAfterTomorrow;
 
-    public HealthAsthmaInfo(LivingUvRedisVO redisVO, BigRegion bigRegion) {
+    public HealthAsthmaInfo(HealthAsthmaRedisVO redisVO, BigRegion bigRegion) {
         this.bigRegion = bigRegion;
 
         this.id = redisVO.getId();
