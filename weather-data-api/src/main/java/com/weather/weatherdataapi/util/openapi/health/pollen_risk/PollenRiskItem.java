@@ -18,12 +18,12 @@ public class PollenRiskItem {
     private String date;
 
     @Element
-    private String today;
+    private Integer today;
 
     @Element
-    private String tomorrow;
+    private Integer tomorrow;
 
     @Element
-    private String theDayAfterTomorrow;
+    private Integer theDayAfterTomorrow;
 
 }
