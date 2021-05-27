@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

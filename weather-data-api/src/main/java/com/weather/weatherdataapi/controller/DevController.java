@@ -10,10 +10,17 @@ import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
 import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.service.*;
+import com.weather.weatherdataapi.service.info.AirPollutionService;
+import com.weather.weatherdataapi.service.info.CoronaService;
+import com.weather.weatherdataapi.service.info.LivingHealthService;
+import com.weather.weatherdataapi.service.info.LivingHealthServiceV2;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.KakaoGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.kakao.transcoord.KakaoGeoTranscoordResponseDocument;
+import com.weather.weatherdataapi.util.openapi.geo.naver.NaverGeoApi;
 import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,15 +31,23 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class DevController {
 
+    private final Environment env;
+
     private final RegionService regionService;
 
     private final ReverseGeoCodingApi reverseGeoCodingApi;
     private final KakaoGeoApi kakaoGeoApi;
+    private final NaverGeoApi naverGeoApi;
 
     private final AirPollutionService airPollutionService;
     private final CoronaService coronaService;
     private final LivingHealthService livingHealthService;
     private final LivingHealthServiceV2 livingHealthServiceV2;
+
+    @GetMapping("/dev/profile")
+    public String profile() {
+        return StringUtils.arrayToCommaDelimitedString(env.getActiveProfiles());
+    }
 
     @GetMapping("/dev/api/air_pollution")
     public AirPollutionInfo getAirPollution(RegionDto regionDto) {
@@ -53,14 +68,6 @@ public class DevController {
 
         CoronaResponseDto responseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
         return responseDto;
-    }
-
-    @GetMapping("/dev/api/living_health")
-    public LivingHealthInfo getLivingHealth(@RequestParam("bigRegionName") String bigRegionName) {
-        BigRegion bigRegion = regionService.getBigRegionByName(bigRegionName);
-
-        LivingHealthInfo livingHealthInfo = livingHealthService.getInfoByBigRegion(bigRegion);
-        return livingHealthInfo;
     }
 
     @GetMapping("/dev/api/v2/living_health")
@@ -97,4 +104,10 @@ public class DevController {
             return new ReverseGeocodingResponseDto();
         }
     }
+
+    @GetMapping("/dev/api/v2/reverse_geocoding")
+    public RegionDto getReverseGeocodingV2(CoordinateDto coordinateDto) {
+        return naverGeoApi.reverseGeocoding(coordinateDto);
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
@@ -11,6 +11,7 @@ import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import com.weather.weatherdataapi.repository.redis.LivingHealthRedisRepository;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.HealthScoreUtil;
 import com.weather.weatherdataapi.util.LivingScoreUtil;
