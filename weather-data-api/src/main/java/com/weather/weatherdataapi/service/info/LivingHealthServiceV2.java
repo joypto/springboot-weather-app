@@ -7,7 +7,7 @@ import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.dto.responsedto.info.LivingHealthResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.entity.info.*;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import com.weather.weatherdataapi.repository.redis.LivingHealthRedisRepository;
@@ -43,18 +43,41 @@ public class LivingHealthServiceV2 {
     private final LivingHealthRedisRepository livingHealthRedisRepository;
     private final RegionService regionService;
 
+    private final HealthAsthmaService asthmaService;
+    private final HealthFoodPoisonService foodPoisonService;
+    private final HealthPollenRiskService pollenRiskService;
+    private final LivingUvService livingUvService;
+
     private final LivingApi livingApi;
     private final HealthApi healthApi;
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
-        LivingHealthInfo info = getInfoByBigRegion(currentBigRegion);
+        HealthAsthmaInfo asthmaInfo = asthmaService.getInfoByBigRegion(currentBigRegion);
+        HealthFoodPoisonInfo foodPoisonInfo = foodPoisonService.getInfoByBigRegion(currentBigRegion);
+        HealthPollenRiskInfo pollenRiskInfo = pollenRiskService.getInfoByBigRegion(currentBigRegion);
+        LivingUvInfo uvInfo = livingUvService.getInfoByBigRegion(currentBigRegion);
 
-        if (info.getDate() != null) {
-            LivingHealthResponseDto responseDto = new LivingHealthResponseDto(info);
-            weatherDataResponseDto.setLivingHealthWeather(responseDto);
+        LivingHealthInfo info = new LivingHealthInfo();
+        info.setAsthmaToday(asthmaInfo.getToday());
+        info.setAsthmaTomorrow(asthmaInfo.getTomorrow());
+        info.setAsthmaTheDayAfterTomorrow(asthmaInfo.getTheDayAfterTomorrow());
 
-            convertInfoToScore(scoreResultDto, info);
-        }
+        info.setFoodPoisonToday(foodPoisonInfo.getToday());
+        info.setFoodPoisonTomorrow(foodPoisonInfo.getTomorrow());
+        info.setFoodPoisonTheDayAfterTomorrow(foodPoisonInfo.getTheDayAfterTomorrow());
+
+        info.setOakPollenRiskToday(pollenRiskInfo.getToday());
+        info.setOakPollenRiskTomorrow(pollenRiskInfo.getTomorrow());
+        info.setOakPollenRiskTheDayAfterTomorrow(pollenRiskInfo.getTheDayAfterTomorrow());
+
+        info.setUvToday(uvInfo.getToday());
+        info.setUvTomorrow(uvInfo.getTomorrow());
+        info.setUvTheDayAfterTomorrow(uvInfo.getTheDayAfterTomorrow());
+
+        LivingHealthResponseDto responseDto = new LivingHealthResponseDto(info);
+        weatherDataResponseDto.setLivingHealthWeather(responseDto);
+
+        convertInfoToScore(scoreResultDto, info);
 
     }
 

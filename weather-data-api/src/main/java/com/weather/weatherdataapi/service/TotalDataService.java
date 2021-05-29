@@ -28,6 +28,7 @@ public class TotalDataService {
     private final CoronaService coronaService;
     private final LivingHealthServiceV2 livingHealthService;
     private final WeatherService weatherService;
+
     private final UserService userService;
     private final ScoreService scoreService;
     private final RegionService regionService;
