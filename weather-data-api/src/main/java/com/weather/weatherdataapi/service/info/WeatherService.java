@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherDayRedisVOException;
 import com.weather.weatherdataapi.exception.repository.redis.InvalidWeatherWeekRedisVOException;
@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ public class WeatherService {
             log.info("mysql에서 날씨 데이터 불러오기");
             WeatherWeekInfo weekInfo = weatherGatherApi.callWeather(wantRegion, weatherDataResponseDto);
             convertInfoToScore(scoreResultDto, weekInfo);
+            scoreResultDto.setWeatherValid(true);
         }
     }
 

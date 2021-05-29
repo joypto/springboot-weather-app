@@ -39,6 +39,7 @@ public class AirPollutionService {
             weatherDataResponseDto.setAirPollution(airPollutionInfo);
 
             convertInfoToScore(airPollutionInfo, scoreResultDto);
+            scoreResultDto.setAirPollutionValid(true);
         }
 
     }

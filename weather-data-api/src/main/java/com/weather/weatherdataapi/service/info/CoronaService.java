@@ -55,6 +55,7 @@ public class CoronaService {
 
             setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
             convertInfoToScore(scoreResultDto, allNewCaseCount);
+            scoreResultDto.setCoronaValid(true);
         }
 
     }
