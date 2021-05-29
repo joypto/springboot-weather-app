@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+import java.time.LocalDate;
+
 @Getter
 @RedisHash("living_health")
 @NoArgsConstructor
@@ -17,33 +19,31 @@ public class LivingHealthRedisVO {
 
     private long bigRegionId;
 
-    private String date;
+    private LocalDate date;
 
-    private String areaNo;
+    private Integer uvToday;
 
-    private String uvToday;
+    private Integer uvTomorrow;
 
-    private String uvTomorrow;
+    private Integer uvTheDayAfterTomorrow;
 
-    private String uvTheDayAfterTomorrow;
+    private Integer oakPollenRiskToday;
 
-    private String oakPollenRiskToday;
+    private Integer oakPollenRiskTomorrow;
 
-    private String oakPollenRiskTomorrow;
+    private Integer oakPollenRiskTheDayAfterTomorrow;
 
-    private String oakPollenRiskTheDayAfterTomorrow;
+    private Integer foodPoisonToday;
 
-    private String foodPoisonToday;
+    private Integer foodPoisonTomorrow;
 
-    private String foodPoisonTomorrow;
+    private Integer foodPoisonTheDayAfterTomorrow;
 
-    private String foodPoisonTheDayAfterTomorrow;
+    private Integer asthmaToday;
 
-    private String asthmaToday;
+    private Integer asthmaTomorrow;
 
-    private String asthmaTomorrow;
-
-    private String asthmaTheDayAfterTomorrow;
+    private Integer asthmaTheDayAfterTomorrow;
 
     public LivingHealthRedisVO(LivingHealthInfo livingHealthInfo) {
         this.bigRegionAdmCode = livingHealthInfo.getBigRegion().getAdmCode();

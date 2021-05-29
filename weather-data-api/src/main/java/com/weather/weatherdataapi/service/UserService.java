@@ -79,7 +79,7 @@ public class UserService {
      * @param coordinateDto 특정 사용자의 현재 위치입니다.
      */
     public UserRegionResponseDto getMyRegion(User user, CoordinateDto coordinateDto) {
-        RegionDto currentRegion = regionService.getRegionName(coordinateDto);
+        RegionDto currentRegion = regionService.getRegionByCoordinate(coordinateDto);
 
         SmallRegion latestRequestRegion = user.getLatestRequestRegion();
         RegionDto latestRequestRegionDto = latestRequestRegion == null ? null : new RegionDto(latestRequestRegion.getBigRegion().getBigRegionName(), latestRequestRegion.getSmallRegionName());

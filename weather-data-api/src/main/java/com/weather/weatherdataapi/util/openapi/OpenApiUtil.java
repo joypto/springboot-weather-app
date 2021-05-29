@@ -1,9 +1,27 @@
 package com.weather.weatherdataapi.util.openapi;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+@RequiredArgsConstructor
+@Component
 public class OpenApiUtil {
+
+    @Value("${secret.api_key.data_go_kr}")
+    private String DATA_GO_KR_API_KEY;
+
+    @Value("${secret.api_key.kakao}")
+    private String KAKAO_API_KEY;
+
+    @Value("${secret.api_key.naver_key_id}")
+    private String NAVER_API_KEY_ID;
+
+    @Value("${secret.api_key.naver_key}")
+    private String NAVER_API_KEY;
 
     /**
      * 생활기상지수와 보건기상지수 OpenApi 요청할 때 건네줄 유효한 time 문자열을 반환받습니다.
@@ -25,6 +43,22 @@ public class OpenApiUtil {
         String timeText = dateTime.format(DATE_TIME_FORMATTER) + "06";
 
         return timeText;
+    }
+
+    public String getDataGoKrApiKey() {
+        return DATA_GO_KR_API_KEY;
+    }
+
+    public String getKakaoApiKey() {
+        return KAKAO_API_KEY;
+    }
+
+    public String getNaverApiKeyId() {
+        return NAVER_API_KEY_ID;
+    }
+
+    public String getNaverApiKey() {
+        return NAVER_API_KEY;
     }
 
 }

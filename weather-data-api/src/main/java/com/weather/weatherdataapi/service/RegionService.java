@@ -4,7 +4,6 @@ import com.weather.weatherdataapi.exception.repository.InvalidBigRegionException
 import com.weather.weatherdataapi.exception.repository.InvalidSmallRegionException;
 import com.weather.weatherdataapi.model.dto.CoordinateDto;
 import com.weather.weatherdataapi.model.dto.RegionDto;
-import com.weather.weatherdataapi.model.dto.responsedto.ReverseGeocodingResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.vo.csv.RegionCsvVO;
@@ -17,7 +16,7 @@ import com.weather.weatherdataapi.repository.redis.SmallRegionRedisRepository;
 import com.weather.weatherdataapi.util.CsvParserUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.RegionUtil;
-import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
+import com.weather.weatherdataapi.util.openapi.geo.naver.NaverGeoApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
@@ -36,16 +35,19 @@ public class RegionService {
     private final BigRegionRedisRepository bigRegionRedisRepository;
     private final SmallRegionRedisRepository smallRegionRedisRepository;
 
-    private final ReverseGeoCodingApi reverseGeoCodingApi;
+    private final NaverGeoApi naverGeoApi;
 
     private Dictionary<String, String> bigRegionAdmCodeDict;
     private Dictionary<String, Dictionary<String, String>> smallRegionAdmCodeDict;
     private List<BigRegion> allValidBigRegionList;
 
-    public RegionDto getRegionName(CoordinateDto coordinateDto) {
-        // 해당 위경도로 시/구 주소 문자열 반환
-        ReverseGeocodingResponseDto address = reverseGeoCodingApi.reverseGeocoding(coordinateDto);
-        return new RegionDto(address.getBigRegion(), address.getSmallRegion());
+    public RegionDto getRegionByCoordinate(CoordinateDto coordinateDto) {
+        try {
+            return naverGeoApi.reverseGeocoding(coordinateDto);
+        } catch (Exception e) {
+            log.error("서비스 대상 지역이 아닙니다. 서울시 강남구 데이터를 반환합니다.");
+            return new RegionDto("서울특별시", "강남구");
+        }
     }
 
     public SmallRegion getSmallRegionByDto(RegionDto regionDto) {

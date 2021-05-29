@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
@@ -12,11 +12,11 @@ import com.weather.weatherdataapi.model.entity.info.CoronaInfo;
 import com.weather.weatherdataapi.model.vo.redis.CoronaRedisVO;
 import com.weather.weatherdataapi.repository.info.CoronaInfoRepository;
 import com.weather.weatherdataapi.repository.redis.CoronaRedisRepository;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaInfo;
 import com.weather.weatherdataapi.util.openapi.corona.ICoronaItem;
 import com.weather.weatherdataapi.util.openapi.corona.gov.GovCoronaApi;
-import com.weather.weatherdataapi.util.openapi.geo.naver.ReverseGeoCodingApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -38,8 +38,6 @@ public class CoronaService {
 
     private final GovCoronaApi govCoronaOpenApi;
 
-    private final ReverseGeoCodingApi reverseGeoCodingApi;
-
     private Integer cachedAllNewCaseCount;
 
     public Integer getAllNewCaseCount() {
@@ -51,11 +49,14 @@ public class CoronaService {
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto totalDataResponseDto) {
         CoronaInfo coronaInfo = getInfoByBigRegion(currentBigRegion);
-        Integer allNewCaseCount = getAllNewCaseCount();
 
-        setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
+        if (coronaInfo.getDate() != null) {
+            Integer allNewCaseCount = getAllNewCaseCount();
 
-        convertInfoToScore(scoreResultDto, allNewCaseCount);
+            setInfo(totalDataResponseDto, coronaInfo, allNewCaseCount);
+            convertInfoToScore(scoreResultDto, allNewCaseCount);
+        }
+
     }
 
     public CoronaInfo getInfoByBigRegion(BigRegion bigRegion) {
@@ -66,10 +67,18 @@ public class CoronaService {
             refreshCache();
         }
 
-        CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidCoronaRedisVOException());
-        coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
+        try {
+            CoronaRedisVO coronaRedisVO = coronaRedisRepository.findById(bigRegion.getAdmCode()).orElseThrow(() -> new InvalidCoronaRedisVOException());
+            coronaInfo = new CoronaInfo(coronaRedisVO, bigRegion);
 
-        return coronaInfo;
+            return coronaInfo;
+        } catch (InvalidCoronaRedisVOException e) {
+            log.error(e.getMessage());
+            log.error("코로나 정보를 반환할 수 없습니다. 캐시되어 있는 코로나 정보가 없습니다.");
+
+            return new CoronaInfo();
+        }
+
     }
 
     public void tryFetchAndStoreInfoUsingOpenApi() {
@@ -96,16 +105,23 @@ public class CoronaService {
 
     @Transactional
     public void fetchAndStoreInfoUsingOpenApi() throws AlreadyExistsLatestDataException, FailedFetchException {
-        if (checkAlreadyHasLatestData() == true)
-            return;
 
-        ICoronaInfo info = govCoronaOpenApi.getInfo();
+        ICoronaInfo fetchedInfo;
 
-        if (info.getItemList().isEmpty())
-            throw new FailedFetchException("가져온 아이템 리스트가 비어있습니다.");
+        try {
+            fetchedInfo = govCoronaOpenApi.getInfo(LocalDate.now());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            log.error("당일 코로나 정보를 가져오는 데 실패하였습니다. 전일 데이터를 요청합니다.");
 
-        for (int i = 0; i < info.getItemList().size(); i++) {
-            ICoronaItem item = info.getItemList().get(i);
+            fetchedInfo = govCoronaOpenApi.getInfo(LocalDate.now().minusDays(1));
+        }
+
+        if (checkAlreadyHasLatestData(fetchedInfo) == true)
+            throw new AlreadyExistsLatestDataException();
+
+        for (int i = 0; i < fetchedInfo.getItemList().size(); i++) {
+            ICoronaItem item = fetchedInfo.getItemList().get(i);
 
             // 파싱해온 정보 중, 합계 정보는 저장하지 않습니다.
             if (item.getRegionName().equals("합계"))
@@ -119,6 +135,7 @@ public class CoronaService {
     }
 
     private void setInfo(TotalDataResponseDto totalDataResponseDto, CoronaInfo coronaInfo, Integer allNewCaseCount) {
+
         Integer bigRegionNewCaseCount = coronaInfo.getNewLocalCaseCount() + coronaInfo.getNewForeignCaseCount();
         CoronaResponseDto coronaResponseDto = new CoronaResponseDto(coronaInfo.getDate(), bigRegionNewCaseCount, allNewCaseCount);
 
@@ -176,16 +193,24 @@ public class CoronaService {
 
     }
 
-    private boolean checkAlreadyHasLatestData() {
+    private boolean checkAlreadyHasLatestData(ICoronaInfo fetched) {
         if (coronaRepository.count() == 0)
             return false;
 
         CoronaInfo latestData = coronaRepository.findFirstByOrderByCreatedAtDesc().orElseThrow(() -> new InvalidCoronaInfoException());
-        LocalDate current = LocalDate.now();
+        LocalDate latestDate = latestData.getDate();
 
-        if (latestData == null)
+        // DB에 저장되어 있는 가장 최신의 데이터가
+        // 오늘자의 데이터인지 확인합니다.
+        if (latestDate.equals(LocalDate.now()))
+            return true;
+
+        // 원격 서버에서 제공하는 최신 데이터보다 뒤쳐진 데이터인지 확인합니다.
+        LocalDate fetchedDate = fetched.getItemList().get(0).getDate();
+
+        if (latestDate.isBefore(fetchedDate))
             return false;
 
-        return latestData.getDate().isEqual(current);
+        return true;
     }
 }

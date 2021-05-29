@@ -1,6 +1,6 @@
 package com.weather.weatherdataapi.scheduler;
 
-import com.weather.weatherdataapi.service.CoronaService;
+import com.weather.weatherdataapi.service.info.CoronaService;
 import com.weather.weatherdataapi.util.DateTimeUtil;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import lombok.RequiredArgsConstructor;

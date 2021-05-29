@@ -15,19 +15,20 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Component
 public class LivingApi {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
     private final LivingService service;
-    private final String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
-    private final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private final OpenApiUtil openApiUtil;
 
-    public LivingApi() {
+    public LivingApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -43,18 +44,29 @@ public class LivingApi {
         service = retrofit.create(LivingService.class);
     }
 
-    public UvItem getResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public UvItem getUvResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
-            Call<UvResponse> call = service.generateResponseCall(SERVICE_KEY, areaNo, requestTimeText);
-            Response<UvResponse> execute = call.execute();
-            UvResponse response = execute.body();
+            Call<UvResponse> call = service.generateResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
+            Response<UvResponse> execute;
+            UvResponse response;
+
+            try {
+                execute = call.execute();
+                response = execute.body();
+            }
+            // retrofit에서 exception이 발생할 때 실행됩니다.
+            catch (Exception e) {
+                throw new FailedFetchException();
+            }
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
             } else if (response.getBody().getItemList().size() == 0) {
                 throw new FailedFetchException("조회한 결과가 없습니다.");
+            } else if (response.getBody().getItemList().get(0).getToday() == null) {
+                throw new FailedFetchException("정상적인 today값을 응답받지 못했습니다.");
             }
 
             return response.getBody().getItemList().get(0);
@@ -65,13 +77,6 @@ public class LivingApi {
             log.error(ExceptionUtil.getStackTraceString(e));
 
             throw e;
-        }
-        // retrofit에서 exception이 발생할 때 실행됩니다.
-        catch (IOException e) {
-            log.error(e.getMessage());
-            log.error(ExceptionUtil.getStackTraceString(e));
-
-            throw new FailedFetchException("원격 서버에서 응답받은 xml데이터가 LivingResponse객체에 매핑될 수 없습니다.");
         }
 
     }

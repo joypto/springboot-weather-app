@@ -1,0 +1,13 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - "classpath:/application-prod-db.yml"
+      - "classpath:/application-secret.yml"
+  jpa:
+    hibernate:
+      ddl-auto: update
+logging:
+  level:
+    root: info

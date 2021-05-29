@@ -20,16 +20,22 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
 public class HealthApi {
 
-    private final HealthService service;
-    private String SERVICE_KEY = "iVwYPkC6bU1VAQicYcfS34fOnic5axhMluibhmVlWbQzkTP7YNapHzeMXMzwWzRjXYtTNk9shZRR+cveP6daGw==";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    public HealthApi() {
+    private final HealthService service;
+    private final OpenApiUtil openApiUtil;
+
+
+    public HealthApi(OpenApiUtil openApiUtil) {
+        this.openApiUtil = openApiUtil;
+
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
@@ -45,13 +51,22 @@ public class HealthApi {
         service = retrofit.create(HealthService.class);
     }
 
-    public AsthmaItem getAsthmaResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public AsthmaItem getAsthmaResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
-            Call<AsthmaResponse> call = service.generateAsthmaResponseCall(SERVICE_KEY, areaNo, requestTimeText);
-            Response<AsthmaResponse> execute = call.execute();
-            AsthmaResponse response = execute.body();
+            Call<AsthmaResponse> call = service.generateAsthmaResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
+            Response<AsthmaResponse> execute;
+            AsthmaResponse response;
+
+            try {
+                execute = call.execute();
+                response = execute.body();
+            }
+            // retrofit에서 exception이 발생할 때 실행됩니다.
+            catch (Exception e) {
+                throw new FailedFetchException();
+            }
 
             if (response.getHeader().getResultCode().equals("00") == false) {
                 throw new FailedFetchException("값을 정상적으로 조회하지 못했습니다.");
@@ -68,21 +83,14 @@ public class HealthApi {
 
             throw e;
         }
-        // retrofit에서 exception이 발생할 때 실행됩니다.
-        catch (IOException e) {
-            log.error(e.getMessage());
-            log.error(ExceptionUtil.getStackTraceString(e));
-
-            throw new FailedFetchException("원격 서버에서 응답받은 xml데이터가 AsthmaResponse 객체에 매핑될 수 없습니다.");
-        }
 
     }
 
-    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
-            Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<FoodPoisonResponse> execute = call.execute();
             FoodPoisonResponse response = execute.body();
 
@@ -111,11 +119,11 @@ public class HealthApi {
 
     }
 
-    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
-            Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(SERVICE_KEY, areaNo, requestTimeText);
+            Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<PollenRiskResponse> execute = call.execute();
             PollenRiskResponse response = execute.body();
 

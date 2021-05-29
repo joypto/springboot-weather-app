@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 
 @Entity
 @Getter
@@ -33,53 +34,53 @@ public class LivingHealthInfo extends Timestamped {
 
     @JsonIgnore
     @Column
-    private String date;
+    private LocalDate date;
 
     @Column
-    private String uvToday;
+    private Integer uvToday;
 
     @Column
-    private String uvTomorrow;
+    private Integer uvTomorrow;
 
     @Column
-    private String uvTheDayAfterTomorrow;
+    private Integer uvTheDayAfterTomorrow;
 
     @Column
-    private String oakPollenRiskToday;
+    private Integer oakPollenRiskToday;
 
     @Column
-    private String oakPollenRiskTomorrow;
+    private Integer oakPollenRiskTomorrow;
 
     @Column
-    private String oakPollenRiskTheDayAfterTomorrow;
+    private Integer oakPollenRiskTheDayAfterTomorrow;
 
     @Column
-    private String foodPoisonToday;
+    private Integer foodPoisonToday;
 
     @Column
-    private String foodPoisonTomorrow;
+    private Integer foodPoisonTomorrow;
 
     @Column
-    private String foodPoisonTheDayAfterTomorrow;
+    private Integer foodPoisonTheDayAfterTomorrow;
 
     @Column
-    private String asthmaToday;
+    private Integer asthmaToday;
 
     @Column
-    private String asthmaTomorrow;
+    private Integer asthmaTomorrow;
 
     @Column
-    private String asthmaTheDayAfterTomorrow;
+    private Integer asthmaTheDayAfterTomorrow;
 
-    public LivingHealthInfo(BigRegion bigRegion, String date, UvItem uvItem, AsthmaItem asthmaItem, FoodPoisonItem foodPoisonItem, PollenRiskItem pollenRiskItem) {
+    public LivingHealthInfo(BigRegion bigRegion, LocalDate date, UvItem uvItem, AsthmaItem asthmaItem, FoodPoisonItem foodPoisonItem, PollenRiskItem pollenRiskItem) {
         // final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddhh");
         // this.date = dateTime.format(DATE_FORMATTER);
 
         this.bigRegion = bigRegion;
         this.date = date;
-        this.uvToday = uvItem.getToday().toString();
-        this.uvTomorrow = uvItem.getTomorrow().toString();
-        this.uvTheDayAfterTomorrow = uvItem.getTheDayAfterTomorrow().toString();
+        this.uvToday = uvItem.getToday();
+        this.uvTomorrow = uvItem.getTomorrow();
+        this.uvTheDayAfterTomorrow = uvItem.getTheDayAfterTomorrow();
         this.asthmaToday = asthmaItem.getToday();
         this.asthmaTomorrow = asthmaItem.getTomorrow();
         this.asthmaTheDayAfterTomorrow = asthmaItem.getTheDayAfterTomorrow();
@@ -94,6 +95,7 @@ public class LivingHealthInfo extends Timestamped {
     public LivingHealthInfo(LivingHealthRedisVO livingHealthRedisVO, BigRegion bigRegion) {
         this.id = livingHealthRedisVO.getId();
         this.bigRegion = bigRegion;
+        this.date = livingHealthRedisVO.getDate();
         this.uvToday = livingHealthRedisVO.getUvToday();
         this.uvTomorrow = livingHealthRedisVO.getUvTomorrow();
         this.uvTheDayAfterTomorrow = livingHealthRedisVO.getUvTheDayAfterTomorrow();

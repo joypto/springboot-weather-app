@@ -6,5 +6,5 @@ import retrofit2.http.Query;
 
 public interface GovCoronaService {
     @GET("getCovid19SidoInfStateJson")
-    Call<GovCoronaResponse> getResponseCall(@Query("serviceKey") String serviceKey);
+    Call<GovCoronaResponse> getResponseCall(@Query("serviceKey") String serviceKey, @Query("startCreateDt") String startCreateDt, @Query("endCreateDt") String endCreateDt);
 }

@@ -8,6 +8,9 @@ import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.User;
+import com.weather.weatherdataapi.service.info.AirPollutionService;
+import com.weather.weatherdataapi.service.info.CoronaService;
+import com.weather.weatherdataapi.service.info.LivingHealthServiceV2;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ public class TotalDataService {
     private final CoronaService coronaService;
     private final LivingHealthServiceV2 livingHealthService;
     private final WeatherService weatherService;
+
     private final UserService userService;
     private final ScoreService scoreService;
     private final RegionService regionService;
@@ -37,7 +41,7 @@ public class TotalDataService {
      * @return 응답 객체입니다. RestController에서 이 응답값을 바로 리턴하면 됩니다.
      */
     public ResponseEntity<TotalDataResponseDto> getTotalDataResponse(String identification, CoordinateDto coordinateDto, String deviceInfo) throws IOException {
-        RegionDto regionDto = regionService.getRegionName(coordinateDto);
+        RegionDto regionDto = regionService.getRegionByCoordinate(coordinateDto);
 
         return getTotalDataResponse(identification, regionDto, deviceInfo);
     }

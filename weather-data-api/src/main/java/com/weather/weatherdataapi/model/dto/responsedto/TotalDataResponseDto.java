@@ -2,10 +2,10 @@ package com.weather.weatherdataapi.model.dto.responsedto;
 
 import com.weather.weatherdataapi.model.dto.RegionDto;
 import com.weather.weatherdataapi.model.dto.responsedto.info.CoronaResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.info.LivingHealthResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
 import com.weather.weatherdataapi.model.entity.SmallRegion;
 import com.weather.weatherdataapi.model.entity.info.AirPollutionInfo;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherDayInfo;
 import com.weather.weatherdataapi.model.entity.info.WeatherWeekInfo;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class TotalDataResponseDto {
 
     private RegionDto region;
 
-    private LivingHealthInfo livingHealthWeather;
+    private LivingHealthResponseDto livingHealthWeather;
 
     private WeatherWeekInfo weekInfo;
 
