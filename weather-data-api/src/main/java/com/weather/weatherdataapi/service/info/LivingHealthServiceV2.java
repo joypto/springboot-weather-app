@@ -78,6 +78,7 @@ public class LivingHealthServiceV2 {
         weatherDataResponseDto.setLivingHealthWeather(responseDto);
 
         convertInfoToScore(scoreResultDto, info);
+        scoreResultDto.setLivingHealthValid(true);
 
     }
 

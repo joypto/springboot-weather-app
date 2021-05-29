@@ -11,6 +11,7 @@ import com.weather.weatherdataapi.model.entity.User;
 import com.weather.weatherdataapi.service.info.AirPollutionService;
 import com.weather.weatherdataapi.service.info.CoronaService;
 import com.weather.weatherdataapi.service.info.LivingHealthServiceV2;
+import com.weather.weatherdataapi.service.info.WeatherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
