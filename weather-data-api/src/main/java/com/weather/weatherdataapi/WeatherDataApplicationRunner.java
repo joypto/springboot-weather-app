@@ -1,6 +1,8 @@
 package com.weather.weatherdataapi;
 
 import com.weather.weatherdataapi.service.*;
+import com.weather.weatherdataapi.service.info.CoronaService;
+import com.weather.weatherdataapi.service.info.LivingHealthServiceV2;
 import com.weather.weatherdataapi.util.openapi.air_pollution.AirKoreaStationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

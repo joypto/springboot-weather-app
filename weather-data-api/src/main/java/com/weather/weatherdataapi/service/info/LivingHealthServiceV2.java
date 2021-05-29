@@ -1,15 +1,17 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import com.weather.weatherdataapi.exception.AlreadyExistsLatestDataException;
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.exception.repository.info.InvalidLivingHealthInfoException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;
 import com.weather.weatherdataapi.model.dto.responsedto.TotalDataResponseDto;
+import com.weather.weatherdataapi.model.dto.responsedto.info.LivingHealthResponseDto;
 import com.weather.weatherdataapi.model.entity.BigRegion;
-import com.weather.weatherdataapi.model.entity.info.LivingHealthInfo;
+import com.weather.weatherdataapi.model.entity.info.*;
 import com.weather.weatherdataapi.model.vo.redis.LivingHealthRedisVO;
 import com.weather.weatherdataapi.repository.info.LivingHealthInfoRepository;
 import com.weather.weatherdataapi.repository.redis.LivingHealthRedisRepository;
+import com.weather.weatherdataapi.service.RegionService;
 import com.weather.weatherdataapi.util.ExceptionUtil;
 import com.weather.weatherdataapi.util.HealthScoreUtil;
 import com.weather.weatherdataapi.util.LivingScoreUtil;
@@ -24,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,22 +37,48 @@ import java.util.Optional;
 @Service
 public class LivingHealthServiceV2 {
 
+    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHH");
+
     private final LivingHealthInfoRepository livingHealthInfoRepository;
     private final LivingHealthRedisRepository livingHealthRedisRepository;
     private final RegionService regionService;
+
+    private final HealthAsthmaService asthmaService;
+    private final HealthFoodPoisonService foodPoisonService;
+    private final HealthPollenRiskService pollenRiskService;
+    private final LivingUvService livingUvService;
 
     private final LivingApi livingApi;
     private final HealthApi healthApi;
 
     public void setInfoAndScore(BigRegion currentBigRegion, ScoreResultDto scoreResultDto, TotalDataResponseDto weatherDataResponseDto) {
-        LivingHealthInfo info = getInfoByBigRegion(currentBigRegion);
+        HealthAsthmaInfo asthmaInfo = asthmaService.getInfoByBigRegion(currentBigRegion);
+        HealthFoodPoisonInfo foodPoisonInfo = foodPoisonService.getInfoByBigRegion(currentBigRegion);
+        HealthPollenRiskInfo pollenRiskInfo = pollenRiskService.getInfoByBigRegion(currentBigRegion);
+        LivingUvInfo uvInfo = livingUvService.getInfoByBigRegion(currentBigRegion);
 
-        if (info.getDate() != null) {
-            weatherDataResponseDto.setLivingHealthWeather(info);
+        LivingHealthInfo info = new LivingHealthInfo();
+        info.setAsthmaToday(asthmaInfo.getToday());
+        info.setAsthmaTomorrow(asthmaInfo.getTomorrow());
+        info.setAsthmaTheDayAfterTomorrow(asthmaInfo.getTheDayAfterTomorrow());
 
-            convertInfoToScore(scoreResultDto, info);
-        }
-        
+        info.setFoodPoisonToday(foodPoisonInfo.getToday());
+        info.setFoodPoisonTomorrow(foodPoisonInfo.getTomorrow());
+        info.setFoodPoisonTheDayAfterTomorrow(foodPoisonInfo.getTheDayAfterTomorrow());
+
+        info.setOakPollenRiskToday(pollenRiskInfo.getToday());
+        info.setOakPollenRiskTomorrow(pollenRiskInfo.getTomorrow());
+        info.setOakPollenRiskTheDayAfterTomorrow(pollenRiskInfo.getTheDayAfterTomorrow());
+
+        info.setUvToday(uvInfo.getToday());
+        info.setUvTomorrow(uvInfo.getTomorrow());
+        info.setUvTheDayAfterTomorrow(uvInfo.getTheDayAfterTomorrow());
+
+        LivingHealthResponseDto responseDto = new LivingHealthResponseDto(info);
+        weatherDataResponseDto.setLivingHealthWeather(responseDto);
+
+        convertInfoToScore(scoreResultDto, info);
+
     }
 
     public void convertInfoToScore(ScoreResultDto scoreResultDto, LivingHealthInfo livingHealthInfo) {
@@ -59,23 +87,23 @@ public class LivingHealthServiceV2 {
         List<Integer> pollenRiskInfoList = new ArrayList<>(7);
         List<Integer> foodPoisonInfoList = new ArrayList<>(7);
 
-        uvInfoList.add(LivingScoreUtil.convertUvInfoToScore(Integer.parseInt(livingHealthInfo.getUvToday())));
-        uvInfoList.add(LivingScoreUtil.convertUvInfoToScore(Integer.parseInt(livingHealthInfo.getUvTomorrow())));
+        uvInfoList.add(LivingScoreUtil.convertUvInfoToScore(livingHealthInfo.getUvToday()));
+        uvInfoList.add(LivingScoreUtil.convertUvInfoToScore(livingHealthInfo.getUvTomorrow()));
 
-        asthmaInfoList.add(HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getAsthmaToday())));
-        asthmaInfoList.add(HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getAsthmaTomorrow())));
+        asthmaInfoList.add(HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getAsthmaToday()));
+        asthmaInfoList.add(HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getAsthmaTomorrow()));
 
-        pollenRiskInfoList.add(HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getOakPollenRiskToday())));
-        pollenRiskInfoList.add(HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getOakPollenRiskTomorrow())));
+        pollenRiskInfoList.add(HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getOakPollenRiskToday()));
+        pollenRiskInfoList.add(HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getOakPollenRiskTomorrow()));
 
-        foodPoisonInfoList.add(HealthScoreUtil.convertFoodPoisonInfoToScore(Integer.parseInt(livingHealthInfo.getFoodPoisonToday())));
-        foodPoisonInfoList.add(HealthScoreUtil.convertFoodPoisonInfoToScore(Integer.parseInt(livingHealthInfo.getFoodPoisonTomorrow())));
+        foodPoisonInfoList.add(HealthScoreUtil.convertFoodPoisonInfoToScore(livingHealthInfo.getFoodPoisonToday()));
+        foodPoisonInfoList.add(HealthScoreUtil.convertFoodPoisonInfoToScore(livingHealthInfo.getFoodPoisonTomorrow()));
 
         // 3~7일 뒤의 예상 점수는 전부 3일 뒤의 예상 점수로 저장합니다.
-        Integer uvTheDayAfterTomorrow = LivingScoreUtil.convertUvInfoToScore(Integer.parseInt(livingHealthInfo.getUvTheDayAfterTomorrow()));
-        Integer asthmaTheDayAfterTomorrow = HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getAsthmaTheDayAfterTomorrow()));
-        Integer pollenRiskTheDayAfterTomorrow = HealthScoreUtil.convertHealthInfoToScore(Integer.parseInt(livingHealthInfo.getOakPollenRiskTheDayAfterTomorrow()));
-        Integer foodPoisonTheDayAfterTomorrow = HealthScoreUtil.convertFoodPoisonInfoToScore(Integer.parseInt(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow()));
+        Integer uvTheDayAfterTomorrow = LivingScoreUtil.convertUvInfoToScore(livingHealthInfo.getUvTheDayAfterTomorrow());
+        Integer asthmaTheDayAfterTomorrow = HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getAsthmaTheDayAfterTomorrow());
+        Integer pollenRiskTheDayAfterTomorrow = HealthScoreUtil.convertHealthInfoToScore(livingHealthInfo.getOakPollenRiskTheDayAfterTomorrow());
+        Integer foodPoisonTheDayAfterTomorrow = HealthScoreUtil.convertFoodPoisonInfoToScore(livingHealthInfo.getFoodPoisonTheDayAfterTomorrow());
 
         for (int i = 0; i < 5; i++) {
             uvInfoList.add(uvTheDayAfterTomorrow);
@@ -119,7 +147,7 @@ public class LivingHealthServiceV2 {
             long startTime = System.currentTimeMillis();
 
             try {
-                fetchAndStoreInfoUsingOpenApi(LocalDateTime.now());
+                fetchAndStoreInfoUsingOpenApi(LocalDate.now());
             }
             // 당일 정보를 가져오지 못했을 때 실행됩니다.
             // 예상되는 이유는 다음과 같습니다.
@@ -128,7 +156,7 @@ public class LivingHealthServiceV2 {
             catch (FailedFetchException e) {
                 log.error("원격 서버에서 당일 생활/보건기상지수 정보를 가져오는 데 실패하였습니다.");
                 log.error("전일 기준으로 다시 한 번 정보를 요청합니다.");
-                fetchAndStoreInfoUsingOpenApi(LocalDateTime.now().minusDays(1));
+                fetchAndStoreInfoUsingOpenApi(LocalDate.now().minusDays(1));
             }
 
             long endTime = System.currentTimeMillis();
@@ -147,25 +175,26 @@ public class LivingHealthServiceV2 {
     }
 
     @Transactional
-    public void fetchAndStoreInfoUsingOpenApi(LocalDateTime dateTime) throws AlreadyExistsLatestDataException, FailedFetchException {
+    public void fetchAndStoreInfoUsingOpenApi(LocalDate date) throws AlreadyExistsLatestDataException, FailedFetchException {
 
         List<BigRegion> allValidBigRegionList = regionService.getAllValidBigRegionList();
 
         for (BigRegion bigRegion : allValidBigRegionList) {
             String admCode = bigRegion.getAdmCode();
 
-            UvItem uvItem = livingApi.getResponse(admCode, dateTime);
-            AsthmaItem asthmaItem = healthApi.getAsthmaResponse(admCode, dateTime);
-            FoodPoisonItem foodPoisonItem = healthApi.getFoodPoisonResponse(admCode, dateTime);
-            PollenRiskItem pollenRiskItem = healthApi.getPollenRiskResponse(admCode, dateTime);
+            UvItem uvItem = livingApi.getUvResponse(admCode, date);
+            AsthmaItem asthmaItem = healthApi.getAsthmaResponse(admCode, date);
+            FoodPoisonItem foodPoisonItem = healthApi.getFoodPoisonResponse(admCode, date);
+            PollenRiskItem pollenRiskItem = healthApi.getPollenRiskResponse(admCode, date);
 
             // FIXME: uv 정보의 시간으로 덮어쓰고 있다. 모든 정보의 시간이 일치하는지 확인해봐야 합니다.
             String fetchedItemTimeText = uvItem.getDate();
+            LocalDate fetchedItemTime = LocalDate.parse(fetchedItemTimeText, DATETIME_FORMATTER);
 
-            if (checkAlreadyHasLatestData(bigRegion, fetchedItemTimeText))
+            if (checkAlreadyHasLatestData(bigRegion, fetchedItemTime))
                 throw new AlreadyExistsLatestDataException();
 
-            LivingHealthInfo livingHealthInfo = new LivingHealthInfo(bigRegion, uvItem.getDate(), uvItem, asthmaItem, foodPoisonItem, pollenRiskItem);
+            LivingHealthInfo livingHealthInfo = new LivingHealthInfo(bigRegion, fetchedItemTime, uvItem, asthmaItem, foodPoisonItem, pollenRiskItem);
             livingHealthInfoRepository.save(livingHealthInfo);
         }
 
@@ -187,17 +216,15 @@ public class LivingHealthServiceV2 {
 
     }
 
-    private boolean checkAlreadyHasLatestData(BigRegion bigRegion, String fetchedItemTimeText) {
-        final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMddHH");
+    private boolean checkAlreadyHasLatestData(BigRegion bigRegion, LocalDate fetchedDate) {
 
         Optional<LivingHealthInfo> queriedLatestInfo = livingHealthInfoRepository.findFirstByBigRegionOrderByCreatedAtDesc(bigRegion);
         if (queriedLatestInfo.isPresent() == false)
             return false;
 
-        LocalDateTime latestItemTime = LocalDateTime.parse(queriedLatestInfo.get().getDate(), DATETIME_FORMATTER);
-        LocalDateTime fetchedItemTime = LocalDateTime.parse(fetchedItemTimeText, DATETIME_FORMATTER);
+        LocalDate latestDate = queriedLatestInfo.get().getDate();
 
-        if (latestItemTime.isBefore(fetchedItemTime))
+        if (latestDate.isBefore(fetchedDate))
             return false;
 
         return true;

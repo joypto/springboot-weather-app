@@ -1,4 +1,4 @@
-package com.weather.weatherdataapi.service;
+package com.weather.weatherdataapi.service.info;
 
 import com.weather.weatherdataapi.exception.FailedFetchException;
 import com.weather.weatherdataapi.model.dto.ScoreResultDto;

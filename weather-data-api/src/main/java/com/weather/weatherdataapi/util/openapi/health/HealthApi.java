@@ -20,14 +20,18 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.simplexml.SimpleXmlConverterFactory;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Slf4j
 @Service
 public class HealthApi {
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+
     private final HealthService service;
     private final OpenApiUtil openApiUtil;
+
 
     public HealthApi(OpenApiUtil openApiUtil) {
         this.openApiUtil = openApiUtil;
@@ -47,9 +51,9 @@ public class HealthApi {
         service = retrofit.create(HealthService.class);
     }
 
-    public AsthmaItem getAsthmaResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public AsthmaItem getAsthmaResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
             Call<AsthmaResponse> call = service.generateAsthmaResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<AsthmaResponse> execute;
@@ -82,9 +86,9 @@ public class HealthApi {
 
     }
 
-    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public FoodPoisonItem getFoodPoisonResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
             Call<FoodPoisonResponse> call = service.generateFoodPoisonResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<FoodPoisonResponse> execute = call.execute();
@@ -115,9 +119,9 @@ public class HealthApi {
 
     }
 
-    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDateTime dateTime) throws FailedFetchException {
+    public PollenRiskItem getPollenRiskResponse(String areaNo, LocalDate date) throws FailedFetchException {
         try {
-            String requestTimeText = OpenApiUtil.getValidRequestTime(dateTime);
+            String requestTimeText = date.format(DATE_TIME_FORMATTER) + "06";
 
             Call<PollenRiskResponse> call = service.generateOakPollenRiskResponseCall(openApiUtil.getDataGoKrApiKey(), areaNo, requestTimeText);
             Response<PollenRiskResponse> execute = call.execute();

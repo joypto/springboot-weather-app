@@ -22,7 +22,7 @@ public class HealthScoreUtil {
 
     }
 
-    public static Integer convertHealthWthIdxToScore(String idx) {
+    public static Integer convertHealthWthIdxToScore(Integer idx) {
         return healthScoreDict.get(idx);
     }
 
