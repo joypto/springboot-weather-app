@@ -41,6 +41,7 @@ public class WeatherService {
             weatherDataResponseDto.setWeekInfo(weekInfo);
             weatherDataResponseDto.setDayInfo(dayInfo);
             convertInfoToScore(scoreResultDto, weekInfo);
+            scoreResultDto.setWeatherValid(true);
             log.info("redis에서 날씨 데이터 불러오기");
         } catch (Exception e) {
             log.info("mysql에서 날씨 데이터 불러오기");
