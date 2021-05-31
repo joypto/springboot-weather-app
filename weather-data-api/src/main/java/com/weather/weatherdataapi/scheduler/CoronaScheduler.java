@@ -15,7 +15,7 @@ public class CoronaScheduler {
 
     private final CoronaService coronaService;
 
-    @Scheduled(cron = "0 0 10 * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
+    @Scheduled(cron = "0 12 * * * ?", zone = DateTimeUtil.ZONE_NAME_ASIA_SEOUL)
     public void cronJobSch() {
         try {
             log.info("전일 코로나 확진자 정보를 갱신합니다.");
