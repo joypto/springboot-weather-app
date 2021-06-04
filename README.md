@@ -122,5 +122,9 @@ setInfoAndScore 안의 convertInfoToScore, setInfoAndScore에서 각각의 정�
 - GitHub Flow 전략 적용
 - 코드 가독성 증가를 위한 리팩토링
 
+### 6차 업데이트 21.06.04
+
+- EC2 인스턴스 과부화 문제인한 서버 오류
+    - EC2 재부팅 및 프로세스 관리를 통해서 
 
 
