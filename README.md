@@ -125,6 +125,6 @@ setInfoAndScore 안의 convertInfoToScore, setInfoAndScore에서 각각의 정�
 ### 6차 업데이트 21.06.04
 
 - EC2 인스턴스 과부화 문제인한 서버 오류
-    - EC2 재부팅 및 프로세스 관리를 통해서 
+    - EC2 재부팅 및 프로세스 관리를 통해서 문제해결
 
 
