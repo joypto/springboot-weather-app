@@ -53,6 +53,7 @@ jobs:
         run: aws s3 cp --region ap-northeast-2 ./$GITHUB_SHA.zip s3://weatherlevelbox/$PROJECT_NAME/$GITHUB_SHA.zip
         working-directory: ./weather-data-api
 
+
       # 코드 배포 시작
       - name: Code Deploy
         run: aws deploy create-deployment --application-name theweatherlevel --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name dev --s3-location bucket=weatherlevelbox,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
