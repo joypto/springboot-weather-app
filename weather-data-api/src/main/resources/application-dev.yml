@@ -2,12 +2,17 @@ spring:
   config:
     activate:
       on-profile: dev
-    import:
-      - "classpath:/application-prod-db.yml"
-      - "classpath:/application-secret.yml"
   jpa:
     hibernate:
       ddl-auto: update
+  datasource:
+    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+    url: jdbc:log4jdbc:mysql://final.cvoggurhiwh9.ap-northeast-2.rds.amazonaws.com:3306/test?characterEncoding=UTF-8&serverTimezone=Asia/Seoul
+    username: admin
+    password: happybird
+  redis:
+    host: localhost
+    port: 6379
 logging:
   level:
     root: info
